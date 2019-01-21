@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Icon } from 'antd';
+import { Icon, Row, Col } from 'antd';
 import { connect } from 'dva';
 import styles from './List.less';
 
 
 
 const MyIcon = Icon.createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_696758_riuzzc04t8.js', // 在 iconfont.cn 上生成
+  scriptUrl: '//at.alicdn.com/t/font_1025319_x6knp53yai.js', // 在 iconfont.cn 上生成
 });
 
 
@@ -31,11 +31,18 @@ class OperateTool extends Component {
 
     return (
       <div className="container">
+        <Row>
 
-        //at.alicdn.com/t/font_1025319_dzdp1dcdli.js
-        op
+          <MyIcon
+            className={styles.blue}
+            type="icon-number2" />
+          <h2>
 
-                <MyIcon type="icon-sort" />
+            文案管理
+</h2>
+
+
+        </Row>
 
       </div>
     )

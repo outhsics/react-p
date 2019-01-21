@@ -15,13 +15,13 @@ export default [
       // 用户管理
       {
         path: '/user',
-        name: '用户管理',
+        name: 'user-manage',
         icon: 'dashboard',
         routes: [
           // 用户资源池
           {
             path: '/user/list',
-            name: '用户资源池',
+            name: 'user-list',
             component: './User/List',
           },
         ],
@@ -29,13 +29,13 @@ export default [
       // 试卷管理
       {
         path: '/exam',
-        name: '试卷管理',
+        name: 'exam-manage',
         icon: 'form',
         routes: [
           // 试卷列表
           {
             path: '/exam/list',
-            name: '试卷列表',
+            name: 'exam-list',
             component: './Exam/List',
           },
           {
@@ -51,13 +51,13 @@ export default [
       // 数据分析
       {
         path: '/data',
-        name: '数据分析',
+        name: 'data-analysis',
         icon: 'table',
         routes: [
           // 数据看板
           {
             path: '/data/board',
-            name: '数据看板',
+            name: 'data-board',
             component: './Data/Analysis',
           },
         ],
@@ -66,13 +66,13 @@ export default [
       // 基础数据
       {
         path: '/basic',
-        name: '基础数据',
+        name: 'basic-data',
         icon: 'profile',
         routes: [
           // 营运工具
           {
             path: '/basic/operate',
-            name: '营运工具',
+            name: 'operate-tool',
             component: './Basic/OperateTool',
           },
         ],
