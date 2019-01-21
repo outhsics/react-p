@@ -9,8 +9,8 @@ export async function queryActivities() {
   return request('/api/activities');
 }
 
-export async function queryRule(params) {
-  return request(`/api/rule?${stringify(params)}`);
+export async function queryUserList(params) {
+  return request(`/api/user/list?${stringify(params)}`);
 }
 
 export async function removeRule(params) {
@@ -123,4 +123,14 @@ export async function queryNotices(params = {}) {
 
 export async function getFakeCaptcha(mobile) {
   return request(`/api/captcha?mobile=${mobile}`);
+}
+
+export async function queryExamList(params = {}) {
+  return request(`/api/exam/list?${stringify(params)}`);
+}
+export async function queryDataAnalysis(params = {}) {
+  return request(`/api/data/analysis?${stringify(params)}`);
+}
+export async function queryBasicData(params = {}) {
+  return request(`/api/basic/data?${stringify(params)}`);
 }
