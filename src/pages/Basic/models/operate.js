@@ -1,7 +1,7 @@
 import { queryBasicData } from '@/services/api';
 
 export default {
-  namespace: 'basic',
+  namespace: 'operate',
 
   state: {
     data: {
@@ -12,11 +12,11 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-        const response = yield call(queryBasicData, payload);
-        yield put({
-            type: 'save',
-            payload: response,
-        });
+      const response = yield call(queryBasicData, payload);
+      yield put({
+        type: 'save',
+        payload: response,
+      });
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addRule, payload);
@@ -46,7 +46,7 @@ export default {
 
   reducers: {
     save(state, action) {
-        // debugger
+      // debugger
 
       return {
         ...state,

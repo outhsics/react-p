@@ -5,54 +5,42 @@ import styles from './List.less';
 
 
 
-class UserList extends Component {
+const MyIcon = Icon.createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_696758_riuzzc04t8.js', // 在 iconfont.cn 上生成
+});
 
-  
+
+@connect(({ operate }) => ({
+  operate,
+}))
+class OperateTool extends Component {
+
+
   componentDidMount() {
     const { dispatch } = this.props;
-      dispatch({
-        type:'userlist/loadUserList'
-      })
-    }
-
-
-    renderList = (resources = []) => resources.map(resource => {
-            return (
-              <div className={styles.row} key={resource.id}>
-
-                <a href={resource.url} className={styles.left}>
-                  <Icon type="file-text" theme="twoTone" />
-                        &nbsp;&nbsp;&nbsp;
-                  {resource.nickname}
-
-                </a>
-                <span className={styles.last}>
-                  {resource.city}
-                </span>
-              </div>
-            )
+    dispatch({
+      type: 'operate/fetch'
     })
-
-
-    render() {
-        const { userlist } = this.props;
-
-        const { list } = userlist;
-
-        return (
-          <div className="container">
-
-            {list && this.renderList(list)}
-
-
-          </div>
-        )
-    }
   }
-const mapStateToProps = (state) => ({
-        userlist: state.userlist,
-    })
 
-export default connect(
-    mapStateToProps
-)(UserList);
+
+
+
+  render() {
+
+
+    return (
+      <div className="container">
+
+        //at.alicdn.com/t/font_1025319_dzdp1dcdli.js
+        op
+
+                <MyIcon type="icon-sort" />
+
+      </div>
+    )
+  }
+}
+
+
+export default OperateTool;

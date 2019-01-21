@@ -1,6 +1,6 @@
 import memoizeOne from 'memoize-one';
 import isEqual from 'lodash/isEqual';
-import { formatMessage } from 'umi/locale';
+// import { formatMessage } from 'umi/locale';
 import Authorized from '@/utils/Authorized';
 
 const { check } = Authorized;
@@ -15,15 +15,21 @@ function formatter(data, parentAuthority, parentName) {
 
       let locale = 'menu';
       if (parentName) {
-        locale = `${parentName}.${item.name}`;
+        // locale = `${parentName}.${item.name}`;
+        locale = item.name;
       } else {
-        locale = `menu.${item.name}`;
+        // debugger
+        // locale = `menu.${item.name}`;
+        locale = item.name;
       }
 
+      // debugger
       const result = {
         ...item,
-        name: formatMessage({ id: locale, defaultMessage: item.name }),
-        locale,
+
+        // name: formatMessage({ id: locale, defaultMessage: item.name }),
+        // name: item.name,
+        // locale,
         authority: item.authority || parentAuthority,
       };
       if (item.routes) {
@@ -100,6 +106,7 @@ export default {
       const { routes, authority } = payload;
       const menuData = filterMenuData(memoizeOneFormatter(routes, authority));
       const breadcrumbNameMap = memoizeOneGetBreadcrumbNameMap(menuData);
+      // debugger
       yield put({
         type: 'save',
         payload: { menuData, breadcrumbNameMap },
