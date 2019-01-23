@@ -24,6 +24,17 @@ export default [
             name: 'user-list',
             component: './User/List',
           },
+          // {
+          //   path: '/user/detail/:id',
+          //   // hideInMenu: true,
+          //   component: './User/$Detail',
+          //   title: 'route.article.detail',
+          //   hideMenu: true,
+          // },
+          {
+            path: '/user/detail',
+            component: './User/Detail/Info',
+          },
         ],
       },
       // 试卷管理

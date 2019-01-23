@@ -6,7 +6,7 @@ import styles from './List.less';
 
 
 const MyIcon = Icon.createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_1025319_x6knp53yai.js', // 在 iconfont.cn 上生成
+  scriptUrl: '//at.alicdn.com/t/font_1025319_360iia8jjiu.js', // 在 iconfont.cn 上生成
 });
 
 
