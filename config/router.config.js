@@ -22,7 +22,7 @@ export default [
           {
             path: '/user/list',
             name: 'user-list',
-            component: './User/List',
+            component: './User/List/List',
           },
           // {
           //   path: '/user/detail/:id',
@@ -33,6 +33,7 @@ export default [
           // },
           {
             path: '/user/detail',
+            // hideInMenu: true,
             component: './User/Detail/Info',
           },
         ],

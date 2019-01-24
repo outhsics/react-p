@@ -13,6 +13,18 @@ export async function queryUserList(params) {
   return request(`/api/user/list?${stringify(params)}`);
 }
 
+
+export async function queryUserDetail(params = {}) {
+  return request(`/api/user/detail?${stringify(params)}`);
+}
+
+export async function queryUserExam(params = {}) {
+  return request(`/api/user/exam?${stringify(params)}`);
+}
+
+
+
+
 export async function removeRule(params) {
   return request('/api/rule', {
     method: 'POST',

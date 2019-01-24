@@ -1,4 +1,6 @@
 import React, { PureComponent, Component, Fragment } from 'react';
+
+import router from 'umi/router';
 import moment from 'moment';
 import { connect } from 'dva';
 import {
@@ -91,6 +93,31 @@ class UserList extends Component {
     });
   }
 
+
+  handleToDetail = (v) => {
+    // router.push('/exception/trigger');
+
+    const { location, dispatch } = this.props;
+    // debugger
+    // dispatch({
+    //   type: 'userdetail/fetch',
+    //   payload: {
+    //     id: 1
+    //   }
+    // })
+
+    router.push({
+      pathname: '/user/detail',
+      query: {
+        id: 1,
+      },
+      // this.appointType = this.$route.params.appointType;
+      // this.appointType = this.$route.query.appointType;
+    });
+
+    //     path: '/userBooking/:customerCode/:appointType',
+
+  }
 
   handleFilterChange = (e) => {
     this.setState({ filterVal: e.target.value });
@@ -367,7 +394,8 @@ class UserList extends Component {
         </a>
 
         }
-        <a href={record.href}>查看详情</a>
+        <a onClick={() => this.handleToDetail(1)}>查看详情</a>
+
       </Fragment>
     ),
   }

@@ -4,6 +4,7 @@ import pageRoutes from './router.config';
 
 
 export default {
+  // history: 'hash',
   plugins: [
     [
       'umi-plugin-react',

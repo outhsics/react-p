@@ -6,7 +6,7 @@ for (let i = 0; i < 46; i += 1) {
   tableListDataSource.push({
     id: i,
     disabled: i % 6 === 0,
-    href: 'https://ant.design',
+    href: '/user/detail/2',
     avatar: [
       'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
       'https://gw.alipayobjects.com/zos/rmsportal/udxAbMEhpwthVVcjLXik.png',

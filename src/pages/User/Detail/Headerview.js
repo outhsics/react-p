@@ -1,19 +1,15 @@
 import React, { Component } from 'react';
 import { Row, Col, Avatar } from 'antd';
 import { connect } from 'dva';
-import styles from './BaseView.less';
+import styles from './HeaderView.less';
 // import { getTimeDistance } from '@/utils/utils';
 
 // const FormItem = Form.Item;
 
-@connect(({ user }) => ({
-    currentUser: user.currentUser,
+@connect(({ userdetail }) => ({
+    userdetail
 }))
-
 class HeaderView extends Component {
-    state = {
-        url: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png'
-    }
 
     componentDidMount() {
 
@@ -23,27 +19,77 @@ class HeaderView extends Component {
 
 
     render() {
-        const { url } = this.state;
-        const { value } = this.props;
+        const { userdetail } = this.props;
+        const { data: { userDetail } } = userdetail;
+        // debugger
+
         const {
             city,
             sex,
-            nickname,
+            avatar,
+            nickName,
             createAt,
             lastLogin,
-            className,
             studyTime,
-            overUser
-        } = value;
+            overUser,
+        } = userDetail;
         return (
-            <div className={styles.baseView} ref={this.getViewDom}>
-                <Avatar src={url} size={64} />
-                <Row>
-                    <Col>
 
-                    </Col>
-                </Row>
+            <div className={styles.header}>
+                <div className={styles.avatar}>
+
+                    <Avatar style={{ marginRight: 10 }} src={avatar} size={45} />
+                </div>
+                <div className={styles.middle}>
+
+                    <div className={styles.middle_row}>
+                        <span>
+                            昵称:{nickName}
+
+                        </span>
+                        <span>
+                            xin:{sex}
+
+                        </span>
+                        <span>
+                            xin:{city}
+                        </span>
+
+                    </div>
+                    <div className={styles.middle_row}>
+                        <span>
+                            昵称:{nickName}
+
+                        </span>
+                        <span>
+                            xin:{sex}
+
+                        </span>
+                        <span>
+                            xin:{city}
+                        </span>
+
+                    </div>
+
+
+                </div>
+                <div className={styles.right}>
+                    <div className={styles.study}>
+
+                        <h2>
+
+                            学习时长： {studyTime}
+                        </h2>
+                        <div className={styles.overUser}>
+                            超过 {overUser}用户
+                            </div>
+                    </div>
+
+
+                </div>
+
             </div>
+
         );
     }
 }
