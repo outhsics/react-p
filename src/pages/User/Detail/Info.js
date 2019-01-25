@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import router from 'umi/router';
 import Link from 'umi/link';
-import { Menu } from 'antd';
+import NavLink from 'umi/navlink';
+import { Menu, Breadcrumb } from 'antd';
 import styles from './Info.less';
 import BaseView from './BaseView';
 
 
 const { Item } = Menu;
 
-@connect(({ userdetail }) => ({
-    userdetail
+@connect(({ userdetail, userexam }) => ({
+    userdetail,
+    userexam
 }))
 class Info extends Component {
 
@@ -18,14 +20,21 @@ class Info extends Component {
 
         const { location, dispatch } = this.props;
 
-        console.log(location.query.id)
-        // debugger
+
         dispatch({
-            type: 'userdetail/fetch',
+            type: 'userexam/fetch',
             payload: {
-                id: location.query.id,
+                userId: '100',
+                specialId: 1
             }
         })
+
+        dispatch({
+            type: 'userexam/fetchUserSpecial',
+            payload: {
+                userId: '100'
+            }
+        });
     }
 
 
@@ -35,27 +44,28 @@ class Info extends Component {
         super(props);
         const { match, location } = props;
         const menuMap = {
-            base: '听力专项挑战',
-            security: '仿真模拟练习',
-            binding: '历年真题闯关',
+            '1': '听力专项挑战',
+            '2': '仿真模拟练习',
+            '3': '历年真题闯关',
         };
         const key = location.pathname.replace(`${match.path}/`, '');
         this.state = {
             mode: 'inline',
             menuMap,
-            selectKey: menuMap[key] ? key : 'base',
+            selectKey: menuMap[key] ? key : '1',
         };
     }
 
-    static getDerivedStateFromProps(props, state) {
-        const { match, location } = props;
-        let selectKey = location.pathname.replace(`${match.path}/`, '');
-        selectKey = state.menuMap[selectKey] ? selectKey : 'base';
-        if (selectKey !== state.selectKey) {
-            return { selectKey };
-        }
-        return null;
-    }
+    // static getDerivedStateFromProps(props, state) {
+    //     const { match, location } = props;
+    //     let selectKey = location.pathname.replace(`${match.path}/`, '');
+    //     selectKey = state.menuMap[selectKey] ? selectKey : '1';
+    //     // debugger
+    //     if (selectKey !== state.selectKey) {
+    //         return { selectKey };
+    //     }
+    //     return null;
+    // }
 
 
     getmenu = () => {
@@ -63,30 +73,52 @@ class Info extends Component {
         return Object.keys(menuMap).map(item => <Item key={item}>{menuMap[item]}</Item>);
     };
 
-    getRightTitle = () => {
-        const { selectKey, menuMap } = this.state;
-        return menuMap[selectKey];
-    };
 
     selectKey = ({ key }) => {
         // router.push(`/account/settings/${key}`);
-        // this.setState({
-        //   selectKey: key,
-        // });
+
+        this.setState({
+            selectKey: key,
+        });
+        const { dispatch } = this.props;
+        dispatch({
+            type: 'userexam/fetch',
+            payload: {
+                userId: '100',
+                specialId: Number(key)
+            }
+        });
+
         console.log(key, 'key');
     };
 
+
     render() {
-        const { userdetail } = this.props;
-        const { data: { userDetail } } = userdetail;
+
         // if (!currentUser.userid) {
         //   return '';
         // }
         const { mode, selectKey } = this.state;
         return (
+            // <div className={styles.container}>
+
             <div
-                className={styles.main}
+                className={styles.container}
             >
+                <div className={styles.breadcrumb}>
+                    <Breadcrumb>
+                        <Breadcrumb.Item>
+                            <NavLink to="/user/list">用户列表</NavLink>
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>
+                            <NavLink to="/user/detail" activeStyle={{
+                                color: "#1890FF"
+                            }}>用户详情</NavLink>
+
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                </div>
+
                 <div className={styles.leftmenu}>
                     <Menu mode={mode} selectedKeys={[selectKey]} onClick={this.selectKey}>
                         {this.getmenu()}
@@ -95,10 +127,10 @@ class Info extends Component {
                 <div className={styles.right}>
                     {/* <div className={styles.title}>{this.getRightTitle()}</div> */}
                     {/* <Link to="/user/detail/2">324</Link> */}
-                    {userDetail && <BaseView />}
+                    <BaseView />
                 </div>
             </div>
-
+            // </div>
         );
     }
 }

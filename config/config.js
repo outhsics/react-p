@@ -5,6 +5,13 @@ import pageRoutes from './router.config';
 
 export default {
   // history: 'hash',
+  "proxy": {
+    "/api": {
+      "target": "https://api.jze100.com/hear",
+      "changeOrigin": true,
+      "pathRewrite": { "^/api": "" }
+    }
+  },
   plugins: [
     [
       'umi-plugin-react',

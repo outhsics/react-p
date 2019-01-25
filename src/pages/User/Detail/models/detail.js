@@ -1,38 +1,32 @@
-import { queryUserDetail, queryUserExam } from '@/services/api';
+import { queryUserDetail } from '@/services/api';
 import { debug } from 'util';
 
 export default {
     namespace: 'userdetail',
 
     state: {
-        data: {
-            userDetail: null
-        },
-        userExam: null
+        userDetail: null
     },
 
     effects: {
         *fetch({ payload }, { call, put }) {
             const response = yield call(queryUserDetail, payload);
-            yield put({
-                type: 'save',
-                payload: response,
-            });
+            // debugger
+            if (response.code === 1) {
+                yield put({
+                    type: 'save',
+                    payload: response.data,
+                });
+            }
         },
-        *loadUserExam({ payload }, { call, put }) {
-            const response = yield call(queryUserExam, payload);
-            yield put({
-                type: 'save',
-                payload: response,
-            });
-        }
     },
 
     reducers: {
         save(state, action) {
+            // debugger
             return {
                 ...state,
-                data: action.payload,
+                userDetail: action.payload,
             };
         },
     },

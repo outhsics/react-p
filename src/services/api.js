@@ -1,6 +1,11 @@
 import { stringify } from 'qs';
 import request from '@/utils/request';
 
+
+import { api as apiConfig } from '../../config/api';
+
+
+
 export async function queryProjectNotice() {
   return request('/api/project/notice');
 }
@@ -14,12 +19,21 @@ export async function queryUserList(params) {
 }
 
 
-export async function queryUserDetail(params = {}) {
-  return request(`/api/user/detail?${stringify(params)}`);
+export async function queryUserDetail(params) {
+
+  return request(`${apiConfig.userDetail.getUserDetail}?id=${params.id}`);
+
 }
 
-export async function queryUserExam(params = {}) {
-  return request(`/api/user/exam?${stringify(params)}`);
+export async function queryUserExam(params) {
+
+  return request(`${apiConfig.userDetail.studySpecialPape}?userId=${params.userId}&specialId=${params.specialId}`);
+}
+
+// 用户-用户专项闯关集合 进度
+export async function queryUserSpecial(params) {
+
+  return request(`${apiConfig.userDetail.studyUserSpecial}?userId=${params.userId}`);
 }
 
 

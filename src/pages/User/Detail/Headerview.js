@@ -1,7 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { Row, Col, Avatar } from 'antd';
 import { connect } from 'dva';
 import styles from './HeaderView.less';
+import moment from 'moment';
+import withRouter from 'umi/withRouter';
+
+
 // import { getTimeDistance } from '@/utils/utils';
 
 // const FormItem = Form.Item;
@@ -11,87 +15,79 @@ import styles from './HeaderView.less';
 }))
 class HeaderView extends Component {
 
-    componentDidMount() {
-
-    }
-
 
 
 
     render() {
         const { userdetail } = this.props;
-        const { data: { userDetail } } = userdetail;
+        const { userDetail } = userdetail;
         // debugger
 
         const {
-            city,
-            sex,
-            avatar,
-            nickName,
-            createAt,
-            lastLogin,
-            studyTime,
-            overUser,
+            user,
+            userExt
         } = userDetail;
         return (
+            <Fragment>
 
-            <div className={styles.header}>
-                <div className={styles.avatar}>
+                {userdetail &&
 
-                    <Avatar style={{ marginRight: 10 }} src={avatar} size={45} />
-                </div>
-                <div className={styles.middle}>
+                    <div className={styles.header}>
+                        <div className={styles.avatar}>
 
-                    <div className={styles.middle_row}>
-                        <span>
-                            昵称:{nickName}
+                            <Avatar style={{ marginRight: 10 }} src={!!user.avatar ? user.avatar : 'https://gw.alipayobjects.com/zos/rmsportal/OKJXDXrmkNshAMvwtvhu.png'} size={45} />
+                        </div>
+                        <div className={styles.middle}>
 
-                        </span>
-                        <span>
-                            xin:{sex}
+                            <div className={styles.middle_row}>
+                                <span>
+                                    昵称:{user.nickName}
 
-                        </span>
-                        <span>
-                            xin:{city}
-                        </span>
+                                </span>
+                                <span>
+                                    性别:{user.sex ? '男' : '女'}
 
-                    </div>
-                    <div className={styles.middle_row}>
-                        <span>
-                            昵称:{nickName}
+                                </span>
+                                <span>
+                                    城市:{user.city}
+                                </span>
 
-                        </span>
-                        <span>
-                            xin:{sex}
-
-                        </span>
-                        <span>
-                            xin:{city}
-                        </span>
-
-                    </div>
-
-
-                </div>
-                <div className={styles.right}>
-                    <div className={styles.study}>
-
-                        <h2>
-
-                            学习时长： {studyTime}
-                        </h2>
-                        <div className={styles.overUser}>
-                            超过 {overUser}用户
                             </div>
+                            <div className={styles.middle_row}>
+                                <span>
+
+                                    创建时间:{moment(user.createTime).format('YYYY-MM-DD HH:mm:ss')}
+
+                                </span>
+                                <span>
+                                    最近登录:{moment(userExt.lastLoginTime).format('YYYY-MM-DD HH:mm:ss')}
+
+
+                                </span>
+
+                            </div>
+
+
+                        </div>
+                        <div className={styles.right}>
+                            <div className={styles.study}>
+
+                                <h2>
+
+                                    学习时长： {userExt.duration}
+                                </h2>
+                                <div className={styles.overUser}>
+                                    超过 {userExt.surpass}用户
+                            </div>
+                            </div>
+
+
+                        </div>
                     </div>
-
-
-                </div>
-
-            </div>
-
+                }
+            </Fragment>
         );
     }
 }
 
-export default HeaderView;
+export default withRouter(HeaderView);

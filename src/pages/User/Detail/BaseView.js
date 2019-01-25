@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   Form,
   Input,
@@ -7,7 +7,8 @@ import {
   Button,
   Progress,
   Row,
-  Col
+  Col,
+  Table
 } from 'antd';
 import { connect } from 'dva';
 import styles from './BaseView.less';
@@ -17,33 +18,65 @@ import withRouter from 'umi/withRouter';
 
 
 // const FormItem = Form.Item;
+const columns = [{
+  title: '名称',
+  dataIndex: 'title',
+},
+{
+  title: '进度',
+  dataIndex: 'pace',
+},
+{
+  title: '最新成绩',
+  dataIndex: '最新成绩',
+  render: 90,
+  render: (text, record) => (
+    <Fragment>
+      <span>{text}</span>
+      <span>{record.id}</span>
+    </Fragment>
+  )
+},
+{
+  title: '最近答题时间',
+  dataIndex: 'lastAnswerTime',
+},
+]
 
-// @connect(({ userdetail }) => ({
-//   userdetail
-// }))
 // @Form.create()
+@connect(({ userdetail, userexam }) => ({
+  userdetail,
+  userexam
+}))
 class BaseView extends Component {
 
 
-  // console.log(match, 'match');
-  // console.log(history, 'history');
+  componentDidMount() {
+    const { location, dispatch } = this.props;
 
-  // this.customerCode = this.$route.params.customerCode;
+    console.log(location.query.id)
+    // debugger
+    dispatch({
+      type: 'userdetail/fetch',
+      payload: {
+        id: location.query.id,
+      }
+    })
 
-
-
-
+  }
 
   render() {
-    const { userExam } = this.props;
-    // const { data: { userDetail } } = userdetail;
+
+    const { userexam, userdetail } = this.props;
+    const { userDetail } = userdetail;
+    const { userExam, UserSpecial } = userexam;
+
     // debugger
 
-    const { match, location, history } = this.props;
+    // const { match, location, history } = this.props;
     return (
-      <div>
-        {/* <div>You are now at {location.pathname}</div>; */}
-        <HeaderView />
+      <Fragment>
+        {userDetail && <HeaderView />}
         <Row className={styles.progress}>
           <Col span={3}>
             总进度：
@@ -55,14 +88,16 @@ class BaseView extends Component {
           </Col>
         </Row>
         <div className={styles.tableList}>
-          <Table
+          {userExam && <Table
+            rowKey={record => record.id}
             columns={columns}
-            expandedRowRender={record => <p style={{ margin: 0 }}>{record.description}</p>}
-            dataSource={data}
-          />,
+            expandedRowRender={record => <p style={{ margin: 0 }}>{record.id}</p>}
+            dataSource={userExam}
+          />
+          }
 
         </div>
-      </div>
+      </Fragment>
     );
   }
 }

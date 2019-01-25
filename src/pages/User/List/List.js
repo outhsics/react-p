@@ -48,7 +48,6 @@ function itemRender(current, type, originalElement) {
   } if (type === 'next') {
     return <a>下一页</a>;
   }
-  debugger
   return originalElement;
 }
 
