@@ -21,11 +21,15 @@ const api = {
         disableUser: `${apiPrefix.tlb}`,
         searchUser: `${apiPrefix.tlb}`,
     },
-    // 用户详情  用户-用户专项试卷集合
+    // 用户详情  
     userDetail: {
+        // 用户试卷
         studySpecialPape: `${apiPrefix.tlb}/admin/studySpecialPaper/list`,
-        getUserDetail: `${apiPrefix.tlb}/admin/user/detail`,
+        // 用户专项
         studyUserSpecial: `${apiPrefix.tlb}/admin/studyUserSpecial/list`,
+        // 用户
+        // 用户- 查询单数
+        getUserDetail: `${apiPrefix.tlb}/admin/user/detail`,
     }
 };
 export { api };

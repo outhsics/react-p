@@ -6,7 +6,8 @@ export default {
 
     state: {
         userExam: [],
-        UserSpecial: ''
+        UserSpecial: [],
+        pace: '',
     },
 
     effects: {
@@ -23,11 +24,10 @@ export default {
         },
         *fetchUserSpecial({ payload }, { call, put }) {
             const response = yield call(queryUserSpecial, payload);
-            debugger
+            // debugger
             if (response.code === 1) {
-
                 yield put({
-                    type: 'save',
+                    type: 'saveUserSpecial',
                     payload: response.data,
                 });
             }
@@ -45,6 +45,12 @@ export default {
             return {
                 ...state,
                 UserSpecial: action.payload,
+            };
+        },
+        savePace(state, action) {
+            return {
+                ...state,
+                pace: action.payload,
             };
         },
     },

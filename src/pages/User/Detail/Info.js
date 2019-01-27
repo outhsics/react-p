@@ -3,9 +3,12 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import Link from 'umi/link';
 import NavLink from 'umi/navlink';
-import { Menu, Breadcrumb } from 'antd';
+import { Menu, Breadcrumb, Icon } from 'antd';
 import styles from './Info.less';
 import BaseView from './BaseView';
+import cloneDeep from 'lodash/cloneDeep';
+
+
 
 
 const { Item } = Menu;
@@ -18,7 +21,40 @@ class Info extends Component {
 
     componentDidMount() {
 
-        const { location, dispatch } = this.props;
+        const { location, dispatch, userexam } = this.props;
+        const { UserSpecial } = userexam;
+
+        const obj = {};
+        UserSpecial.map(item => {
+            let id = item.id.toString();
+            obj[id] = item.title;
+        })
+        const paceList = {};
+        UserSpecial.map(item => {
+            let id = item.id.toString();
+            paceList[id] = item.pace;
+        })
+
+
+        const pace1 = UserSpecial[0];
+        const pace2 = pace1;
+        if (pace1) {
+            dispatch({
+                type: 'userexam/savePace',
+                payload: pace1.id
+            });
+        }
+
+
+        // obj.keys()
+
+        // debugger
+        this.setState({
+            menuMap: obj,
+            paceList
+        })
+
+
 
 
         dispatch({
@@ -35,6 +71,7 @@ class Info extends Component {
                 userId: '100'
             }
         });
+
     }
 
 
@@ -43,18 +80,28 @@ class Info extends Component {
     constructor(props) {
         super(props);
         const { match, location } = props;
-        const menuMap = {
-            '1': '听力专项挑战',
-            '2': '仿真模拟练习',
-            '3': '历年真题闯关',
-        };
-        const key = location.pathname.replace(`${match.path}/`, '');
+        // debugger
+
+
+        // let menuMap = {
+
+        // };
+
+
+
+        // '1': '听力专项挑战',
+        // '2': '仿真模拟练习',
+        // '3': '历年真题闯关',
+        // const key = location.pathname.replace(`${match.path}/`, '');
         this.state = {
             mode: 'inline',
-            menuMap,
-            selectKey: menuMap[key] ? key : '1',
+            selectKey: '1',
+            menuMap: [],
+            paceList: ''
         };
+        // debugger
     }
+
 
     // static getDerivedStateFromProps(props, state) {
     //     const { match, location } = props;
@@ -70,7 +117,11 @@ class Info extends Component {
 
     getmenu = () => {
         const { menuMap } = this.state;
-        return Object.keys(menuMap).map(item => <Item key={item}>{menuMap[item]}</Item>);
+        const { userexam } = this.props;
+        const { UserSpecial } = userexam;
+        // return Object.keys(menuMap).map(item => <Item key={item}>{menuMap[item]}</Item>);
+        // debugger
+        return UserSpecial.map(item => <Item key={item.id}>{item.title} {item.pace}</Item>);
     };
 
 
@@ -88,6 +139,10 @@ class Info extends Component {
                 specialId: Number(key)
             }
         });
+        dispatch({
+            type: 'userexam/savePace',
+            payload: paceList[key]
+        })
 
         console.log(key, 'key');
     };
@@ -99,6 +154,8 @@ class Info extends Component {
         //   return '';
         // }
         const { mode, selectKey } = this.state;
+        const { userexam } = this.props;
+        const { UserSpecial } = userexam;
         return (
             // <div className={styles.container}>
 
@@ -118,17 +175,25 @@ class Info extends Component {
                         </Breadcrumb.Item>
                     </Breadcrumb>
                 </div>
+                <div className={styles.box}>
+                    <div className={styles.left}>
+                        <Icon type="home" />
+                        <h2 style={{ marginLeft: 15, display: 'inline-block' }}>
+                            专题列表
 
-                <div className={styles.leftmenu}>
-                    <Menu mode={mode} selectedKeys={[selectKey]} onClick={this.selectKey}>
-                        {this.getmenu()}
-                    </Menu>
+                        </h2>
+                        <Menu mode={mode} selectedKeys={[selectKey]} onClick={this.selectKey}>
+                            {this.getmenu()}
+                        </Menu>
+                    </div>
+                    <div className={styles.right}>
+                        {/* <div className={styles.title}>{this.getRightTitle()}</div> */}
+                        {/* <Link to="/user/detail/2">324</Link> */}
+                        <BaseView />
+                    </div>
+
                 </div>
-                <div className={styles.right}>
-                    {/* <div className={styles.title}>{this.getRightTitle()}</div> */}
-                    {/* <Link to="/user/detail/2">324</Link> */}
-                    <BaseView />
-                </div>
+
             </div>
             // </div>
         );

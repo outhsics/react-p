@@ -54,7 +54,7 @@ class BaseView extends Component {
   componentDidMount() {
     const { location, dispatch } = this.props;
 
-    console.log(location.query.id)
+    // console.log(location.query.id)
     // debugger
     dispatch({
       type: 'userdetail/fetch',
@@ -80,15 +80,17 @@ class BaseView extends Component {
         <Row className={styles.progress}>
           <Col span={3}>
             总进度：
-
           </Col>
           <Col span={21}>
             <Progress className={styles.progress_r} percent={30} />
-
           </Col>
         </Row>
         <div className={styles.tableList}>
           {userExam && <Table
+            pagination={{
+              showQuickJumper: true, showSizeChanger: true,
+            }}
+            footer={() => <div className={styles.footer}></div>}
             rowKey={record => record.id}
             columns={columns}
             expandedRowRender={record => <p style={{ margin: 0 }}>{record.id}</p>}
