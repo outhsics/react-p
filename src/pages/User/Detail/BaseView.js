@@ -90,7 +90,12 @@ class BaseView extends Component {
             pagination={{
               showQuickJumper: true, showSizeChanger: true,
             }}
-            footer={() => <div className={styles.footer}></div>}
+            footer={() => <div className={styles.footer}>
+              <span className={styles.footerLeft}>
+                试卷下共26份试卷
+            </span>
+
+            </div>}
             rowKey={record => record.id}
             columns={columns}
             expandedRowRender={record => <p style={{ margin: 0 }}>{record.id}</p>}

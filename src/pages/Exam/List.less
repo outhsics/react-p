@@ -1,3 +1,4 @@
+@import '~@/utils/utils.less';
 .container {
     padding: 24px;
     background: #fff;
@@ -15,6 +16,23 @@
 .examLeft {
     padding: 10px;
     height: 100vh;
+    border: 1px solid #e8e8e8;
+    h2 {
+        font-size: 14px;
+    }
+}
+
+.examTitle {
+    .clearfix();
 }
 
 .examRight {}
+
+.examForm {
+    border-bottom: 1px solid #e8e8e8;
+    margin-bottom: 8px;
+}
+
+:global(.ant-row) {
+    line-height: 40px;
+}
