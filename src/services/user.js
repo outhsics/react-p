@@ -5,7 +5,7 @@ export async function query() {
 }
 
 export async function queryCurrent() {
-  return request('/api/currentUser');
+  return request('https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/api/currentUser');
 }
 
 export async function queryNotices() {

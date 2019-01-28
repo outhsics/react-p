@@ -15,7 +15,7 @@ export async function queryActivities() {
 }
 
 export async function queryUserList(params) {
-  return request(`/api/user/list?${stringify(params)}`);
+  return request(`https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/user/list?${stringify(params)}`);
 }
 
 
@@ -77,7 +77,7 @@ export async function fakeSubmitForm(params) {
 }
 
 export async function fakeChartData() {
-  return request('/api/fake_chart_data');
+  return request('https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/api/fake_chart_data');
 }
 
 export async function queryTags() {
@@ -152,7 +152,7 @@ export async function getFakeCaptcha(mobile) {
 }
 
 export async function queryExamList(params = {}) {
-  return request(`/api/exam/list?${stringify(params)}`);
+  return request(`https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/api/exam/list?${stringify(params)}`);
 }
 export async function queryDataAnalysis(params = {}) {
   return request(`/api/data/analysis?${stringify(params)}`);

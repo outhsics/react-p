@@ -23,9 +23,9 @@ class OperateTool extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'operate/fetch'
-    })
+    // dispatch({
+    //   type: 'operate/fetch'
+    // })
   }
 
   save = () => {
