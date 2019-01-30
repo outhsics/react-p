@@ -1,4 +1,4 @@
-import { queryUserList } from '@/services/api';
+import { queryUserList, updateUser } from '@/services/api';
 
 export default {
   namespace: 'userlist',
@@ -6,38 +6,41 @@ export default {
   state: {
     data: {
       list: [],
-      pagination: {},
     },
+    userState: null
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
-        const response = yield call(queryUserList, payload);
+      const response = yield call(queryUserList, payload);
+      // debugger
+      if (response.code === 1) {
         yield put({
-            type: 'save',
-            payload: response,
+          type: 'save',
+          payload: response.data,
         });
+      }
     },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addRule, payload);
+    // *add({ payload, callback }, { call, put }) {
+    //   const response = yield call(addRule, payload);
+    //   yield put({
+    //     type: 'save',
+    //     payload: response,
+    //   });
+    //   if (callback) callback();
+    // },
+    // *remove({ payload, callback }, { call, put }) {
+    //   const response = yield call(removeRule, payload);
+    //   yield put({
+    //     type: 'save',
+    //     payload: response,
+    //   });
+    //   if (callback) callback();
+    // },
+    *updateUser({ payload, callback }, { call, put }) {
+      const response = yield call(updateUser, payload);
       yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
-    },
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
-    },
-    *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateRule, payload);
-      yield put({
-        type: 'save',
+        type: 'saveUpdate',
         payload: response,
       });
       if (callback) callback();
@@ -46,11 +49,15 @@ export default {
 
   reducers: {
     save(state, action) {
-        // debugger
-
       return {
         ...state,
         data: action.payload,
+      };
+    },
+    saveUpdate(state, action) {
+      return {
+        ...state,
+        userState: action.payload,
       };
     },
   },

@@ -68,7 +68,6 @@ class UserList extends Component {
     filterCreateTime: '',
     filterStudyTime: '',
     filterNickname: '',
-    userCount: '全部用户(300)', // todo
     // selectedRows: [],
     formValues: {},
     // stepFormValues: {},
@@ -80,13 +79,27 @@ class UserList extends Component {
     let title = flag ? `是否确认启用用户${record.nickname}` : `是否确认停用用户${record.nickname}?`
     let content = flag ? '启用后用户可重新使用小程序' : '停用后用户不可使用小程序'
 
+    const { dispatch } = this.props;
+
     confirm({
       title,
       content,
       onOk() {
-        return new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'));
+        // return new Promise((resolve, reject) => {
+        //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        // }).catch(() => console.log('Oops errors!'));
+        // this updateUser
+        dispatch({
+          type: 'userlist/updateUser',
+          payload: {
+            id: 1,
+            state: flag ? 1 : 2
+          }
+        });
+
+
+
+
       },
       onCancel() { },
     });
@@ -168,10 +181,6 @@ class UserList extends Component {
     form.resetFields();
     this.setState({
       formValues: {},
-    });
-    dispatch({
-      type: 'userlist/fetch',
-      payload: {},
     });
   };
 
@@ -359,7 +368,7 @@ class UserList extends Component {
   },
   {
     title: '昵称',
-    dataIndex: 'nickname',
+    dataIndex: 'nickName',
   },
   {
     title: '城市',
@@ -368,6 +377,8 @@ class UserList extends Component {
   {
     title: '性别',
     dataIndex: 'sex',
+    render: val => <span> {val === 1 ? '男' : '女'} </span>,
+
   },
   {
     title: '创建时间',
@@ -384,7 +395,7 @@ class UserList extends Component {
     title: '操作',
     render: (text, record) => (
       <Fragment>
-        {record.disabled ?
+        {record.state !== 1 ?
           <a onClick={() => this.showConfirm(true, record)} style={{ marginRight: 10 }} >
             启用
         </a> :
@@ -405,6 +416,10 @@ class UserList extends Component {
     const { dispatch } = this.props;
     dispatch({
       type: 'userlist/fetch',
+      payload: {
+        pageNum: 1,
+        pageSize: 10
+      }
     });
   }
 
@@ -421,9 +436,8 @@ class UserList extends Component {
 
   render() {
     const { userlist } = this.props;
-    const { userCount } = this.state;
 
-    const { data: { list } } = userlist;
+    const { data: { list, total }, } = userlist;
 
 
 
@@ -431,7 +445,7 @@ class UserList extends Component {
       <div className={styles.container} >
 
         <Tabs className={styles.tabs} defaultActiveKey="1" onChange={callback}>
-          <TabPane tab={userCount} key="1">
+          <TabPane tab={<span> 全部用户({total})</span>} key="1">
 
             <div>
               {this.renderForm()}

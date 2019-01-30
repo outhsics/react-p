@@ -30,6 +30,16 @@ const api = {
         // 用户
         // 用户- 查询单数
         getUserDetail: `${apiPrefix.tlb}/admin/user/detail`,
+    },
+    // 查询数据集合
+    queryDataHub: {
+        // 用户-查询数据集合
+        getUserList: `${apiPrefix.tlb}/admin/user/list`
+    },
+    // 更新状态（admin）
+    updateState: {
+        // 用户- 更新状态
+        updateUser: `${apiPrefix.tlb}/admin/user/update`
     }
 };
 export { api };

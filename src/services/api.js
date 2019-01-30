@@ -15,7 +15,7 @@ export async function queryActivities() {
 }
 
 export async function queryUserList(params) {
-  return request(`https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/user/list?${stringify(params)}`);
+  return request(`${apiConfig.queryDataHub.getUserList}?pageNum=${params.pageNum}&pageSize=${params.pageSize}`);
 }
 
 
@@ -23,6 +23,20 @@ export async function queryUserDetail(params) {
 
   return request(`${apiConfig.userDetail.getUserDetail}?id=${params.id}`);
 
+}
+
+
+export async function updateUser(params) {
+  debugger
+  // params = JSON.stringify(params);
+  return request(`${apiConfig.updateState.updateUser}`, {
+    method: 'POST',
+    body: {
+      "id": params.id,
+      "state": params.state,
+    },
+    requestType: 'json'
+  });
 }
 
 export async function queryUserExam(params) {

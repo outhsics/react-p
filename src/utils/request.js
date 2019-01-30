@@ -29,6 +29,7 @@ const codeMessage = {
 const errorHandler = error => {
   const { response = {} } = error;
   const errortext = codeMessage[response.status] || response.statusText;
+  // debugger
   const { status, url } = response;
 
   notification.error({
@@ -43,6 +44,9 @@ const errorHandler = error => {
 const request = extend({
   errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+  headers: {
+    'content-type': 'application/json;charset=UTF-8'  // 统一的headers
+  },
 });
 
 export default request;
