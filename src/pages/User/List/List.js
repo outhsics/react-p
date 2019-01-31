@@ -96,6 +96,13 @@ class UserList extends Component {
             state: flag ? 1 : 2
           }
         });
+        dispatch({
+          type: 'userlist/fetch',
+          payload: {
+            pageNum: 1,
+            pageSize: 10
+          }
+        });
 
 
 
@@ -121,7 +128,7 @@ class UserList extends Component {
     router.push({
       pathname: '/user/detail',
       query: {
-        id: 1,
+        id: v,
       },
       // this.appointType = this.$route.params.appointType;
       // this.appointType = this.$route.query.appointType;
@@ -389,7 +396,9 @@ class UserList extends Component {
   },
   {
     title: '学习时长',
-    dataIndex: 'studytime',
+    dataIndex: 'duration',
+    render: val => <span>{val}mins</span>,
+
   },
   {
     title: '操作',

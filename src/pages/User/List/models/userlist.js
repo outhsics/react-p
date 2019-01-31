@@ -1,4 +1,7 @@
-import { queryUserList, updateUser } from '@/services/api';
+import {
+  queryUserList,
+  updateUser
+} from '@/services/api';
 
 export default {
   namespace: 'userlist',
@@ -11,13 +14,18 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    * fetch({
+      payload
+    }, {
+      call,
+      put
+    }) {
       const response = yield call(queryUserList, payload);
       // debugger
-      if (response.code === 1) {
+      if (response.data && response.data.code === 1) {
         yield put({
           type: 'save',
-          payload: response.data,
+          payload: response.data.data,
         });
       }
     },
@@ -37,12 +45,21 @@ export default {
     //   });
     //   if (callback) callback();
     // },
-    *updateUser({ payload, callback }, { call, put }) {
+    * updateUser({
+      payload,
+      callback
+    }, {
+      call,
+      put
+    }) {
       const response = yield call(updateUser, payload);
-      yield put({
-        type: 'saveUpdate',
-        payload: response,
-      });
+      // debugger
+      if (response.data && response.data.code === 1) {
+        yield put({
+          type: 'saveUpdate',
+          payload: response,
+        });
+      }
       if (callback) callback();
     },
   },

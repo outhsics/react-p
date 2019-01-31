@@ -126,20 +126,20 @@ class HeaderView extends PureComponent {
             theme={navTheme}
             mode="horizontal"
             onCollapse={handleMenuCollapse}
-            onNoticeClear={this.handleNoticeClear}
-            onMenuClick={this.handleMenuClick}
-            onNoticeVisibleChange={this.handleNoticeVisibleChange}
+            // onNoticeClear={this.handleNoticeClear}
+            // onMenuClick={this.handleMenuClick}
+            // onNoticeVisibleChange={this.handleNoticeVisibleChange}
             {...this.props}
           />
         ) : (
-          <GlobalHeader
-            onCollapse={handleMenuCollapse}
-            onNoticeClear={this.handleNoticeClear}
-            onMenuClick={this.handleMenuClick}
-            onNoticeVisibleChange={this.handleNoticeVisibleChange}
-            {...this.props}
-          />
-        )}
+            <GlobalHeader
+              onCollapse={handleMenuCollapse}
+              // onNoticeClear={this.handleNoticeClear}
+              // onMenuClick={this.handleMenuClick}
+              // onNoticeVisibleChange={this.handleNoticeVisibleChange}
+              {...this.props}
+            />
+          )}
       </Header>
     ) : null;
     return (

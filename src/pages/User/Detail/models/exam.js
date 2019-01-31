@@ -14,21 +14,21 @@ export default {
         *fetch({ payload }, { call, put }) {
             const response = yield call(queryUserExam, payload);
             // debugger
-            if (response.code === 1) {
+            if (response.data && response.data.code === 1) {
 
                 yield put({
                     type: 'save',
-                    payload: response.data,
+                    payload: response.data.data,
                 });
             }
         },
         *fetchUserSpecial({ payload }, { call, put }) {
             const response = yield call(queryUserSpecial, payload);
             // debugger
-            if (response.code === 1) {
+            if (response.data && response.data.code === 1) {
                 yield put({
                     type: 'saveUserSpecial',
-                    payload: response.data,
+                    payload: response.data.data,
                 });
             }
         },

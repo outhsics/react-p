@@ -1,8 +1,12 @@
-import { stringify } from 'qs';
+import {
+  stringify
+} from 'qs';
 import request from '@/utils/request';
 
 
-import { api as apiConfig } from '../../config/api';
+import {
+  api as apiConfig
+} from '../../config/api';
 
 
 
@@ -15,7 +19,15 @@ export async function queryActivities() {
 }
 
 export async function queryUserList(params) {
-  return request(`${apiConfig.queryDataHub.getUserList}?pageNum=${params.pageNum}&pageSize=${params.pageSize}`);
+  // return request(`${apiConfig.queryDataHub.getUserList}?pageNum=${params.pageNum}&pageSize=${params.pageSize}`);
+  return request({
+    url: `${apiConfig.queryDataHub.getUserList}`,
+    method: 'get',
+    params: {
+      pageNum: params.pageNum,
+      pageSize: params.pageSize,
+    }
+  })
 }
 
 
@@ -27,16 +39,25 @@ export async function queryUserDetail(params) {
 
 
 export async function updateUser(params) {
-  debugger
+  // debugger
   // params = JSON.stringify(params);
-  return request(`${apiConfig.updateState.updateUser}`, {
-    method: 'POST',
-    body: {
-      "id": params.id,
-      "state": params.state,
-    },
-    requestType: 'json'
-  });
+  // return request(`${apiConfig.updateState.updateUser}`, {
+  //   method: 'POST',
+  //   body: {
+  //     "id": params.id,
+  //     "state": params.state,
+  //   },
+  //   requestType: 'json'
+  // });
+  return request({
+    url: `${apiConfig.updateState.updateUser}`,
+    method: 'post',
+    // body: {
+    //   ...params
+    // },
+    data: params,
+    responseType: 'json'
+  })
 }
 
 export async function queryUserExam(params) {
@@ -91,7 +112,7 @@ export async function fakeSubmitForm(params) {
 }
 
 export async function fakeChartData() {
-  return request('https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/api/fake_chart_data');
+  // return request('https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/api/fake_chart_data');
 }
 
 export async function queryTags() {
@@ -111,7 +132,9 @@ export async function queryFakeList(params) {
 }
 
 export async function removeFakeList(params) {
-  const { count = 5, ...restParams } = params;
+  const {
+    count = 5, ...restParams
+  } = params;
   return request(`/api/fake_list?count=${count}`, {
     method: 'POST',
     body: {
@@ -122,7 +145,9 @@ export async function removeFakeList(params) {
 }
 
 export async function addFakeList(params) {
-  const { count = 5, ...restParams } = params;
+  const {
+    count = 5, ...restParams
+  } = params;
   return request(`/api/fake_list?count=${count}`, {
     method: 'POST',
     body: {
@@ -133,7 +158,9 @@ export async function addFakeList(params) {
 }
 
 export async function updateFakeList(params) {
-  const { count = 5, ...restParams } = params;
+  const {
+    count = 5, ...restParams
+  } = params;
   return request(`/api/fake_list?count=${count}`, {
     method: 'POST',
     body: {

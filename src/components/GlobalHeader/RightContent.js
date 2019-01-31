@@ -100,8 +100,8 @@ export default class GlobalHeaderRight extends PureComponent {
     }
     return (
       <div className={className}>
-       
-        <NoticeIcon
+
+        {/* <NoticeIcon
           className={styles.action}
           count={0}
           onItemClick={(item, tabProps) => {
@@ -116,8 +116,8 @@ export default class GlobalHeaderRight extends PureComponent {
           onPopupVisibleChange={onNoticeVisibleChange}
           loading={fetchingNotices}
           clearClose
-        >
-          {/* <NoticeIcon.Tab
+        > */}
+        {/* <NoticeIcon.Tab
             count={unreadMsg.notification}
             list={noticeData.notification}
             title={formatMessage({ id: 'component.globalHeader.notification' })}
@@ -140,22 +140,21 @@ export default class GlobalHeaderRight extends PureComponent {
             name="event"
             emptyText={formatMessage({ id: 'component.globalHeader.event.empty' })}
             emptyImage="https://gw.alipayobjects.com/zos/rmsportal/HsIsxMZiWKrNUavQUXqx.svg" */}
-          {/* /> */}
-        </NoticeIcon>
+        {/* /> */}
+        {/* </NoticeIcon> */}
         {currentUser.name ? (
-            <span className={`${styles.action} ${styles.account}`}>
-              <Avatar
-                size="small"
-                className={styles.avatar}
-                src={currentUser.avatar}
-                alt="avatar"
-              />
-              <span className={styles.name}>{currentUser.name}</span>
-            </span>
+          <span className={`${styles.action} ${styles.account}`}>
+            <Avatar
+              size="small"
+              className={styles.avatar}
+              src={currentUser.avatar}
+              alt="avatar"
+            />
+            <span className={styles.name}>{currentUser.name}</span>
+          </span>
 
-        ) : (
-          <Spin size="small" style={{ marginLeft: 8, marginRight: 8 }} />
-        )}
+        ) : null
+        }
       </div>
     );
   }

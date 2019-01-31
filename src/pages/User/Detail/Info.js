@@ -23,36 +23,33 @@ class Info extends Component {
 
         const { location, dispatch, userexam } = this.props;
         const { UserSpecial } = userexam;
-
-        const obj = {};
-        UserSpecial.map(item => {
-            let id = item.id.toString();
-            obj[id] = item.title;
-        })
-        const paceList = {};
-        UserSpecial.map(item => {
-            let id = item.id.toString();
-            paceList[id] = item.pace;
-        })
+        // console.log(location.query.id, 'location');
 
 
-        const pace1 = UserSpecial[0];
-        const pace2 = pace1;
-        if (pace1) {
-            dispatch({
-                type: 'userexam/savePace',
-                payload: pace1.id
-            });
-        }
 
 
-        // obj.keys()
+        // const obj = {};
+        // UserSpecial.map(item => {
+        //     let id = item.id.toString();
+        //     obj[id] = item.title;
+        // })
+        // const paceList = {};
+        // UserSpecial.map(item => {
+        //     let id = item.id.toString();
+        //     paceList[id] = item.pace;
+        // })
 
-        // debugger
-        this.setState({
-            menuMap: obj,
-            paceList
-        })
+
+        // const pace1 = UserSpecial[0];
+        // const pace2 = pace1;
+        // if (pace1) {
+        //     dispatch({
+        //         type: 'userexam/savePace',
+        //         payload: pace1.id
+        //     });
+        // }
+
+
 
 
 
@@ -60,7 +57,7 @@ class Info extends Component {
         dispatch({
             type: 'userexam/fetch',
             payload: {
-                userId: '100',
+                userId: location.query.id,
                 specialId: 1
             }
         })
@@ -68,9 +65,16 @@ class Info extends Component {
         dispatch({
             type: 'userexam/fetchUserSpecial',
             payload: {
-                userId: '100'
+                userId: location.query.id,
             }
         });
+        if (UserSpecial) {
+            dispatch({
+                type: 'userexam/savePace',
+                payload: UserSpecial[0] && UserSpecial[0].pace
+            })
+        }
+
 
     }
 
@@ -83,9 +87,6 @@ class Info extends Component {
         // debugger
 
 
-        // let menuMap = {
-
-        // };
 
 
 
@@ -96,8 +97,6 @@ class Info extends Component {
         this.state = {
             mode: 'inline',
             selectKey: '1',
-            menuMap: [],
-            paceList: ''
         };
         // debugger
     }
@@ -116,33 +115,44 @@ class Info extends Component {
 
 
     getmenu = () => {
-        const { menuMap } = this.state;
         const { userexam } = this.props;
         const { UserSpecial } = userexam;
-        // return Object.keys(menuMap).map(item => <Item key={item}>{menuMap[item]}</Item>);
-        // debugger
         return UserSpecial.map(item => <Item key={item.id}>{item.title} {item.pace}</Item>);
     };
 
 
     selectKey = ({ key }) => {
         // router.push(`/account/settings/${key}`);
+        const { userexam } = this.props;
+
+        const { UserSpecial } = userexam;
+
+
 
         this.setState({
             selectKey: key,
         });
-        const { dispatch } = this.props;
+
+
+        const { dispatch, location } = this.props;
         dispatch({
             type: 'userexam/fetch',
             payload: {
-                userId: '100',
+                userId: location.query.id,
                 specialId: Number(key)
             }
         });
+        // dispatch({
+        //     type: 'userexam/savePace',
+        //     payload: Number(key)
+        // })
+
         dispatch({
             type: 'userexam/savePace',
-            payload: paceList[key]
+            payload: UserSpecial && UserSpecial.filter(item => item.id === Number(key))[0].pace
         })
+
+
 
         console.log(key, 'key');
     };
@@ -153,6 +163,8 @@ class Info extends Component {
         // if (!currentUser.userid) {
         //   return '';
         // }
+
+
         const { mode, selectKey } = this.state;
         const { userexam } = this.props;
         const { UserSpecial } = userexam;
@@ -189,7 +201,7 @@ class Info extends Component {
                     <div className={styles.right}>
                         {/* <div className={styles.title}>{this.getRightTitle()}</div> */}
                         {/* <Link to="/user/detail/2">324</Link> */}
-                        <BaseView />
+                        {UserSpecial && <BaseView />}
                     </div>
 
                 </div>
