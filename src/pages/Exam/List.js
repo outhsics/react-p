@@ -65,7 +65,7 @@ class ExamList extends Component {
         </a>
 
         }
-        <a href={record.href}>查看</a>
+        <Link to={`'/exam/newexam?id='${record.id}`}>查看</Link>
       </Fragment>
     ),
   }
@@ -205,7 +205,7 @@ class ExamList extends Component {
                   <Button style={{ marginRight: 8 }} onClick={this.handleSort}>
                     整理排序
                   </Button>
-                  <Button type="primary" onClick={this.createExam}>
+                  <Button type="primary">
                     <Link to="/exam/newexam">新建试卷</Link>
                   </Button>
                 </div>
@@ -223,7 +223,7 @@ class ExamList extends Component {
 
                 <div className={styles.tabelList}>
                   <Table
-                    footer={() => <span style={{ color: '#1890FF' }}>该专题下共{list.length} 份试卷</span>}
+                    footer={() => <span style={{ color: '#1890FF' }}>该专题下共{list && list.length || 0} 份试卷</span>}
                     rowKey={record => record.id} columns={this.columns} dataSource={list} />
                 </div>
 

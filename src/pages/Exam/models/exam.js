@@ -1,4 +1,4 @@
-import { queryExamList } from '@/services/api';
+import { queryExamList, createPaper } from '@/services/api';
 
 export default {
   namespace: 'examlist',
@@ -20,8 +20,8 @@ export default {
         payload: response,
       });
     },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addRule, payload);
+    *createPaper({ payload, callback }, { call, put }) {
+      const response = yield call(createPaper, payload);
       yield put({
         type: 'save',
         payload: response,

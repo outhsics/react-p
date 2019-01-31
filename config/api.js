@@ -40,6 +40,9 @@ const api = {
     updateState: {
         // 用户- 更新状态
         updateUser: `${apiPrefix.tlb}/admin/user/update`
+    },
+    paper: {
+        createPaper: `${apiPrefix.tlb}/admin/paper/create`
     }
 };
 export { api };

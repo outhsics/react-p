@@ -10,21 +10,25 @@
 
 .container {
     width: 100%; // height: ~'calc(100vh - 12px)';
-    height: ~'calc(100vh - 112px)';
+    min-height: ~'calc(100vh - 112px)';
     background-color: @body-background; // display: flex;
-    padding: 25px; // overflow: auto;
+    padding: 25px;
+    overflow: auto;
 }
 
 .left {
     width: 200px; // height: ~'calc(100vh - 200px)';
-    height: 100%;
     float: left;
+    height: ~'calc(100vh - 250px)';
     border-right: 1px solid #e8e8e8;
+    overflow: hidden;
 }
 
 .right {
-    float: right;
+    // float: right;
+    float: left;
     width: ~'calc(100% - 200px)';
+    height: ~'calc(100vh - 250px)';
     padding-left: 20px;
 }
 

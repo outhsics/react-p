@@ -80,7 +80,17 @@ class NewExam extends Component {
         itemStatus:null
     }
 
+    componentDidMount(){
+         const {location} = this.props;
+        console.log(location.query.id,'location.query.id');
+    }
+
     onSubmitExam = () => {
+        const {dispatch} = this.props;
+        dispatch({
+            type:'exam/createPaper',
+            payload:''
+        })
 
     }
     handleSubmit = () => {
@@ -654,9 +664,9 @@ const {itemStatus} = this.state;
                             <Form.Item   {...formItemLayout} label={'试卷名称'}>
                                 {getFieldDecorator('name', {
                                     rules: [
-                                        { required: true, message: '请输入名称' },
+                                        { required: true, message: '请输入名称，不超过18个字', max:18},
                                     ],
-                                })(<Input placeholder="
+                                })(<Input  placeholder="
                                 因果题型训练                     
                                 6/18" />)}
                             </Form.Item>
@@ -871,4 +881,4 @@ const {itemStatus} = this.state;
     }
 }
 
-export default NewExam;
+export default  NewExam;

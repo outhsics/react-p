@@ -39,16 +39,6 @@ export async function queryUserDetail(params) {
 
 
 export async function updateUser(params) {
-  // debugger
-  // params = JSON.stringify(params);
-  // return request(`${apiConfig.updateState.updateUser}`, {
-  //   method: 'POST',
-  //   body: {
-  //     "id": params.id,
-  //     "state": params.state,
-  //   },
-  //   requestType: 'json'
-  // });
   return request({
     url: `${apiConfig.updateState.updateUser}`,
     method: 'post',
@@ -84,14 +74,13 @@ export async function removeRule(params) {
   });
 }
 
-export async function addRule(params) {
-  return request('/api/rule', {
-    method: 'POST',
-    body: {
-      ...params,
-      method: 'post',
-    },
-  });
+export async function createPaper(params) {
+  return request({
+    url: `${apiConfig.paper.createPaper}`,
+    method: 'post',
+    data: params,
+    responseType: 'json'
+  })
 }
 
 export async function updateRule(params) {
