@@ -59,12 +59,9 @@ class HeaderView extends Component {
                                     创建时间:{moment(user.createTime).format('YYYY-MM-DD HH:mm:ss')}
 
                                 </span>
-                                <span>
+                                {userExt.lastLoginTime ? <span>
                                     最近登录:{moment(userExt.lastLoginTime).format('YYYY-MM-DD HH:mm:ss')}
-
-
-                                </span>
-
+                                </span> : '最近登录 :null'}
                             </div>
 
 
@@ -74,11 +71,11 @@ class HeaderView extends Component {
 
                                 <h2>
 
-                                    学习时长： {userExt.duration}
+                                    学习时长： {userExt.duration} 分钟
                                 </h2>
                                 <div className={styles.overUser}>
-                                    超过 {userExt.surpass}用户
-                            </div>
+                                    {userExt.surpass > 0 ? `'超过' ${userExt.surpass}'用户'` : ''}
+                                </div>
                             </div>
 
 

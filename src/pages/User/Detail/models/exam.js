@@ -48,6 +48,7 @@ export default {
             };
         },
         savePace(state, action) {
+            // debugger
             return {
                 ...state,
                 pace: action.payload,

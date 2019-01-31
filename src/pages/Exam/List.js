@@ -223,7 +223,7 @@ class ExamList extends Component {
 
                 <div className={styles.tabelList}>
                   <Table
-                    footer={() => <span style={{ color: '#1890FF' }}>该专题下共26份试卷</span>}
+                    footer={() => <span style={{ color: '#1890FF' }}>该专题下共{list.length} 份试卷</span>}
                     rowKey={record => record.id} columns={this.columns} dataSource={list} />
                 </div>
 

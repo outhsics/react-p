@@ -4,17 +4,20 @@
 //     height: 100%;
 //     background-color: @body-background;
 // }
+* {
+    box-sizing: border-box;
+}
+
 .container {
     width: 100%; // height: ~'calc(100vh - 12px)';
     height: ~'calc(100vh - 112px)';
     background-color: @body-background; // display: flex;
-    padding: 25px;
-    overflow: auto;
+    padding: 25px; // overflow: auto;
 }
 
 .left {
-    width: 200px;
-    height: ~'calc(100vh - 250px)';
+    width: 200px; // height: ~'calc(100vh - 200px)';
+    height: 100%;
     float: left;
     border-right: 1px solid #e8e8e8;
 }
@@ -31,7 +34,6 @@
     padding-left: 20px;
 }
 
-.box {
-    .clearfix();
-    width: 100%;
-}
+// .box {//     .clearfix();
+//     width: 100%;
+// }

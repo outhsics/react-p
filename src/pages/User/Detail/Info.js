@@ -68,12 +68,17 @@ class Info extends Component {
                 userId: location.query.id,
             }
         });
-        if (UserSpecial) {
-            dispatch({
-                type: 'userexam/savePace',
-                payload: UserSpecial[0] && UserSpecial[0].pace
-            })
-        }
+
+        this.setState({
+            nickName: decodeURIComponent(location.query.nickname)
+        })
+
+        // if (UserSpecial) {
+        //     dispatch({
+        //         type: 'userexam/savePace',
+        //         payload: UserSpecial[0] && UserSpecial[0].pace
+        //     })
+        // }
 
 
     }
@@ -97,6 +102,7 @@ class Info extends Component {
         this.state = {
             mode: 'inline',
             selectKey: '1',
+            nickName: ''
         };
         // debugger
     }
@@ -117,7 +123,7 @@ class Info extends Component {
     getmenu = () => {
         const { userexam } = this.props;
         const { UserSpecial } = userexam;
-        return UserSpecial.map(item => <Item key={item.id}>{item.title} {item.pace}</Item>);
+        return UserSpecial.map(item => <Item key={item.id}>{item.title} {item.pace}%</Item>);
     };
 
 
@@ -165,7 +171,7 @@ class Info extends Component {
         // }
 
 
-        const { mode, selectKey } = this.state;
+        const { mode, selectKey, nickName } = this.state;
         const { userexam } = this.props;
         const { UserSpecial } = userexam;
         return (
@@ -182,7 +188,7 @@ class Info extends Component {
                         <Breadcrumb.Item>
                             <NavLink to="/user/detail" activeStyle={{
                                 color: "#1890FF"
-                            }}>用户详情</NavLink>
+                            }}>{nickName}</NavLink>
 
                         </Breadcrumb.Item>
                     </Breadcrumb>

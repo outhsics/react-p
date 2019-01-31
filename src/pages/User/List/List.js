@@ -113,7 +113,7 @@ class UserList extends Component {
   }
 
 
-  handleToDetail = (v) => {
+  handleToDetail = (id, nickname) => {
     // router.push('/exception/trigger');
 
     const { location, dispatch } = this.props;
@@ -128,7 +128,8 @@ class UserList extends Component {
     router.push({
       pathname: '/user/detail',
       query: {
-        id: v,
+        id,
+        nickname: encodeURIComponent(nickname)
       },
       // this.appointType = this.$route.params.appointType;
       // this.appointType = this.$route.query.appointType;
@@ -413,7 +414,7 @@ class UserList extends Component {
         </a>
 
         }
-        <a onClick={() => this.handleToDetail(1)}>查看详情</a>
+        <a onClick={() => this.handleToDetail(record.id, record.nickName)}>查看详情</a>
 
       </Fragment>
     ),
