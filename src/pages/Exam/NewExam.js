@@ -55,13 +55,15 @@ const examList = [
 const item1AddList = [
 
 ]
+
 const props = {
     name: 'file',
-    action: '//jsonplaceholder.typicode.com/posts/',
+    action: 'https://api.jze100.com/hear/admin/file/upload',
     headers: {
         authorization: 'authorization-text',
     },
     onChange(info) {
+        console.log(info,'info');
         if (info.file.status !== 'uploading') {
             console.log(info.file, info.fileList);
         }
@@ -98,6 +100,20 @@ class NewExam extends Component {
     }
     deleteExam = () =>{
         
+    }
+
+    onUpload = ()=>{
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            contentType: undefined,
+            mimeType: "multipart/form-data",
+            success: function (data) {
+                //  success
+                console.log(data, '12')
+            }
+        });
     }
 
     onChangeExamType = (e)=> {
@@ -335,7 +351,6 @@ class NewExam extends Component {
                                                 <Icon type="upload" /> 上传图片
                                          </Button>
                                         </Upload>
-
                                     </div>
                                 </Col>
 

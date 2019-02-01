@@ -10,7 +10,7 @@ export default {
       "target": "https://api.jze100.com/hear",
       "changeOrigin": true,
       "pathRewrite": { "^/api": "" }
-    }
+    },
   },
   plugins: [
     [

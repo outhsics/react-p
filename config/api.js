@@ -43,6 +43,11 @@ const api = {
     },
     paper: {
         createPaper: `${apiPrefix.tlb}/admin/paper/create`
-    }
+    },
+    basicData:{
+        querySpecialList: `${apiPrefix.tlb}/admin/special/list`,
+        saveConfig: `${apiPrefix.tlb}/admin/config/save`
+    },
+
 };
 export { api };

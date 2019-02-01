@@ -31,6 +31,16 @@ export async function queryUserList(params) {
 }
 
 
+export async function saveConfig(params) {
+  return request({
+    // url: `${apiConfig.basicData.saveConfig}`,
+    url: `${apiConfig.basicData.saveConfig}`,
+    method: 'post',
+    data: params,
+  })
+}
+
+
 export async function queryUserDetail(params) {
 
   return request(`${apiConfig.userDetail.getUserDetail}?id=${params.id}`);
@@ -189,4 +199,10 @@ export async function queryDataAnalysis(params = {}) {
 }
 export async function queryBasicData(params = {}) {
   return request(`/api/basic/data?${stringify(params)}`);
+}
+export async function querySpecialList() {
+  return request({
+    url: `${apiConfig.basicData.querySpecialList}`,
+    method: 'get',
+  })
 }

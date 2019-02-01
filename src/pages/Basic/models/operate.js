@@ -1,4 +1,4 @@
-import { queryBasicData } from '@/services/api';
+import { queryBasicData, querySpecialList,saveConfig } from '@/services/api';
 
 export default {
   namespace: 'operate',
@@ -8,6 +8,9 @@ export default {
       list: [],
       pagination: {},
     },
+    specialList: [],
+    writconfig: []
+
   },
 
   effects: {
@@ -16,6 +19,24 @@ export default {
       yield put({
         type: 'save',
         payload: response,
+      });
+    },
+    *fetchSpecialList({ }, { call, put }) {
+      const { data } = yield call(querySpecialList);
+      const { code, data: list } = data;
+      // const response = yield call(querySpecialList);
+      if (code === 1) {
+        yield put({
+          type: 'saveSpecialList',
+          payload: list,
+        });
+      }
+    },
+    *addConfig({ payload }, { call, put }) {
+      const response = yield call(saveConfig, payload);
+      yield put({
+          type: 'save',
+          payload: response,
       });
     },
     *add({ payload, callback }, { call, put }) {
@@ -46,11 +67,16 @@ export default {
 
   reducers: {
     save(state, action) {
-      // debugger
-
       return {
         ...state,
         data: action.payload,
+      };
+    },
+    saveSpecialList(state, action) {
+      // debugger
+      return {
+        ...state,
+        specialList: action.payload,
       };
     },
   },
