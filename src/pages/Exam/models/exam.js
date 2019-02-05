@@ -1,4 +1,4 @@
-import { queryExamList, createPaper } from '@/services/api';
+import { queryPaperList, createPaper, queryPaperDetail } from '@/services/api';
 
 export default {
   namespace: 'examlist',
@@ -10,16 +10,11 @@ export default {
       tabDefaultActiveKey: 'challenge',
       tabActiveKey: 'challenge',
     },
+    paperList: [],
+    paperDetail: '',
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(queryExamList, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-    },
     *createPaper({ payload, callback }, { call, put }) {
       const response = yield call(createPaper, payload);
       yield put({
@@ -27,6 +22,30 @@ export default {
         payload: response,
       });
       if (callback) callback();
+    },
+    *fetchPaperList({ payload }, { call, put }) {
+      const { data } = yield call(queryPaperList, payload);
+      const { code, data: list } = data;
+
+      // debugger
+
+      if (code === 1) {
+        yield put({
+          type: 'savePaperList',
+          payload: list.list,
+        });
+      }
+    },
+    *fetchPaperDetail({ payload }, { call, put }) {
+      const { data } = yield call(queryPaperDetail, payload);
+      const { code, data: list } = data;
+
+      if (code === 1) {
+        yield put({
+          type: 'savePaperDetail',
+          payload: list,
+        });
+      }
     },
     *remove({ payload, callback }, { call, put }) {
       const response = yield call(removeRule, payload);
@@ -47,12 +66,16 @@ export default {
   },
 
   reducers: {
-    save(state, action) {
-      // debugger
-
+    savePaperList(state, action) {
       return {
         ...state,
-        data: action.payload,
+        paperList: action.payload,
+      };
+    },
+    savePaperDetail(state, action) {
+      return {
+        ...state,
+        paperDetail: action.payload,
       };
     },
   },

@@ -55,6 +55,11 @@ export default [
             hideInMenu: true,
             component: './Exam/NewExam',
           },
+          {
+            path: '/exam/detail',
+            hideInMenu: true,
+            component: './Exam/Detail',
+          },
 
 
         ],

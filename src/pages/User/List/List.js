@@ -85,10 +85,6 @@ class UserList extends Component {
       title,
       content,
       onOk() {
-        // return new Promise((resolve, reject) => {
-        //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        // }).catch(() => console.log('Oops errors!'));
-        // this updateUser
         dispatch({
           type: 'userlist/updateUser',
           payload: {
@@ -114,16 +110,8 @@ class UserList extends Component {
 
 
   handleToDetail = (id, nickname) => {
-    // router.push('/exception/trigger');
 
     const { location, dispatch } = this.props;
-    // debugger
-    // dispatch({
-    //   type: 'userdetail/fetch',
-    //   payload: {
-    //     id: 1
-    //   }
-    // })
 
     router.push({
       pathname: '/user/detail',
@@ -131,11 +119,7 @@ class UserList extends Component {
         id,
         nickname: encodeURIComponent(nickname)
       },
-      // this.appointType = this.$route.params.appointType;
-      // this.appointType = this.$route.query.appointType;
     });
-
-    //     path: '/userBooking/:customerCode/:appointType',
 
   }
 

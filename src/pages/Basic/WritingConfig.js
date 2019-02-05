@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-
-import { Card, Icon, Form, Row, Col, Button, Input, DatePicker, InputNumber } from 'antd';
+import moment from 'moment';
+import { message, Card, Icon, Form, Row, Col, Button, Input, DatePicker, InputNumber } from 'antd';
 import { connect } from 'dva';
 import styles from './WritingConfig.less';
 
@@ -9,13 +9,41 @@ import styles from './WritingConfig.less';
 const MyIcon = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_1025319_360iia8jjiu.js', // 在 iconfont.cn 上生成
 });
+function onChange(date, dateString) {
+    console.log(date, dateString);
+}
+
+
+const validator12 = (rule, value, callback) => {
+
+    if (value.length > 12) {
+        callback('字数不得超过12');
+    }
+    callback();
+};
+
+
+const validator5 = (rule, value, callback) => {
+
+    if (value.length > 5) {
+        callback('字数不得超过5');
+    }
+    callback();
+};
+
 
 
 @connect(({ operate }) => ({
     operate,
 }))
-@Form.create()
+@Form.create({ name: 'writ_config_form' })
 class WritingConfig extends Component {
+
+    cbSuccess = () => {
+        message.success('保存成功');
+        this.handleReset()
+
+    };
 
 
     handleReset = () => {
@@ -30,9 +58,11 @@ class WritingConfig extends Component {
             if (!err) {
 
                 console.log('Received values of form: ', values);
+                values.examDated = moment(values.examDated).valueOf()
                 dispatch({
-                    type:'operate/addConfig',
-                    payload:values
+                    type: 'operate/addConfig',
+                    payload: values,
+                    callback: this.cbSuccess
                 })
 
             };
@@ -41,109 +71,115 @@ class WritingConfig extends Component {
     }
 
 
-render() {
-    const { getFieldDecorator } = this.props.form;
-    return (
-        <div>
-            <Form onSubmit={this.handleSubmit}>
+    render() {
+        const { getFieldDecorator } = this.props.form;
+        return (
+            <div>
+                <Form onSubmit={this.handleSubmit}>
 
 
-                <Row>
+                    <Row>
 
-                    <Col span={18}>
-                        <MyIcon
-                            className={styles.blue}
-                            type="icon-number1" />
-                        <span className={styles.title}>
-                            文案管理
+                        <Col span={18}>
+                            <MyIcon
+                                className={styles.blue}
+                                type="icon-number1" />
+                            <span className={styles.title}>
+                                文案管理
               </span>
-                        <div>
-                            倒计时文本及时间&引流文案
+                            <div>
+                                倒计时文本及时间&引流文案
 
               </div>
 
-                    </Col>
-                    <Col span={6} className={styles.row1_right}>
-                        <Button style={{ marginRight: 8, width: 120 }} onClick={this.handleReset}>
-                            取消
+                        </Col>
+                        <Col span={6} className={styles.row1_right}>
+                            <Button style={{ marginRight: 8, width: 120 }} onClick={this.handleReset}>
+                                取消
                             </Button>
-                        <Button style={{ width: 120 }} htmlType="submit" type="primary" onClick={this.save}>
-                            保存
+                            <Button style={{ width: 120 }} htmlType="submit" type="primary" onClick={this.save}>
+                                保存
                             </Button>
 
-                    </Col>
+                        </Col>
 
 
-                </Row>
+                    </Row>
 
-                <Row>
-                    <Col span={8}>
-                        <Form.Item
-                            label="设置中考日期:"
-                            labelCol={{ span: 12 }}
-                            wrapperCol={{ span: 11 }}
-                        >
-                            {getFieldDecorator('examDated', {
-                                rules: [{ required: true, message: 'Please input your note!' }],
-                            })(
-                                <DatePicker />
-                            )}
-                        </Form.Item>
+                    <Row>
+                        <Col span={8}>
+                            <Form.Item
+                                label="设置中考日期:"
+                                labelCol={{ span: 12 }}
+                                wrapperCol={{ span: 11 }}
+                            >
+                                {getFieldDecorator('examDated', {
+                                    rules: [{ required: true, message: '请设置中考日期' }],
+                                })(
+                                    <DatePicker
+                                        format="YYYY-MM-DD"
+                                    />
+                                )}
+                            </Form.Item>
 
-                    </Col>
+                        </Col>
 
-                    <Col span={15}>
-                        <Form.Item
-                            label="倒计时文本(不超过12个字):"
-                            labelCol={{ span: 12 }}
-                            wrapperCol={{ span: 11 }}
-                        >
-                            {getFieldDecorator('timerTitle', {
-                                rules: [{ required: true, message: 'Please input your note!' }],
-                            })(
-                                <Input placeholder='距离2019年福建中考' />
-                            )}
-                        </Form.Item>
+                        <Col span={15}>
+                            <Form.Item
+                                label="倒计时文本(不超过12个字):"
+                                labelCol={{ span: 12 }}
+                                wrapperCol={{ span: 11 }}
+                            >
+                                {getFieldDecorator('timerTitle', {
+                                    rules: [{ required: true, message: '(不超过12个字)!' },
+                                    { validator: validator12 },
+                                    ],
+                                })(
+                                    <Input placeholder='距离2019年福建中考' />
+                                )}
+                            </Form.Item>
 
-                    </Col>
-                </Row>
+                        </Col>
+                    </Row>
 
-                <Row>
-                    <Col span={8}>
-                        <Form.Item
-                            label="引流按钮文本（不超过5个字）:"
-                            labelCol={{ span: 16 }}
-                            wrapperCol={{ span: 8 }}
-                        >
-                            {getFieldDecorator('attractButton', {
-                                rules: [{ required: true, message: 'Please input your note!' }],
-                            })(
-                                <Input placeholder='回复“1”' />
-                            )}
-                        </Form.Item>
+                    <Row>
+                        <Col span={8}>
+                            <Form.Item
+                                label="引流按钮文本（不超过5个字）:"
+                                labelCol={{ span: 16 }}
+                                wrapperCol={{ span: 8 }}
+                            >
+                                {getFieldDecorator('attractButton', {
+                                    rules: [{ required: true, message: '（不超过5个字)' },
+                                    { validator: validator5 },],
+                                })(
+                                    <Input placeholder='回复“1”' />
+                                )}
+                            </Form.Item>
 
-                    </Col>
+                        </Col>
 
-                    <Col span={15}>
-                        <Form.Item
-                            label="引流文本（不超过12个字):"
-                            labelCol={{ span: 12 }}
-                            wrapperCol={{ span: 11 }}
-                        >
-                            {getFieldDecorator('attractTitle', {
-                                rules: [{ required: true, message: 'Please input your note!' }],
-                            })(
-                                <Input placeholder='领福利， 免费领取历年真题' />
-                            )}
-                        </Form.Item>
+                        <Col span={15}>
+                            <Form.Item
+                                label="引流文本（不超过12个字):"
+                                labelCol={{ span: 12 }}
+                                wrapperCol={{ span: 11 }}
+                            >
+                                {getFieldDecorator('attractTitle', {
+                                    rules: [{ required: true, message: '（不超过12个字)' },
+                                    { validator: validator12 },],
+                                })(
+                                    <Input placeholder='领福利， 免费领取历年真题' />
+                                )}
+                            </Form.Item>
 
-                    </Col>
-                </Row>
-            </Form>
-        </div>
+                        </Col>
+                    </Row>
+                </Form>
+            </div>
 
-    )
-}
+        )
+    }
 }
 
 export default WritingConfig;

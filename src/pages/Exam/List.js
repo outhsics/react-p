@@ -3,7 +3,7 @@ import { Icon, Tabs, Table, Button, Modal } from 'antd';
 import Link from 'umi/link';
 import { connect } from 'dva';
 import moment from 'moment';
-
+import router from 'umi/router';
 import styles from './List.less';
 import { create } from 'domain';
 const { TabPane } = Tabs;
@@ -13,8 +13,9 @@ const confirm = Modal.confirm;
 
 
 
-@connect(({ examlist, loading }) => ({
+@connect(({ operate, examlist, loading }) => ({
   examlist,
+  operate,
   loading: loading.models.examlist,
 }))
 class ExamList extends Component {
@@ -29,24 +30,27 @@ class ExamList extends Component {
   },
   {
     title: '难度',
-    dataIndex: 'difficulty',
+    dataIndex: 'level',
   },
   {
     title: '完成人次/进行中',
     dataIndex: 'finish',
   },
   {
-    title: '平均成绩/总分',
-    dataIndex: 'grade',
+    // title: '平均成绩/总分', //todo api2
+    title: '总分',
+    dataIndex: 'totalScore',
   },
   {
     title: '创建时间',
-    dataIndex: 'createdAt',
+    dataIndex: 'createTime',
     render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
   },
   {
     title: '试卷音频总长度(min)',
-    dataIndex: 'soundSize',
+    dataIndex: 'totalDuration',
+    render: val => <span>{(val / 60).toFixed(1)}</span>,
+
   },
 
   {
@@ -55,17 +59,21 @@ class ExamList extends Component {
       <Fragment>
         <a onClick={() => this.showDeleteConfirm(record)} style={{ marginRight: 10 }} >
           删除</a>
-
-        {record.disabled ?
-          <a onClick={() => this.showConfirm(true, record)} style={{ marginRight: 10, color: '#178139' }} >
+        {record.state !== 1 ?
+          <a onClick={() => this.showConfirm(true, record)} style={{ marginRight: 10 }} >
             启用
         </a> :
-          <a onClick={() => this.showConfirm(false, record)} style={{ marginRight: 10, color: '#F5222D' }} >
+          <a onClick={() => this.showConfirm(false, record)} style={{ marginRight: 10, color: "red" }} >
             禁用
         </a>
 
         }
-        <Link to={`'/exam/newexam?id='${record.id}`}>查看</Link>
+
+        {/* <Link to={`'/exam/detail?id='${record.id}`}>查看详情</Link> */}
+        <a onClick={() => this.handleToDetail(record.id)}>查看详情</a>
+
+
+
       </Fragment>
     ),
   }
@@ -91,22 +99,50 @@ class ExamList extends Component {
   }
 
 
+  handleToDetail = (id) => {
+
+    const { location, dispatch } = this.props;
+
+    router.push({
+      pathname: '/exam/detail',
+      query: {
+        id,
+      },
+    });
+
+  }
+
+
   showConfirm = (flag, record) => {
 
     let title = flag ? `是否确认启用${record.title}该试卷？` : `是否确认禁用${record.title}该试卷?`
     let content = flag ? '启用后，小程序端可以看到该试卷并答题' : '禁用后，小程序端看不到该试卷'
 
+    const { dispatch } = this.props;
+
     confirm({
       title,
       content,
       onOk() {
-        return new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'));
+        dispatch({
+          type: 'examlist/updatePapger',
+          payload: {
+            id: 1,
+            state: flag ? 1 : 2
+          }
+        });
+        dispatch({
+          type: 'examlist/fetchPaperList',
+          payload: {
+            pageNum: 1,
+            pageSize: 10
+          }
+        });
       },
       onCancel() { },
     });
   }
+
 
 
   onTabChange = tabType => {
@@ -124,8 +160,16 @@ class ExamList extends Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'examlist/fetch'
+      type: 'examlist/fetchPaperList',
+      payload: {
+        pageNum: 1,
+        pageSize: 10
+      }
     })
+    dispatch({
+      type: 'operate/fetchSpecialList',
+    })
+
   }
 
 
@@ -139,49 +183,26 @@ class ExamList extends Component {
   })
 
   render() {
-    const tabList = [
-      {
-        key: 'challenge',
-        tab: '听力专项挑战',
-        count: '12'
-      },
-      {
-        key: 'practice',
-        tab: '仿真模拟练习',
-        count: '11'
-      },
-      {
-        key: 'overyears',
-        tab: '历年真题闯关',
-        count: '12'
-      },
-    ];
+
     const {
       examlist,
-      // title,
-      // logo,
-      // action,
-      // content,
-      // extraContent,
-      // tabList,
-      // className,
+      operate,
+
       tabActiveKey,
       tabDefaultActiveKey,
-      // tabBarExtraContent,
-      // loading = false,
-      // wide = false,
-      // hiddenBreadcrumb = false,
+
     } = this.props;
 
-
-    const { data: { list } } = examlist;
-    const activeKeyProps = {};
-    if (tabDefaultActiveKey !== undefined) {
-      activeKeyProps.defaultActiveKey = tabDefaultActiveKey;
-    }
-    if (tabActiveKey !== undefined) {
-      activeKeyProps.activeKey = tabActiveKey;
-    }
+    debugger
+    const { paperList } = examlist;
+    // const { specialList } = operate;
+    // const activeKeyProps = {};
+    // if (tabDefaultActiveKey !== undefined) {
+    //   activeKeyProps.defaultActiveKey = tabDefaultActiveKey;
+    // }
+    // if (tabActiveKey !== undefined) {
+    //   activeKeyProps.activeKey = tabActiveKey;
+    // }
     return (
       <div className={styles.container} >
 
@@ -194,10 +215,10 @@ class ExamList extends Component {
 
         </Tabs> */}
 
-        {tabList && tabList.length ? (
+        {specialList && specialList.length ? (
           <Tabs
             className={styles.tabs}
-            {...activeKeyProps}
+            // {...activeKeyProps}
             onChange={this.onTabChange}
             tabBarExtraContent={
               <div className={styles.salesExtraWrap}>
@@ -214,8 +235,8 @@ class ExamList extends Component {
 
             }
           >
-            {tabList.map(item => (
-              <TabPane className={styles.tabPane} tab={`${item.tab}${item.count}`} key={item.key} >
+            {specialList.map(item => (
+              <TabPane className={styles.tabPane} tab={`${item.title}`} key={item.id} >
                 <div>
                   {/* {this.renderForm()} */}
 
@@ -223,8 +244,8 @@ class ExamList extends Component {
 
                 <div className={styles.tabelList}>
                   <Table
-                    footer={() => <span style={{ color: '#1890FF' }}>该专题下共{list && list.length || 0} 份试卷</span>}
-                    rowKey={record => record.id} columns={this.columns} dataSource={list} />
+                    footer={() => <span style={{ color: '#1890FF' }}>该专题下共{paperList && paperList.length || 0} 份试卷</span>}
+                    rowKey={record => record.id} columns={this.columns} dataSource={paperList} />
                 </div>
 
               </TabPane>

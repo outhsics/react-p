@@ -76,6 +76,11 @@ const props = {
 };
 
 
+
+@connect(({ examlist, loading }) => ({
+    examlist,
+    loading: loading.models.examlist,
+}))
 @Form.create()
 class NewExam extends Component {
     state={
@@ -83,8 +88,12 @@ class NewExam extends Component {
     }
 
     componentDidMount(){
-         const {location} = this.props;
-        console.log(location.query.id,'location.query.id');
+        const {location,dispatch} = this.props;
+        dispatch({
+            type:'examlist/fetchPaperDetail',
+            payload: location.query.id
+        })
+
     }
 
     onSubmitExam = () => {
@@ -165,11 +174,12 @@ class NewExam extends Component {
                     <Col span={5}>
                     <Row>
                         <Col span={9}>
-                  7(1)
+7(1)
 
                         </Col>
                         <Col span={15}>
-                          <Input />
+ <Input />
+
                         </Col>
                     </Row>
 
@@ -651,8 +661,11 @@ class NewExam extends Component {
     render() {
         const {
             form: { getFieldDecorator },
+            examlist
         } = this.props;
-const {itemStatus} = this.state;
+        // debugger
+        const {itemStatus} = this.state;
+        const { paperDetail } = examlist;
 
 
     

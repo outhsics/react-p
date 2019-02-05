@@ -1,4 +1,8 @@
-import { queryBasicData, querySpecialList,saveConfig } from '@/services/api';
+import {
+  queryBasicData, querySpecialList,
+  saveConfig, updateSpecial, createSpecial,
+  deleteSpecial
+} from '@/services/api';
 
 export default {
   namespace: 'operate',
@@ -24,7 +28,7 @@ export default {
     *fetchSpecialList({ }, { call, put }) {
       const { data } = yield call(querySpecialList);
       const { code, data: list } = data;
-      // const response = yield call(querySpecialList);
+      // debugger
       if (code === 1) {
         yield put({
           type: 'saveSpecialList',
@@ -32,12 +36,19 @@ export default {
         });
       }
     },
-    *addConfig({ payload }, { call, put }) {
-      const response = yield call(saveConfig, payload);
-      yield put({
+    *addConfig({ payload, callback }, { call, put }) {
+      const { data } = yield call(saveConfig, payload);
+      const { code, data: config } = data;
+
+      if (code === 1) {
+        yield put({
           type: 'save',
-          payload: response,
-      });
+          payload: config,
+        });
+        if (callback) callback();
+      }
+
+
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addRule, payload);
@@ -55,13 +66,26 @@ export default {
       });
       if (callback) callback();
     },
-    *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
+    *updateSpecial({ payload, callback }, { call }) {
+      const { data } = yield call(updateSpecial, payload);
+      // debugger
+
+      if (data.code === 1) {
+        if (callback) callback();
+      }
+    },
+    *createSpecial({ payload, callback }, { call, put }) {
+      const { data } = yield call(createSpecial, payload);
+      // debugger
+      if (data.code === 1) {
+        if (callback) callback();
+      }
+    },
+    *deleteSpecial({ payload, callback }, { call, put }) {
+      const { data } = yield call(deleteSpecial, payload);
+      if (data.code === 1) {
+        if (callback) callback();
+      }
     },
   },
 

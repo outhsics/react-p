@@ -42,12 +42,18 @@ const api = {
         updateUser: `${apiPrefix.tlb}/admin/user/update`
     },
     paper: {
-        createPaper: `${apiPrefix.tlb}/admin/paper/create`
+        createPaper: `${apiPrefix.tlb}/admin/paper/create`,
+        queryPaperList: `${apiPrefix.tlb}/admin/paper/list`,
+        queryPaperDetail: `${apiPrefix.tlb}/admin/paper/detail`
     },
-    basicData:{
+    basicData: {
         querySpecialList: `${apiPrefix.tlb}/admin/special/list`,
-        saveConfig: `${apiPrefix.tlb}/admin/config/save`
+        saveConfig: `${apiPrefix.tlb}/admin/config/save`,
     },
-
+    special: {
+        updateSpecial: `${apiPrefix.tlb}/admin/special/update`,
+        createSpecial: `${apiPrefix.tlb}/admin/special/create`,
+        deleteSpecial: `${apiPrefix.tlb}/admin/special/delete`
+    }
 };
 export { api };

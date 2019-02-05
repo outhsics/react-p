@@ -33,12 +33,41 @@ export async function queryUserList(params) {
 
 export async function saveConfig(params) {
   return request({
-    // url: `${apiConfig.basicData.saveConfig}`,
     url: `${apiConfig.basicData.saveConfig}`,
     method: 'post',
     data: params,
   })
 }
+
+export async function updateSpecial(params) {
+  return request({
+    url: `${apiConfig.special.updateSpecial}`,
+    method: 'post',
+    data: params,
+    responseType: 'json'
+
+  })
+}
+export async function createSpecial(params) {
+  return request({
+    url: `${apiConfig.special.createSpecial}`,
+    method: 'post',
+    params: {
+      pageSize: params.pageSize,
+    }
+
+  })
+}
+export async function deleteSpecial(params) {
+  return request({
+    url: `${apiConfig.special.deleteSpecial}`,
+    method: 'get',
+    params: {
+      id: params
+    },
+  })
+}
+
 
 
 export async function queryUserDetail(params) {
@@ -52,9 +81,6 @@ export async function updateUser(params) {
   return request({
     url: `${apiConfig.updateState.updateUser}`,
     method: 'post',
-    // body: {
-    //   ...params
-    // },
     data: params,
     responseType: 'json'
   })
@@ -191,9 +217,26 @@ export async function getFakeCaptcha(mobile) {
   return request(`/api/captcha?mobile=${mobile}`);
 }
 
-export async function queryExamList(params = {}) {
-  return request(`https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/api/exam/list?${stringify(params)}`);
+export async function queryPaperList(params) {
+  return request({
+    url: `${apiConfig.paper.queryPaperList}`,
+    method: 'get',
+    params: {
+      pageNum: params.pageNum,
+      pageSize: params.pageSize,
+    }
+  })
 }
+export async function queryPaperDetail(params) {
+  return request({
+    url: `${apiConfig.paper.queryPaperDetail}`,
+    method: 'get',
+    params: {
+      id: params
+    }
+  })
+}
+
 export async function queryDataAnalysis(params = {}) {
   return request(`/api/data/analysis?${stringify(params)}`);
 }
