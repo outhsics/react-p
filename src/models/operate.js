@@ -1,7 +1,10 @@
 import {
-  queryBasicData, querySpecialList,
-  saveConfig, updateSpecial, createSpecial,
-  deleteSpecial
+  queryBasicData,
+  querySpecialList,
+  saveConfig,
+  updateSpecial,
+  createSpecial,
+  deleteSpecial,
 } from '@/services/api';
 
 export default {
@@ -13,10 +16,8 @@ export default {
       pagination: {},
     },
     specialList: [],
-    writconfig: []
-
+    writconfig: [],
   },
-
   effects: {
     *fetch({ payload }, { call, put }) {
       const response = yield call(queryBasicData, payload);
@@ -25,10 +26,9 @@ export default {
         payload: response,
       });
     },
-    *fetchSpecialList({ }, { call, put }) {
-      const { data } = yield call(querySpecialList);
+    *fetchSpecialList({ payload }, { call, put }) {
+      const { data } = yield call(querySpecialList, payload);
       const { code, data: list } = data;
-      // debugger
       if (code === 1) {
         yield put({
           type: 'saveSpecialList',
@@ -47,8 +47,6 @@ export default {
         });
         if (callback) callback();
       }
-
-
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addRule, payload);
@@ -68,7 +66,6 @@ export default {
     },
     *updateSpecial({ payload, callback }, { call }) {
       const { data } = yield call(updateSpecial, payload);
-      // debugger
 
       if (data.code === 1) {
         if (callback) callback();
@@ -76,7 +73,7 @@ export default {
     },
     *createSpecial({ payload, callback }, { call, put }) {
       const { data } = yield call(createSpecial, payload);
-      // debugger
+
       if (data.code === 1) {
         if (callback) callback();
       }
@@ -97,7 +94,7 @@ export default {
       };
     },
     saveSpecialList(state, action) {
-      // debugger
+      // debugger;
       return {
         ...state,
         specialList: action.payload,

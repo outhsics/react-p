@@ -1,14 +1,7 @@
-import {
-  stringify
-} from 'qs';
+import { stringify } from 'qs';
 import request from '@/utils/request';
 
-
-import {
-  api as apiConfig
-} from '../../config/api';
-
-
+import { api as apiConfig } from '../../config/api';
 
 export async function queryProjectNotice() {
   return request('/api/project/notice');
@@ -26,17 +19,16 @@ export async function queryUserList(params) {
     params: {
       pageNum: params.pageNum,
       pageSize: params.pageSize,
-    }
-  })
+    },
+  });
 }
-
 
 export async function saveConfig(params) {
   return request({
     url: `${apiConfig.basicData.saveConfig}`,
     method: 'post',
     data: params,
-  })
+  });
 }
 
 export async function updateSpecial(params) {
@@ -44,61 +36,49 @@ export async function updateSpecial(params) {
     url: `${apiConfig.special.updateSpecial}`,
     method: 'post',
     data: params,
-    responseType: 'json'
-
-  })
+    responseType: 'json',
+  });
 }
 export async function createSpecial(params) {
   return request({
     url: `${apiConfig.special.createSpecial}`,
     method: 'post',
-    params: {
-      pageSize: params.pageSize,
-    }
-
-  })
+    data: params,
+  });
 }
 export async function deleteSpecial(params) {
   return request({
     url: `${apiConfig.special.deleteSpecial}`,
     method: 'get',
     params: {
-      id: params
+      id: params,
     },
-  })
+  });
 }
-
-
 
 export async function queryUserDetail(params) {
-
   return request(`${apiConfig.userDetail.getUserDetail}?id=${params.id}`);
-
 }
-
 
 export async function updateUser(params) {
   return request({
     url: `${apiConfig.updateState.updateUser}`,
     method: 'post',
     data: params,
-    responseType: 'json'
-  })
+    responseType: 'json',
+  });
 }
 
 export async function queryUserExam(params) {
-
-  return request(`${apiConfig.userDetail.studySpecialPape}?userId=${params.userId}&specialId=${params.specialId}`);
+  return request(
+    `${apiConfig.userDetail.studySpecialPape}?userId=${params.userId}&specialId=${params.specialId}`
+  );
 }
 
 // 用户-用户专项闯关集合 进度
 export async function queryUserSpecial(params) {
-
   return request(`${apiConfig.userDetail.studyUserSpecial}?userId=${params.userId}`);
 }
-
-
-
 
 export async function removeRule(params) {
   return request('/api/rule', {
@@ -115,8 +95,8 @@ export async function createPaper(params) {
     url: `${apiConfig.paper.createPaper}`,
     method: 'post',
     data: params,
-    responseType: 'json'
-  })
+    responseType: 'json',
+  });
 }
 
 export async function updateRule(params) {
@@ -157,9 +137,7 @@ export async function queryFakeList(params) {
 }
 
 export async function removeFakeList(params) {
-  const {
-    count = 5, ...restParams
-  } = params;
+  const { count = 5, ...restParams } = params;
   return request(`/api/fake_list?count=${count}`, {
     method: 'POST',
     body: {
@@ -170,9 +148,7 @@ export async function removeFakeList(params) {
 }
 
 export async function addFakeList(params) {
-  const {
-    count = 5, ...restParams
-  } = params;
+  const { count = 5, ...restParams } = params;
   return request(`/api/fake_list?count=${count}`, {
     method: 'POST',
     body: {
@@ -183,9 +159,7 @@ export async function addFakeList(params) {
 }
 
 export async function updateFakeList(params) {
-  const {
-    count = 5, ...restParams
-  } = params;
+  const { count = 5, ...restParams } = params;
   return request(`/api/fake_list?count=${count}`, {
     method: 'POST',
     body: {
@@ -224,17 +198,17 @@ export async function queryPaperList(params) {
     params: {
       pageNum: params.pageNum,
       pageSize: params.pageSize,
-    }
-  })
+    },
+  });
 }
 export async function queryPaperDetail(params) {
   return request({
     url: `${apiConfig.paper.queryPaperDetail}`,
     method: 'get',
     params: {
-      id: params
-    }
-  })
+      id: params,
+    },
+  });
 }
 
 export async function queryDataAnalysis(params = {}) {
@@ -244,8 +218,9 @@ export async function queryBasicData(params = {}) {
   return request(`/api/basic/data?${stringify(params)}`);
 }
 export async function querySpecialList() {
+  // debugger;
   return request({
     url: `${apiConfig.basicData.querySpecialList}`,
     method: 'get',
-  })
+  });
 }

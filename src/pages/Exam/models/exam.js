@@ -27,12 +27,10 @@ export default {
       const { data } = yield call(queryPaperList, payload);
       const { code, data: list } = data;
 
-      // debugger
-
       if (code === 1) {
         yield put({
           type: 'savePaperList',
-          payload: list.list,
+          payload: Array.isArray(list.list) ? list.list : [],
         });
       }
     },
