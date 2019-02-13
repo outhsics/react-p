@@ -109,6 +109,23 @@ export async function updateRule(params) {
   });
 }
 
+export async function updatePaper(params) {
+  return request({
+    url: `${apiConfig.paper.updatePaper}`,
+    method: 'post',
+    data: params,
+    responseType: 'json',
+  });
+}
+export async function deletePaper(params) {
+  return request({
+    url: `${apiConfig.paper.deletePaper}`,
+    method: 'get',
+    params: {
+      id: params,
+    },
+  });
+}
 export async function fakeSubmitForm(params) {
   return request('/api/forms', {
     method: 'POST',
@@ -198,6 +215,7 @@ export async function queryPaperList(params) {
     params: {
       pageNum: params.pageNum,
       pageSize: params.pageSize,
+      specialId: params.specialId,
     },
   });
 }

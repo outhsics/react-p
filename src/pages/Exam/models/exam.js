@@ -1,4 +1,10 @@
-import { queryPaperList, createPaper, queryPaperDetail } from '@/services/api';
+import {
+  queryPaperList,
+  createPaper,
+  queryPaperDetail,
+  updatePaper,
+  deletePaper,
+} from '@/services/api';
 
 export default {
   namespace: 'examlist',
@@ -11,7 +17,8 @@ export default {
       tabActiveKey: 'challenge',
     },
     paperList: [],
-    paperDetail: '',
+    paperDetail: {},
+    paperTotal: '',
   },
 
   effects: {
@@ -23,25 +30,42 @@ export default {
       });
       if (callback) callback();
     },
+    *updatePaper({ payload, callback }, { call, put }) {
+      const response = yield call(updatePaper, payload);
+      // debugger
+      if (response.data && response.data.code === 1) {
+        if (callback) callback();
+      }
+    },
+    *deletePaper({ payload, callback }, { call, put }) {
+      const { data } = yield call(deletePaper, payload);
+      if (data.code === 1) {
+        if (callback) callback();
+      }
+    },
     *fetchPaperList({ payload }, { call, put }) {
       const { data } = yield call(queryPaperList, payload);
       const { code, data: list } = data;
-
+      // debugger;
       if (code === 1) {
         yield put({
           type: 'savePaperList',
           payload: Array.isArray(list.list) ? list.list : [],
         });
+
+        yield put({
+          type: 'savePaperTotal',
+          payload: list.total,
+        });
       }
     },
     *fetchPaperDetail({ payload }, { call, put }) {
       const { data } = yield call(queryPaperDetail, payload);
-      const { code, data: list } = data;
 
-      if (code === 1) {
+      if (data.code === 1) {
         yield put({
           type: 'savePaperDetail',
-          payload: list,
+          payload: data.data,
         });
       }
     },
@@ -74,6 +98,12 @@ export default {
       return {
         ...state,
         paperDetail: action.payload,
+      };
+    },
+    savePaperTotal(state, action) {
+      return {
+        ...state,
+        paperTotal: action.payload,
       };
     },
   },

@@ -77,9 +77,9 @@ const props = {
   },
 };
 
-@connect(({ examlist, loading }) => ({
+@connect(({ examlist, operate }) => ({
   examlist,
-  loading: loading.models.examlist,
+  operate,
 }))
 @Form.create()
 class NewExam extends Component {
@@ -96,14 +96,18 @@ class NewExam extends Component {
       payload: location.query.id,
     });
 
-    this.props.form.setFieldsValue({
-      id: paperDetail.id,
-      button: paperDetail.button,
-      content: paperDetail.content,
-      peopleBase: paperDetail.peopleBase,
-      slogan: paperDetail.slogan,
-      title: paperDetail.title,
+    dispatch({
+      type: 'operate/fetchSpecialList',
     });
+
+    // this.props.form.setFieldsValue({
+    //   id: paperDetail.id,
+    //   button: paperDetail.button,
+    //   content: paperDetail.content,
+    //   peopleBase: paperDetail.peopleBase,
+    //   slogan: paperDetail.slogan,
+    //   title: paperDetail.title,
+    // });
   }
 
   onSubmitExam = () => {
@@ -143,26 +147,26 @@ class NewExam extends Component {
       });
     }
   };
-  deleteConfirm = id => {
-    let title = '删除试题';
-    let content = (
-      <div>
-        {' '}
-        <p>新增试卷时，试题可以删除</p> <p>题目删除后不可复原，确认删除第{id}题吗？</p>
-      </div>
-    );
+  // deleteConfirm = id => {
+  //   let title = '删除试题';
+  //   let content = (
+  //     <div>
+  //       {' '}
+  //       <p>新增试卷时，试题可以删除</p> <p>题目删除后不可复原，确认删除第{id}题吗？</p>
+  //     </div>
+  //   );
 
-    confirm({
-      title,
-      content,
-      onOk() {
-        return new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'));
-      },
-      onCancel() {},
-    });
-  };
+  //   confirm({
+  //     title,
+  //     content,
+  //     onOk() {
+  //       return new Promise((resolve, reject) => {
+  //         setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+  //       }).catch(() => console.log('Oops errors!'));
+  //     },
+  //     onCancel() {},
+  //   });
+  // };
   renderSelectP = (resources = []) => {
     return (
       <Fragment>
@@ -493,11 +497,12 @@ class NewExam extends Component {
     const {
       form: { getFieldDecorator },
       examlist,
+      operate,
     } = this.props;
-    // debugger
     const { itemStatus } = this.state;
     const { paperDetail } = examlist;
-
+    const { specialList } = operate;
+    // return <div>1</div>;
     return (
       <div className={styles.container}>
         <Breadcrumb>
@@ -505,14 +510,9 @@ class NewExam extends Component {
             <NavLink to="/exam/list">试卷管理</NavLink>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            <NavLink
-              to="/exam/newexam"
-              activeStyle={{
-                color: '#1890FF',
-              }}
-            >
-              新增试卷
-            </NavLink>
+            <a href="#" style={{ color: '#1890FF', textDecoration: 'none' }}>
+              {paperDetail.title}
+            </a>
           </Breadcrumb.Item>
         </Breadcrumb>
 
@@ -549,9 +549,16 @@ class NewExam extends Component {
             <Col span={12}>
               <Form.Item {...formItemLayout} label={'专项选择'}>
                 <RadioGroup size="default" defaultValue={paperDetail.specialId}>
-                  <RadioButton value="a">听力专项挑战</RadioButton>
-                  <RadioButton value="b">仿真模拟练习</RadioButton>
-                  <RadioButton value="c">历年真题闯关</RadioButton>
+                  {/* <RadioButton value="b">仿真模拟练习</RadioButton>
+                  <RadioButton value="c">历年真题闯关</RadioButton> */}
+                  {specialList.map(item => {
+                    return (
+                      <RadioButton key={item.id} value={item.id}>
+                        {item.title}
+                        {paperDetail.specialId === item.id ? '' : null}
+                      </RadioButton>
+                    );
+                  })}
                 </RadioGroup>
               </Form.Item>
             </Col>
@@ -575,31 +582,31 @@ class NewExam extends Component {
           <Col lg={11} md={24}>
             <h2>试卷预览</h2>
             <div className={styles.examLeft}>
-              {paperDetail.topics.map((item, i) => (
-                <div key={i}>
-                  <div className={styles.examTitle}>
-                    <h2 style={{ float: 'left', marginRight: 11 }}>
-                      {item.id}. {item.title}({item.score}分)
-                    </h2>
-                    <div style={{ float: 'left' }}>
-                      <a href="#" style={{ marginRight: 5 }}>
-                        编辑
-                      </a>
-                      <a href="#" onClick={() => this.deleteConfirm(item.id)}>
-                        删除
-                      </a>
+              {paperDetail.topics &&
+                paperDetail.topics.map(item =>
+                  item.type === 1 ? (
+                    <div key={item.id}>
+                      <div className={styles.examTitle}>
+                        <h2 style={{ float: 'left', marginRight: 11 }}>
+                          {item.id}. {item.title}({item.score}分)
+                        </h2>
+                        <div style={{ float: 'left' }}>
+                          <a href="#" style={{ marginRight: 5 }}>
+                            编辑
+                          </a>
+                        </div>
+                      </div>
+                      <p>A. {item.A}</p>
+                      <p>B. {item.B}</p>
+                      <p>C. {item.C}</p>
                     </div>
-                  </div>
-                  <p>A. {item.A}</p>
-                  <p>B. {item.B}</p>
-                  <p>C. {item.C}</p>
-                </div>
-              ))}
+                  ) : null
+                )}
             </div>
           </Col>
 
           <Col lg={12} md={24}>
-            <h2>新增题目</h2>
+            <h2>编辑题目{}</h2>
             <div className={styles.examRight}>
               <Form onSubmit={this.handleSubmit}>
                 {/* <Row>

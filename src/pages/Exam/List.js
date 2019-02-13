@@ -9,12 +9,15 @@ import { create } from 'domain';
 const { TabPane } = Tabs;
 const confirm = Modal.confirm;
 
-@connect(({ operate, examlist, loading }) => ({
-  examlist,
+@connect(({ operate, examlist }) => ({
   operate,
-  loading: loading.models.examlist,
+  examlist,
 }))
 class ExamList extends Component {
+  state = {
+    currentSpecial: '',
+  };
+
   columns = [
     {
       title: '序列',
@@ -31,6 +34,9 @@ class ExamList extends Component {
     {
       title: '完成人次/进行中',
       dataIndex: 'finish',
+      render: (text, record) => (
+        <span>{` ${record.completeAmount} / ${record.createAmount} `}</span>
+      ),
     },
     {
       // title: '平均成绩/总分', //todo api2
@@ -77,14 +83,32 @@ class ExamList extends Component {
 
   static Tab = TabPane;
 
+  deleteSuccess = () => {
+    const { dispatch } = this.props;
+
+    message.success('删除成功');
+
+    dispatch({
+      type: 'examlist/fetchPaperList',
+    });
+  };
+
   showDeleteConfirm = record => {
     confirm({
       title: `是否确认删除${record.title}该试卷`,
       content: '删除后不可复原，并且之前答题过的用户进度和历史数据就不会保留',
       onOk() {
-        return new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'));
+        // return new Promise((resolve, reject) => {
+        //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        // }).catch(() => console.log('Oops errors!'));
+
+        const { dispatch } = this.props;
+
+        dispatch({
+          type: 'examlist/deletePaper',
+          payload: record.id,
+          callback: this.deleteSuccess,
+        });
       },
       onCancel() {},
     });
@@ -106,13 +130,14 @@ class ExamList extends Component {
     let content = flag ? '启用后，小程序端可以看到该试卷并答题' : '禁用后，小程序端看不到该试卷';
 
     const { dispatch } = this.props;
+    const { currentSpecial } = this.state;
 
     confirm({
       title,
       content,
       onOk() {
         dispatch({
-          type: 'examlist/updatePapger',
+          type: 'examlist/updatePaper',
           payload: {
             id: 1,
             state: flag ? 1 : 2,
@@ -123,6 +148,7 @@ class ExamList extends Component {
           payload: {
             pageNum: 1,
             pageSize: 10,
+            specialId: currentSpecial,
           },
         });
       },
@@ -132,22 +158,42 @@ class ExamList extends Component {
 
   onTabChange = tabType => {
     console.log(tabType, 'tabType');
+    const { dispatch } = this.props;
+    this.setState({
+      currentSpecial: tabType,
+    });
+    dispatch({
+      type: 'examlist/fetchPaperList',
+      payload: {
+        pageNum: 1,
+        pageSize: 10,
+        specialId: tabType,
+      },
+    });
   };
 
   handleSort = () => {};
   createExam = () => {};
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, operate } = this.props;
+    // dispatch({
+    //   type: 'operate/fetchSpecialList',
+    // });
+
+    const { specialList } = operate;
+    // debugger;
+    const id = specialList.length && specialList[0].id;
+    this.setState({
+      currentSpecial: id,
+    });
     dispatch({
       type: 'examlist/fetchPaperList',
       payload: {
         pageNum: 1,
         pageSize: 10,
+        specialId: id,
       },
-    });
-    dispatch({
-      type: 'operate/fetchSpecialList',
     });
   }
 
@@ -165,7 +211,7 @@ class ExamList extends Component {
       tabDefaultActiveKey,
     } = this.props;
 
-    const { paperList } = examlist;
+    const { paperList, paperTotal } = examlist;
     const { specialList } = operate;
     // const activeKeyProps = {};
     // if (tabDefaultActiveKey !== undefined) {
@@ -209,9 +255,7 @@ class ExamList extends Component {
                 <div className={styles.tabelList}>
                   <Table
                     footer={() => (
-                      <span style={{ color: '#1890FF' }}>
-                        该专题下共{(paperList && paperList.length) || 0} 份试卷
-                      </span>
+                      <span style={{ color: '#1890FF' }}>该专题下共{paperTotal || 0} 份试卷</span>
                     )}
                     rowKey={record => record.id}
                     columns={this.columns}
