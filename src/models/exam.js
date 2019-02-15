@@ -21,6 +21,18 @@ export default {
     paperTotal: '',
   },
 
+  // subscriptions: {
+  //   setup({ dispatch, history }) {
+  //     history.listen(({ pathname }) => {
+  //       if (pathname == '/exam/list') {
+  //         dispatch({
+  //           type: 'operate/fetchSpecialList',
+  //         });
+  //       }
+  //     });
+  //   },
+  // },
+
   effects: {
     *createPaper({ payload, callback }, { call, put }) {
       const response = yield call(createPaper, payload);

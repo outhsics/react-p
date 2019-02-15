@@ -26,7 +26,7 @@ export default {
         payload: response,
       });
     },
-    *fetchSpecialList({ payload }, { call, put }) {
+    *fetchSpecialList({ payload, callback }, { call, put }) {
       const { data } = yield call(querySpecialList, payload);
       const { code, data: list } = data;
       if (code === 1) {
@@ -34,6 +34,9 @@ export default {
           type: 'saveSpecialList',
           payload: list,
         });
+        if (callback) {
+          callback(list[0].id);
+        }
       }
     },
     *addConfig({ payload, callback }, { call, put }) {

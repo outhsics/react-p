@@ -66,6 +66,19 @@ const updateColorWeak = colorWeak => {
 export default {
   namespace: 'setting',
   state: defaultSettings,
+
+  // subscriptions: {
+  //   setup({ dispatch, history }) {
+  //     history.listen(({ pathname }) => {
+  //       if (pathname == '/exam/list') {
+  //         dispatch({
+  //           type: 'operate/fetchSpecialList',
+  //         });
+  //       }
+  //     });
+  //   },
+  // },
+
   reducers: {
     getSetting(state) {
       const setting = {};

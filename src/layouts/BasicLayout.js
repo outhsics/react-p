@@ -68,9 +68,9 @@ class BasicLayout extends React.PureComponent {
       payload: { routes, authority },
     });
 
-    dispatch({
-      type: 'operate/fetchSpecialList',
-    });
+    // dispatch({
+    //   type: 'operate/fetchSpecialList',
+    // });
   }
 
   componentDidUpdate(preProps) {
@@ -115,14 +115,15 @@ class BasicLayout extends React.PureComponent {
     const currRouterData = this.matchParamsPath(pathname, breadcrumbNameMap);
 
     if (!currRouterData) {
-      return 'Ant Design Pro';
+      return '福建中考英语听力宝';
     }
     const pageName = formatMessage({
       id: currRouterData.locale || currRouterData.name,
       defaultMessage: currRouterData.name,
     });
 
-    return `${pageName} - Ant Design Pro`;
+    // return `${pageName} - Ant Design Pro`;
+    return `${pageName} - 福建中考英语听力宝`;
   };
 
   getLayoutStyle = () => {

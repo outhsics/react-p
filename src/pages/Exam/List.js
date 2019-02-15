@@ -9,9 +9,9 @@ import { create } from 'domain';
 const { TabPane } = Tabs;
 const confirm = Modal.confirm;
 
-@connect(({ operate, examlist }) => ({
-  operate,
+@connect(({ examlist, operate }) => ({
   examlist,
+  operate,
 }))
 class ExamList extends Component {
   state = {
@@ -128,9 +128,16 @@ class ExamList extends Component {
   showConfirm = (flag, record) => {
     let title = flag ? `是否确认启用${record.title}该试卷？` : `是否确认禁用${record.title}该试卷?`;
     let content = flag ? '启用后，小程序端可以看到该试卷并答题' : '禁用后，小程序端看不到该试卷';
+    let id;
 
-    const { dispatch } = this.props;
-    const { currentSpecial } = this.state;
+    const { dispatch, operate } = this.props;
+    const { specialList } = operate;
+
+    if (!this.state.currentSpecial) {
+      id = specialList.length && specialList[0].id;
+    } else {
+      id = this.state.currentSpecial;
+    }
 
     confirm({
       title,
@@ -148,7 +155,7 @@ class ExamList extends Component {
           payload: {
             pageNum: 1,
             pageSize: 10,
-            specialId: currentSpecial,
+            specialId: id,
           },
         });
       },
@@ -175,26 +182,26 @@ class ExamList extends Component {
   handleSort = () => {};
   createExam = () => {};
 
-  componentDidMount() {
-    const { dispatch, operate } = this.props;
-    // dispatch({
-    //   type: 'operate/fetchSpecialList',
-    // });
+  callback = id => {
+    const { dispatch } = this.props;
 
-    const { specialList } = operate;
-    // debugger;
-    const id = specialList.length && specialList[0].id;
-    this.setState({
-      currentSpecial: id,
-    });
     dispatch({
       type: 'examlist/fetchPaperList',
       payload: {
         pageNum: 1,
         pageSize: 10,
-        specialId: id,
+        specialId: id, //[0].id
       },
     });
+  };
+
+  componentDidMount() {
+    const { dispatch, operate } = this.props;
+    dispatch({
+      type: 'operate/fetchSpecialList',
+      callback: this.callback,
+    });
+    // console.log(operate.specialList, 'specialList');
   }
 
   renderList = (resources = []) =>
