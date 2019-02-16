@@ -86,16 +86,18 @@ class OperateTool extends Component {
 
   loadSpecialList = () => {
     const { dispatch } = this.props;
+
     dispatch({
       type: 'operate/fetchSpecialList',
     });
-    dispatch({
-      type: 'examlist/fetchPaperList',
-      payload: {
-        pageNum: 1,
-        pageSize: 10,
-      },
-    });
+
+    // dispatch({
+    //   type: 'examlist/fetchPaperList',
+    //   payload: {
+    //     pageNum: 1,
+    //     pageSize: 10,
+    //   },
+    // });
   };
 
   save = () => {

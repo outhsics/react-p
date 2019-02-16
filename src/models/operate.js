@@ -2,6 +2,7 @@ import {
   queryBasicData,
   querySpecialList,
   saveConfig,
+  configInfo,
   updateSpecial,
   createSpecial,
   deleteSpecial,
@@ -17,6 +18,7 @@ export default {
     },
     specialList: [],
     writconfig: [],
+    operateInfo: {},
   },
   effects: {
     *fetch({ payload }, { call, put }) {
@@ -49,6 +51,20 @@ export default {
           payload: config,
         });
         if (callback) callback();
+      }
+    },
+    *fetchConfigInfo({ callback }, { call, put }) {
+      const { data } = yield call(configInfo);
+      const { code, data: config } = data;
+
+      if (code === 1) {
+        yield put({
+          type: 'saveOperateInfo',
+          payload: config,
+        });
+        if (callback) {
+          callback(config);
+        }
       }
     },
     *add({ payload, callback }, { call, put }) {
@@ -97,10 +113,15 @@ export default {
       };
     },
     saveSpecialList(state, action) {
-      // debugger;
       return {
         ...state,
         specialList: action.payload,
+      };
+    },
+    saveOperateInfo(state, action) {
+      return {
+        ...state,
+        operateInfo: action.payload,
       };
     },
   },

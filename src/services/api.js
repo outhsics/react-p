@@ -31,6 +31,13 @@ export async function saveConfig(params) {
   });
 }
 
+export async function configInfo() {
+  return request({
+    url: `${apiConfig.basicData.configInfo}`,
+    method: 'get',
+  });
+}
+
 export async function updateSpecial(params) {
   return request({
     url: `${apiConfig.special.updateSpecial}`,

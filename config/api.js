@@ -49,6 +49,7 @@ const api = {
   basicData: {
     querySpecialList: `${apiPrefix.tlb}/admin/special/list`,
     saveConfig: `${apiPrefix.tlb}/admin/config/save`,
+    configInfo: `${apiPrefix.tlb}/admin/config/info`,
   },
   special: {
     updateSpecial: `${apiPrefix.tlb}/admin/special/update`,

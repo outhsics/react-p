@@ -6,7 +6,6 @@ import NavLink from 'umi/navlink';
 import { Menu, Breadcrumb, Icon } from 'antd';
 import styles from './Info.less';
 import BaseView from './BaseView';
-import cloneDeep from 'lodash/cloneDeep';
 
 const { Item } = Menu;
 
