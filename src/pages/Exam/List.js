@@ -160,7 +160,7 @@ class ExamList extends Component {
         dispatch({
           type: 'examlist/updatePaperState',
           payload: {
-            id: 1,
+            id: record.id,
             state: flag ? 1 : 2,
           },
         });

@@ -37,27 +37,6 @@ const formItemLayout = {
   },
 };
 
-const examList = [
-  {
-    id: 1,
-    title: "Why can't the man go fishing tomorrow?",
-    A: ' He has an important meeting',
-    B: 'He has to go to the airport',
-    C: "He has to go to Mr. Green's house",
-    score: '5',
-  },
-  {
-    id: 2,
-    title: "Why can't the man go fishing tomorrow?",
-    A: ' He has an important meeting',
-    B: 'He has to go to the airport',
-    C: "He has to go to Mr. Green's house",
-    score: '5',
-  },
-];
-
-const item1AddList = [];
-
 const props = {
   name: 'file',
   action: 'https://api.jze100.com/hear/admin/file/upload',

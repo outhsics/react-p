@@ -12,7 +12,7 @@ export default {
   effects: {
     *fetch({ payload }, { call, put }) {
       const response = yield call(queryUserExam, payload);
-      // debugger
+      // debugger;
       if (response.data && response.data.code === 1) {
         yield put({
           type: 'save',
@@ -20,14 +20,15 @@ export default {
         });
       }
     },
-    *fetchUserSpecial({ payload }, { call, put }) {
+    *fetchUserSpecial({ payload, callback }, { call, put }) {
       const response = yield call(queryUserSpecial, payload);
-      // debugger
       if (response.data && response.data.code === 1) {
         yield put({
           type: 'saveUserSpecial',
           payload: response.data.data,
         });
+
+        if (callback) callback(response.data.data[0].id);
       }
     },
   },

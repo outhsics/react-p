@@ -46,27 +46,6 @@ const formItemLayout2 = {
   },
 };
 
-const examList = [
-  {
-    id: 1,
-    title: "Why can't the man go fishing tomorrow?",
-    A: ' He has an important meeting',
-    B: 'He has to go to the airport',
-    C: "He has to go to Mr. Green's house",
-    score: '5',
-  },
-  {
-    id: 2,
-    title: "Why can't the man go fishing tomorrow?",
-    A: ' He has an important meeting',
-    B: 'He has to go to the airport',
-    C: "He has to go to Mr. Green's house",
-    score: '5',
-  },
-];
-
-const item1AddList = [];
-
 const props = {
   name: 'file',
   action: 'https://api.jze100.com/hear/admin/file/upload',
@@ -124,12 +103,12 @@ class Detail extends Component {
   addOption = id => {
     const { editItem } = this.state;
     const data = editItem;
-    debugger;
+    // debugger;
     data.subTopics[id - 1].options.push({
       id: data.subTopics[id - 1].options.length + 1,
       topicSubId: data.subTopics[id - 1].id,
       answer: '',
-      image: null,
+      image: '',
       isCorrect: 0,
       topicNo: data.subTopics[id - 1].options.length + 1,
     });
@@ -156,7 +135,7 @@ class Detail extends Component {
 
   saveChange = () => {
     const { editItem } = this.state;
-    const { examlist, dispatch } = this.props;
+    const { examlist, dispatch, location } = this.props;
 
     const { paperDetail } = examlist;
     // editItem.
@@ -172,7 +151,7 @@ class Detail extends Component {
       }
     }
 
-    paperDetail.topics[editItem.id - 1] = editItem;
+    paperDetail.topics[editItem.topicNo - 1] = editItem;
 
     // for (let k in paperDetail.topics) {
     //   for (let kk in paperDetail.topics[k].subTopics) {
@@ -180,9 +159,15 @@ class Detail extends Component {
     //   }
     // }
 
+    // debugger;
     dispatch({
       type: 'examlist/updatePaper',
       payload: paperDetail,
+    });
+
+    dispatch({
+      type: 'examlist/fetchPaperDetail',
+      payload: location.query.id,
     });
   };
 
@@ -379,7 +364,7 @@ class Detail extends Component {
                     <Col span={24}>
                       <Button
                         type="primary"
-                        onClick={() => this.addOption(subItem.id)}
+                        onClick={() => this.addOption(subItem.topicNo)}
                         style={{ width: '100%' }}
                         icon={'plus'}
                       >
@@ -403,7 +388,7 @@ class Detail extends Component {
                         rows={8}
                       />
                     </Col>
-                    {subItem.id === editItem.subTopics.length && (
+                    {subItem.topicNo === editItem.subTopics.length && (
                       <Col span={7} className={styles.opt}>
                         <Row>
                           <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>

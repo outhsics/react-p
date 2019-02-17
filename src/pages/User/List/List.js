@@ -16,7 +16,7 @@ import {
   Radio,
   Table,
   Modal,
-  Tag
+  Tag,
 } from 'antd';
 import styles from './List.less';
 
@@ -34,9 +34,18 @@ const MyIcon = Icon.createFromIconfontCN({
 });
 
 const tagsCreateTime = ['今天', '最近3天', '一周内', '一个月', '一季度'];
-const tagsStudyTime = ['0-20', '20-40', '40-60', '60-100', '100-150', '150-250', '250-350', '350-450', '450以上'];
+const tagsStudyTime = [
+  '0-20',
+  '20-40',
+  '40-60',
+  '60-100',
+  '100-150',
+  '150-250',
+  '250-350',
+  '350-450',
+  '450以上',
+];
 const tagsNickname = ['有昵称', '无昵称'];
-
 
 function callback(key) {
   console.log(key);
@@ -45,13 +54,12 @@ function callback(key) {
 function itemRender(current, type, originalElement) {
   if (type === 'prev') {
     return <a>上一页</a>;
-  } if (type === 'next') {
+  }
+  if (type === 'next') {
     return <a>下一页</a>;
   }
   return originalElement;
 }
-
-
 
 @connect(({ userlist, loading }) => ({
   userlist,
@@ -73,11 +81,9 @@ class UserList extends Component {
     // stepFormValues: {},
   };
 
-
   showConfirm = (flag, record) => {
-
-    let title = flag ? `是否确认启用用户${record.nickname}` : `是否确认停用用户${record.nickname}?`
-    let content = flag ? '启用后用户可重新使用小程序' : '停用后用户不可使用小程序'
+    let title = flag ? `是否确认启用用户${record.nickname}` : `是否确认停用用户${record.nickname}?`;
+    let content = flag ? '启用后用户可重新使用小程序' : '停用后用户不可使用小程序';
 
     const { dispatch } = this.props;
 
@@ -88,58 +94,50 @@ class UserList extends Component {
         dispatch({
           type: 'userlist/updateUser',
           payload: {
-            id: 1,
-            state: flag ? 1 : 2
-          }
+            id: record.id,
+            state: flag ? 1 : 2,
+          },
         });
         dispatch({
           type: 'userlist/fetch',
           payload: {
             pageNum: 1,
-            pageSize: 10
-          }
+            pageSize: 10,
+          },
         });
-
-
-
-
       },
-      onCancel() { },
+      onCancel() {},
     });
-  }
-
+  };
 
   handleToDetail = (id, nickname) => {
-
     const { location, dispatch } = this.props;
 
     router.push({
       pathname: '/user/detail',
       query: {
         id,
-        nickname: encodeURIComponent(nickname)
+        nickname: encodeURIComponent(nickname),
       },
     });
+  };
 
-  }
-
-  handleFilterChange = (e) => {
+  handleFilterChange = e => {
     this.setState({ filterVal: e.target.value });
     console.log(this.state.filterVal);
-  }
-  handleFilterCreateTime = (e) => {
+  };
+  handleFilterCreateTime = e => {
     this.setState({ FilterCreateTime: e.target.value });
     console.log(this.state.filterCreateTime);
-  }
-  handleFilterStudyTime = (e) => {
+  };
+  handleFilterStudyTime = e => {
     this.setState({ FilterStudyTime: e.target.value });
     console.log(this.state.filterStudyTime);
-  }
-  handleFilterNickname = (e) => {
+  };
+  handleFilterNickname = e => {
     this.setState({ filterVal: e.target.value });
     console.log(this.state.filterNickname);
-  }
-
+  };
 
   handleSearch = e => {
     e.preventDefault();
@@ -165,9 +163,6 @@ class UserList extends Component {
     // });
   };
 
-
-
-
   handleFormReset = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
@@ -176,7 +171,6 @@ class UserList extends Component {
     });
   };
 
-
   toggleForm = () => {
     const { expandForm } = this.state;
     this.setState({
@@ -184,35 +178,29 @@ class UserList extends Component {
     });
   };
 
-
-
-
   renderAdvancedForm() {
     const {
       form: { getFieldDecorator },
-      loading
+      loading,
     } = this.props;
 
     const { selectedTags } = this.state;
     return (
       <Fragment>
-
-
-
         <Row className={styles.filterRow}>
-          <Col span={21} >
-            <Radio.Group defaultValue="a" buttonStyle="solid"
-              onChange={this.handleFilterChange}
-            >
-              <Radio.Button value="a">创建时间
+          <Col span={21}>
+            <Radio.Group defaultValue="a" buttonStyle="solid" onChange={this.handleFilterChange}>
+              <Radio.Button value="a">
+                创建时间
                 <MyIcon type="icon-sort" />
               </Radio.Button>
-              <Radio.Button value="b">学习时长
-              <MyIcon type="icon-sort" />
+              <Radio.Button value="b">
+                学习时长
+                <MyIcon type="icon-sort" />
               </Radio.Button>
             </Radio.Group>
           </Col>
-          <Col span={3} >
+          <Col span={3}>
             <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
               筛选收起 <Icon type="up" />
             </a>
@@ -220,7 +208,7 @@ class UserList extends Component {
         </Row>
 
         <Row className={styles.filterRow}>
-          <Col span={3} >创建时间:</Col>
+          <Col span={3}>创建时间:</Col>
           <Col span={18}>
             {tagsCreateTime.map(tag => (
               <CheckableTag
@@ -231,17 +219,13 @@ class UserList extends Component {
                 {tag}
               </CheckableTag>
             ))}
-
           </Col>
         </Row>
 
-
         <Row className={styles.filterRow}>
-
-          <Col span={3} >学习时长:</Col>
+          <Col span={3}>学习时长:</Col>
 
           <Col span={18}>
-
             {tagsStudyTime.map(tag => (
               <CheckableTag
                 key={tag}
@@ -251,18 +235,12 @@ class UserList extends Component {
                 {tag}
               </CheckableTag>
             ))}
-
           </Col>
-
         </Row>
 
-
-
         <Row className={styles.filterRow}>
-
-          <Col span={3} >昵称:</Col>
+          <Col span={3}>昵称:</Col>
           <Col span={18}>
-
             {tagsNickname.map(tag => (
               <CheckableTag
                 key={tag}
@@ -275,70 +253,54 @@ class UserList extends Component {
           </Col>
         </Row>
 
-
         <Row className={styles.filterRow}>
           <Col span={19}>
             <Row>
-              <Col span={4}>
-
-                筛选条件:
-          </Col>
+              <Col span={4}>筛选条件:</Col>
               <Col>
-                {
-                  selectedTags && selectedTags.map(tag => (
-                    <Tag closable key={tag} > {tag} </Tag>
-                  ))
-                }
-
+                {selectedTags &&
+                  selectedTags.map(tag => (
+                    <Tag closable key={tag}>
+                      {' '}
+                      {tag}{' '}
+                    </Tag>
+                  ))}
               </Col>
-
             </Row>
-
-
           </Col>
           <Col span={5}>
-
-            <Button onClick={this.handleFormReset}>
-              复原
-            </Button>
+            <Button onClick={this.handleFormReset}>复原</Button>
             <Button style={{ marginLeft: 8 }} type="primary" htmlType="submit">
               确认筛选
             </Button>
-
           </Col>
         </Row>
       </Fragment>
     );
   }
 
-
   renderSimpleForm() {
     const {
       form: { getFieldDecorator },
       filterVal,
-      loading
+      loading,
     } = this.props;
 
     return (
-
       <Row className={styles.filterRow}>
-
-        <Col span={21} >
-
-          <Radio.Group defaultValue="a" buttonStyle="solid"
-            onChange={this.handleFilterChange}
-          >
-            <Radio.Button value="a">创建时间
-                <MyIcon type="icon-sort" />
+        <Col span={21}>
+          <Radio.Group defaultValue="a" buttonStyle="solid" onChange={this.handleFilterChange}>
+            <Radio.Button value="a">
+              创建时间
+              <MyIcon type="icon-sort" />
             </Radio.Button>
-            <Radio.Button value="b">学习时长
+            <Radio.Button value="b">
+              学习时长
               <MyIcon type="icon-sort" />
             </Radio.Button>
           </Radio.Group>
         </Col>
         <Col span={3}>
-
-
           <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
             筛选展开 <Icon type="down" />
           </a>
@@ -352,59 +314,54 @@ class UserList extends Component {
     return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
   }
 
-
-  columns = [{
-    title: '头像',
-    dataIndex: 'avatar',
-    render: text => <img src={text}></img>,
-  },
-  {
-    title: '昵称',
-    dataIndex: 'nickName',
-  },
-  {
-    title: '城市',
-    dataIndex: 'city',
-  },
-  {
-    title: '性别',
-    dataIndex: 'sex',
-    render: val => <span> {val === 1 ? '男' : '女'} </span>,
-
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createdAt',
-    // sorter: true,
-    render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-
-  },
-  {
-    title: '学习时长',
-    dataIndex: 'duration',
-    render: val => <span>{val}mins</span>,
-
-  },
-  {
-    title: '操作',
-    render: (text, record) => (
-      <Fragment>
-        {record.state !== 1 ?
-          <a onClick={() => this.showConfirm(true, record)} style={{ marginRight: 10 }} >
-            启用
-        </a> :
-          <a onClick={() => this.showConfirm(false, record)} style={{ marginRight: 10 }} >
-            停用
-        </a>
-
-        }
-        <a onClick={() => this.handleToDetail(record.id, record.nickName)}>查看详情</a>
-
-      </Fragment>
-    ),
-  }
+  columns = [
+    {
+      title: '头像',
+      dataIndex: 'avatar',
+      render: text => <img src={text} />,
+    },
+    {
+      title: '昵称',
+      dataIndex: 'nickName',
+    },
+    {
+      title: '城市',
+      dataIndex: 'city',
+    },
+    {
+      title: '性别',
+      dataIndex: 'sex',
+      render: val => <span> {val === 1 ? '男' : '女'} </span>,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      // sorter: true,
+      render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+    },
+    {
+      title: '学习时长',
+      dataIndex: 'duration',
+      render: val => <span>{val}mins</span>,
+    },
+    {
+      title: '操作',
+      render: (text, record) => (
+        <Fragment>
+          {record.state !== 1 ? (
+            <a onClick={() => this.showConfirm(true, record)} style={{ marginRight: 10 }}>
+              启用
+            </a>
+          ) : (
+            <a onClick={() => this.showConfirm(false, record)} style={{ marginRight: 10 }}>
+              停用
+            </a>
+          )}
+          <a onClick={() => this.handleToDetail(record.id, record.nickName)}>查看详情</a>
+        </Fragment>
+      ),
+    },
   ];
-
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -412,54 +369,46 @@ class UserList extends Component {
       type: 'userlist/fetch',
       payload: {
         pageNum: 1,
-        pageSize: 10
-      }
+        pageSize: 10,
+      },
     });
   }
 
-
   handleChange(tag, checked) {
     const { selectedTags } = this.state;
-    const nextSelectedTags = checked
-      ? [...selectedTags, tag]
-      : selectedTags.filter(t => t !== tag);
+    const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag);
     console.log('You are interested in: ', nextSelectedTags);
     this.setState({ selectedTags: nextSelectedTags });
   }
 
-
   render() {
     const { userlist } = this.props;
 
-    const { data: { list, total }, } = userlist;
-
-
+    const {
+      data: { list, total },
+    } = userlist;
 
     return (
-      <div className={styles.container} >
-
+      <div className={styles.container}>
         <Tabs className={styles.tabs} defaultActiveKey="1" onChange={callback}>
           <TabPane tab={<span> 全部用户({total})</span>} key="1">
-
-            <div>
-              {this.renderForm()}
-
-            </div>
+            <div>{this.renderForm()}</div>
 
             <div className={styles.tabelList}>
               <Table
                 pagination={{
-                  showQuickJumper: true, showSizeChanger: true,
+                  showQuickJumper: true,
+                  showSizeChanger: true,
                 }}
-                rowKey={record => record.id} columns={this.columns} dataSource={list} />
+                rowKey={record => record.id}
+                columns={this.columns}
+                dataSource={list}
+              />
             </div>
-
-
           </TabPane>
         </Tabs>
-
       </div>
-    )
+    );
   }
 }
 

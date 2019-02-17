@@ -14,67 +14,37 @@ const { Item } = Menu;
   userexam,
 }))
 class Info extends Component {
-  componentDidMount() {
-    const { location, dispatch, userexam } = this.props;
-    const { UserSpecial } = userexam;
-    // console.log(location.query.id, 'location');
-
-    // const obj = {};
-    // UserSpecial.map(item => {
-    //     let id = item.id.toString();
-    //     obj[id] = item.title;
-    // })
-    // const paceList = {};
-    // UserSpecial.map(item => {
-    //     let id = item.id.toString();
-    //     paceList[id] = item.pace;
-    // })
-
-    // const pace1 = UserSpecial[0];
-    // const pace2 = pace1;
-    // if (pace1) {
-    //     dispatch({
-    //         type: 'userexam/savePace',
-    //         payload: pace1.id
-    //     });
-    // }
-
+  callback = id => {
+    const { location, dispatch } = this.props;
     dispatch({
       type: 'userexam/fetch',
       payload: {
         userId: location.query.id,
-        specialId: 1,
+        specialId: id, //[0].id
       },
     });
+  };
+
+  componentDidMount() {
+    const { location, dispatch } = this.props;
+    // const { UserSpecial } = userexam;
 
     dispatch({
       type: 'userexam/fetchUserSpecial',
       payload: {
         userId: location.query.id,
       },
+      callback: this.callback,
     });
 
     this.setState({
       nickName: decodeURIComponent(location.query.nickname),
     });
-
-    // if (UserSpecial) {
-    //     dispatch({
-    //         type: 'userexam/savePace',
-    //         payload: UserSpecial[0] && UserSpecial[0].pace
-    //     })
-    // }
   }
 
   constructor(props) {
     super(props);
     const { match, location } = props;
-    // debugger
-
-    // '1': '听力专项挑战',
-    // '2': '仿真模拟练习',
-    // '3': '历年真题闯关',
-    // const key = location.pathname.replace(`${match.path}/`, '');
     this.state = {
       mode: 'inline',
       selectKey: '1',
