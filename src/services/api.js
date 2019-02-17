@@ -116,6 +116,15 @@ export async function updateRule(params) {
   });
 }
 
+export async function updatePaperState(params) {
+  return request({
+    url: `${apiConfig.paper.updatePaperState}`,
+    method: 'post',
+    data: params,
+    responseType: 'json',
+  });
+}
+
 export async function updatePaper(params) {
   return request({
     url: `${apiConfig.paper.updatePaper}`,

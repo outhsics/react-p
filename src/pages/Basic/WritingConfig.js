@@ -112,7 +112,6 @@ class WritingConfig extends Component {
               <Col span={8}>
                 <Form.Item label="设置中考日期:" labelCol={{ span: 12 }} wrapperCol={{ span: 11 }}>
                   {getFieldDecorator('examDate', {
-                    initialValue: moment(1550210627355) ? moment(1550210627355) : null,
                     rules: [{ required: true, message: '请选择时间!' }],
                   })(<DatePicker showTime placeholder="请选择" format="YYYY-MM-DD" />)}
                 </Form.Item>

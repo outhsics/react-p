@@ -43,8 +43,9 @@ const api = {
     createPaper: `${apiPrefix.tlb}/admin/paper/create`,
     queryPaperList: `${apiPrefix.tlb}/admin/paper/list`,
     queryPaperDetail: `${apiPrefix.tlb}/admin/paper/detail`,
-    updatePaper: `${apiPrefix.tlb}/admin/paper/updateState`,
+    updatePaperState: `${apiPrefix.tlb}/admin/paper/updateState`,
     deletePaper: `${apiPrefix.tlb}/admin/paper/delete`,
+    updatePaper: `${apiPrefix.tlb}/admin/paper/update`,
   },
   basicData: {
     querySpecialList: `${apiPrefix.tlb}/admin/special/list`,

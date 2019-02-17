@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Icon, Tabs, Table, Button, Modal } from 'antd';
+import { Icon, Tabs, Table, Button, Modal, message } from 'antd';
 import Link from 'umi/link';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -84,16 +84,32 @@ class ExamList extends Component {
   static Tab = TabPane;
 
   deleteSuccess = () => {
-    const { dispatch } = this.props;
+    const { dispatch, operate } = this.props;
+    const { specialList } = operate;
+    let id;
+
+    if (!this.state.currentSpecial) {
+      id = specialList.length && specialList[0].id;
+    } else {
+      id = this.state.currentSpecial;
+    }
 
     message.success('删除成功');
 
     dispatch({
       type: 'examlist/fetchPaperList',
+      payload: {
+        pageNum: 1,
+        pageSize: 10,
+        specialId: id,
+      },
     });
   };
 
   showDeleteConfirm = record => {
+    const { dispatch } = this.props;
+    const _this = this;
+
     confirm({
       title: `是否确认删除${record.title}该试卷`,
       content: '删除后不可复原，并且之前答题过的用户进度和历史数据就不会保留',
@@ -102,12 +118,10 @@ class ExamList extends Component {
         //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
         // }).catch(() => console.log('Oops errors!'));
 
-        const { dispatch } = this.props;
-
         dispatch({
           type: 'examlist/deletePaper',
           payload: record.id,
-          callback: this.deleteSuccess,
+          callback: _this.deleteSuccess,
         });
       },
       onCancel() {},
@@ -144,7 +158,7 @@ class ExamList extends Component {
       content,
       onOk() {
         dispatch({
-          type: 'examlist/updatePaper',
+          type: 'examlist/updatePaperState',
           payload: {
             id: 1,
             state: flag ? 1 : 2,

@@ -2,8 +2,9 @@ import {
   queryPaperList,
   createPaper,
   queryPaperDetail,
-  updatePaper,
+  updatePaperState,
   deletePaper,
+  updatePaper,
 } from '@/services/api';
 
 export default {
@@ -42,9 +43,9 @@ export default {
       });
       if (callback) callback();
     },
-    *updatePaper({ payload, callback }, { call, put }) {
-      const response = yield call(updatePaper, payload);
-      // debugger
+    *updatePaperState({ payload, callback }, { call, put }) {
+      const response = yield call(updatePaperState, payload);
+
       if (response.data && response.data.code === 1) {
         if (callback) callback();
       }
@@ -52,6 +53,13 @@ export default {
     *deletePaper({ payload, callback }, { call, put }) {
       const { data } = yield call(deletePaper, payload);
       if (data.code === 1) {
+        if (callback) callback();
+      }
+    },
+    *updatePaper({ payload, callback }, { call, put }) {
+      const response = yield call(updatePaper, payload);
+      debugger;
+      if (response.data && response.data.code === 1) {
         if (callback) callback();
       }
     },
@@ -71,14 +79,15 @@ export default {
         });
       }
     },
-    *fetchPaperDetail({ payload }, { call, put }) {
+    *fetchPaperDetail({ payload, callback }, { call, put }) {
       const { data } = yield call(queryPaperDetail, payload);
-
+      // debugger;
       if (data.code === 1) {
         yield put({
           type: 'savePaperDetail',
           payload: data.data,
         });
+        if (callback) callback(data.data);
       }
     },
     *remove({ payload, callback }, { call, put }) {
