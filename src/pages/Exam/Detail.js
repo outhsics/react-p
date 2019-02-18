@@ -83,7 +83,6 @@ class Detail extends Component {
     dispatch({
       type: 'examlist/fetchPaperDetail',
       payload: location.query.id,
-      // callback: this.initForm,
     });
 
     dispatch({
@@ -105,7 +104,7 @@ class Detail extends Component {
     const data = editItem;
     // debugger;
     data.subTopics[id - 1].options.push({
-      id: data.subTopics[id - 1].options.length + 1,
+      // id: data.subTopics[id - 1].options.length + 1,
       topicSubId: data.subTopics[id - 1].id,
       answer: '',
       image: '',
@@ -321,7 +320,7 @@ class Detail extends Component {
           {editItem &&
             editItem.subTopics.map(subItem => {
               return (
-                <Fragment key={subItem.id}>
+                <Fragment key={subItem.topicNo}>
                   <Row>
                     <Col span={6}>题目（{subItem.topicNo}）:</Col>
 
@@ -332,7 +331,7 @@ class Detail extends Component {
 
                   {subItem.options.map(optionItem => {
                     return (
-                      <Row gutter={16} key={optionItem.id}>
+                      <Row gutter={16} key={optionItem.topicNo}>
                         <Col span={14}>
                           <Row>
                             <Col span={6}>选项: {optionItem.topicNo} </Col>
@@ -516,7 +515,7 @@ class Detail extends Component {
                 {paperDetail.topics &&
                   paperDetail.topics.map(item => (
                     <Card
-                      key={item.id}
+                      key={item.topicNo}
                       bordered={false}
                       hoverable
                       onClick={() => this.handleEdit(item)}
@@ -525,7 +524,7 @@ class Detail extends Component {
                         <div key={item.id}>
                           {item.subTopics.map(subItem => {
                             return (
-                              <div key={subItem.id}>
+                              <div key={subItem.topicNo}>
                                 <div className={styles.examTitle}>
                                   <h2 style={{ float: 'left', marginRight: 11 }}>
                                     {item.topicNo === subItem.topicNo ? item.topicNo : ''} (
@@ -543,7 +542,7 @@ class Detail extends Component {
 
                                 {subItem.options.map(subOption => {
                                   return (
-                                    <div key={subOption.id} style={{ lineHeight: '31px' }}>
+                                    <div key={subOption.topicNo} style={{ lineHeight: '31px' }}>
                                       <span> {subOption.topicNo}</span>
                                       <span> {subOption.answer}</span>
                                       {subOption.image.includes('http') && (
@@ -570,7 +569,7 @@ class Detail extends Component {
                           </div>
                           {item.subTopics.map(subItem => {
                             return (
-                              <div key={subItem.id}>
+                              <div key={subItem.topicNo}>
                                 <h2>
                                   {subItem.id} .{subItem.title}
                                 </h2>

@@ -37,6 +37,15 @@ const formItemLayout = {
   },
 };
 
+const formItemLayout2 = {
+  labelCol: {
+    span: 9,
+  },
+  wrapperCol: {
+    span: 12,
+  },
+};
+
 const props = {
   name: 'file',
   action: 'https://api.jze100.com/hear/admin/file/upload',
@@ -56,15 +65,29 @@ const props = {
   },
 };
 
+@connect(({ examlist, operate }) => ({
+  examlist,
+  operate,
+}))
 @Form.create()
-class NewExam extends Component {
+class CreateExam extends Component {
   state = {
-    itemStatus: null,
+    editItem: null,
+    currentEditType: 1,
+    showEdit: false,
   };
 
   componentDidMount() {
-    const { location } = this.props;
-    console.log(location.query.id, 'location.query.id');
+    const { location, dispatch, examlist } = this.props;
+
+    dispatch({
+      type: 'examlist/fetchPaperDetail',
+      payload: location.query.id,
+    });
+
+    dispatch({
+      type: 'operate/fetchSpecialList',
+    });
   }
 
   onSubmitExam = () => {
@@ -75,8 +98,83 @@ class NewExam extends Component {
     });
   };
   handleSubmit = () => {};
+
+  addOption = id => {
+    const { editItem } = this.state;
+    const data = editItem;
+    // debugger;
+    data.subTopics[id - 1].options.push({
+      // id: data.subTopics[id - 1].options.length + 1,
+      topicSubId: data.subTopics[id - 1].id,
+      answer: '',
+      image: '',
+      isCorrect: 0,
+      topicNo: data.subTopics[id - 1].options.length + 1,
+    });
+    this.setState({
+      editItem: data,
+    });
+  };
+
+  cancelEdit = () => {
+    this.setState({
+      showEdit: false,
+    });
+  };
+
+  handleEdit = item => {
+    console.log(item);
+    this.setState({
+      editItem: item,
+      showEdit: true,
+      currentEditType: item.type,
+    });
+  };
   deleteExam = () => {};
 
+  saveChange = () => {
+    const { editItem } = this.state;
+    const { examlist, dispatch, location } = this.props;
+
+    const { paperDetail } = examlist;
+    // editItem.
+
+    for (let k in editItem.subTopics) {
+      for (let kk in editItem.subTopics[k].options) {
+        if (editItem.subTopics[k].answer === editItem.subTopics[k].options[kk].topicNo) {
+          editItem.subTopics[k].options[kk].isCorrect = 1;
+        } else {
+          editItem.subTopics[k].options[kk].isCorrect = 0;
+        }
+        delete editItem.subTopics[k].answer;
+      }
+    }
+
+    paperDetail.topics[editItem.topicNo - 1] = editItem;
+
+    // for (let k in paperDetail.topics) {
+    //   for (let kk in paperDetail.topics[k].subTopics) {
+    //     delete paperDetail.topics[k].subTopics.kk.answer;
+    //   }
+    // }
+
+    // debugger;
+    dispatch({
+      type: 'examlist/updatePaper',
+      payload: paperDetail,
+    });
+
+    dispatch({
+      type: 'examlist/fetchPaperDetail',
+      payload: location.query.id,
+    });
+  };
+
+  handleChange = evt => {
+    this.setState({
+      value: evt.target.value,
+    });
+  };
   onUpload = () => {
     $.ajax({
       type: 'POST',
@@ -91,360 +189,226 @@ class NewExam extends Component {
     });
   };
 
-  onChangeExamType = e => {
-    console.log(e.target.value);
-    if (e.target.value == 1) {
-      this.setState({
-        itemStatus: 1,
-      });
+  // deleteConfirm = id => {
+  //   let title = '删除试题';
+  //   let content = (
+  //     <div>
+  //       {' '}
+  //       <p>新增试卷时，试题可以删除</p> <p>题目删除后不可复原，确认删除第{id}题吗？</p>
+  //     </div>
+  //   );
+
+  //   confirm({
+  //     title,
+  //     content,
+  //     onOk() {
+  //       return new Promise((resolve, reject) => {
+  //         setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+  //       }).catch(() => console.log('Oops errors!'));
+  //     },
+  //     onCancel() {},
+  //   });
+  // };
+
+  // renderSelectP = (resources = []) => {
+  //   return (
+  //     <Fragment>
+  //       <Row>
+  //         <Col span={3}>题目：</Col>
+  //         <Col span={13}>
+  //           <Input.TextArea placeholder={'富文本框'} rows={8} />
+  //         </Col>
+  //       </Row>
+  //       <Row gutter={16}>
+  //         <Col span={5}>
+  //           <Row>
+  //             <Col span={9}>7(1)</Col>
+  //             <Col span={15}>
+  //               <Input />
+  //             </Col>
+  //           </Row>
+  //         </Col>
+
+  //         <Col span={4}>
+  //           <Row>
+  //             <Col span={9}>7(2)</Col>
+  //             <Col span={15}>
+  //               <Input />
+  //             </Col>
+  //           </Row>
+  //         </Col>
+
+  //         <Col span={4}>
+  //           <Row>
+  //             <Col span={9}>7(3)</Col>
+  //             <Col span={15}>
+  //               <Input />
+  //             </Col>
+  //           </Row>
+  //         </Col>
+
+  //         <Col span={4}>
+  //           <Row>
+  //             <Col span={9}>7(1)</Col>
+  //             <Col span={15}>
+  //               <Input />
+  //             </Col>
+  //           </Row>
+  //         </Col>
+
+  //         <Col span={4}>
+  //           <Row>
+  //             <Col span={9}>7(1)</Col>
+  //             <Col span={15}>
+  //               <Input />
+  //             </Col>
+  //           </Row>
+  //         </Col>
+  //       </Row>
+
+  //       <Row>
+  //         <Col span={4}>答案:</Col>
+
+  //         <Col span={20}>
+  //           <Row>
+  //             <Col span={10}>
+  //               <Row>
+  //                 <Col span={5}>71()</Col>
+  //                 <Col span={11}>
+  //                   <Input />
+  //                 </Col>
+  //               </Row>
+  //             </Col>
+
+  //             <Col span={7}>
+  //               <Row>
+  //                 <Col span={9}>72()</Col>
+  //                 <Col span={11}>
+  //                   <Input />
+  //                 </Col>
+  //               </Row>
+  //             </Col>
+  //           </Row>
+  //         </Col>
+  //       </Row>
+
+  //       <Row>
+  //         <Col span={3}>解析:</Col>
+  //         <Col span={11} style={{ mariginRight: 30 }}>
+  //           <Input.TextArea placeholder={'专项说明文本（0/180）'} rows={8} />
+  //         </Col>
+  //       </Row>
+  //     </Fragment>
+  //   );
+  // };
+
+  renderSelectQs = v => {
+    const { editItem } = this.state;
+    // const resources = editItem;
+
+    for (let k in editItem.subTopics) {
+      for (let kk in editItem.subTopics[k].options) {
+        if (editItem.subTopics[k].options[kk].isCorrect === 1) {
+          editItem.subTopics[k].answer = editItem.subTopics[k].options[kk].topicNo;
+        }
+      }
     }
-    if (e.target.value == 2) {
-      this.setState({
-        itemStatus: 2,
-      });
-    }
-  };
-  deleteConfirm = id => {
-    let title = '删除试题';
-    let content = (
-      <div>
-        {' '}
-        <p>新增试卷时，试题可以删除</p> <p>题目删除后不可复原，确认删除第{id}题吗？</p>
-      </div>
-    );
-
-    confirm({
-      title,
-      content,
-      onOk() {
-        return new Promise((resolve, reject) => {
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'));
-      },
-      onCancel() {},
-    });
-  };
-  renderSelectP = (resources = []) => {
-    return (
-      <Fragment>
-        <Row>
-          <Col span={3}>题目：</Col>
-          <Col span={13}>
-            <Input.TextArea placeholder={'富文本框'} rows={8} />
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={5}>
-            <Row>
-              <Col span={9}>7(1)</Col>
-              <Col span={15}>
-                <Input />
-              </Col>
-            </Row>
-          </Col>
-
-          <Col span={4}>
-            <Row>
-              <Col span={9}>7(2)</Col>
-              <Col span={15}>
-                <Input />
-              </Col>
-            </Row>
-          </Col>
-
-          <Col span={4}>
-            <Row>
-              <Col span={9}>7(3)</Col>
-              <Col span={15}>
-                <Input />
-              </Col>
-            </Row>
-          </Col>
-
-          <Col span={4}>
-            <Row>
-              <Col span={9}>7(1)</Col>
-              <Col span={15}>
-                <Input />
-              </Col>
-            </Row>
-          </Col>
-
-          <Col span={4}>
-            <Row>
-              <Col span={9}>7(1)</Col>
-              <Col span={15}>
-                <Input />
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col span={4}>答案:</Col>
-
-          <Col span={20}>
-            <Row>
-              <Col span={10}>
-                <Row>
-                  <Col span={5}>71()</Col>
-                  <Col span={11}>
-                    <Input />
-                  </Col>
-                </Row>
-              </Col>
-
-              <Col span={7}>
-                <Row>
-                  <Col span={9}>72()</Col>
-                  <Col span={11}>
-                    <Input />
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-
-        <Row>
-          <Col span={3}>解析:</Col>
-          <Col span={11} style={{ mariginRight: 30 }}>
-            <Input.TextArea placeholder={'专项说明文本（0/180）'} rows={8} />
-          </Col>
-          <Col span={8} style={{ mariginLeft: 30 }}>
-            <Row style={{ textAlign: 'center' }}>
-              <Button style={{ width: 120 }}>清空重新录入</Button>
-            </Row>
-            <Row style={{ textAlign: 'center' }}>
-              <Button style={{ width: 120 }} type="primary">
-                确定试题
-              </Button>
-            </Row>
-          </Col>
-        </Row>
-      </Fragment>
-    );
-  };
-
-  renderSelectQs = (resources = []) => {
+    // debugger;
     return (
       <Fragment>
         <div className={styles.item1}>
-          <Row>
-            <Col span={6}>题目（1）:</Col>
-            <Col span={18}>
-              <Input placeholder={'Why did they punish Peter yesterday?'} />
-            </Col>
-          </Row>
+          {editItem &&
+            editItem.subTopics.map(subItem => {
+              return (
+                <Fragment key={subItem.topicNo}>
+                  <Row>
+                    <Col span={6}>题目（{subItem.topicNo}）:</Col>
 
-          <Row gutter={16}>
-            <Col span={14}>
-              <Row>
-                <Col span={4}>选项A:</Col>
-                <Col span={20}>
-                  <Input />
-                </Col>
-              </Row>
-            </Col>
+                    <Col span={18}>
+                      <Input defaultValue={subItem.title} />
+                    </Col>
+                  </Row>
 
-            <Col span={10}>
-              <Row>
-                <Col span={6}>or</Col>
-                <Col span={8}>
-                  <div>
-                    <Upload {...props}>
-                      <Button>
-                        <Icon type="upload" /> 上传图片
+                  {subItem.options.map(optionItem => {
+                    return (
+                      <Row gutter={16} key={optionItem.topicNo}>
+                        <Col span={14}>
+                          <Row>
+                            <Col span={6}>选项: {optionItem.topicNo} </Col>
+                            <Col span={18}>
+                              <Input defaultValue={optionItem.answer} />
+                            </Col>
+                          </Row>
+                        </Col>
+
+                        <Col span={10}>
+                          <Row>
+                            <Col span={6}>or</Col>
+                            <Col span={8}>
+                              <div>
+                                <Upload {...props}>
+                                  <Button>
+                                    <Icon type="upload" /> 上传图片
+                                  </Button>
+                                </Upload>
+                              </div>
+                            </Col>
+                          </Row>
+                        </Col>
+                      </Row>
+                    );
+                  })}
+
+                  <Row>
+                    <Col span={24}>
+                      <Button
+                        type="primary"
+                        onClick={() => this.addOption(subItem.topicNo)}
+                        style={{ width: '100%' }}
+                        icon={'plus'}
+                      >
+                        新增选项
                       </Button>
-                    </Upload>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={3}>答案:</Col>
+                    <Col span={13}>
+                      <InputNumber defaultValue={subItem.answer} min={1} max={10} />
+                    </Col>
+                  </Row>
+                  <Row className={styles.rightFooter}>
+                    <Col span={3}>解析:</Col>
 
-          <Row gutter={16}>
-            <Col span={14}>
-              <Row>
-                <Col span={4}>选项B:</Col>
-                <Col span={20}>
-                  <Input />
-                </Col>
-              </Row>
-            </Col>
-
-            <Col span={10}>
-              <Row>
-                <Col span={6}>or</Col>
-                <Col span={8}>
-                  <div>
-                    <Upload {...props}>
-                      <Button>
-                        <Icon type="upload" /> 上传图片
-                      </Button>
-                    </Upload>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={14}>
-              <Row>
-                <Col span={4}>选项C:</Col>
-                <Col span={20}>
-                  <Input />
-                </Col>
-              </Row>
-            </Col>
-
-            <Col span={10}>
-              <Row>
-                <Col span={6}>or</Col>
-                <Col span={8}>
-                  <div>
-                    <Upload {...props}>
-                      <Button>
-                        <Icon type="upload" /> 上传图片
-                      </Button>
-                    </Upload>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col span={24}>
-              <Button type="primary" style={{ width: '100%' }} icon={'plus'}>
-                新增选项
-              </Button>
-            </Col>
-          </Row>
-          <Row>
-            答案: <InputNumber min={1} max={10} />
-          </Row>
-          <Row>
-            <Col span={3}>解析:</Col>
-            <Col span={13}>
-              <Input.TextArea placeholder={'专项说明文本（0/180）'} rows={8} />
-            </Col>
-          </Row>
-        </div>
-
-        <div className={styles.item2}>
-          <Row>
-            <Col span={6}>题目（2）:</Col>
-            <Col span={18}>
-              <Input placeholder={'Why did they punish Peter yesterday?'} />
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={14}>
-              <Row>
-                <Col span={4}>选项A:</Col>
-                <Col span={20}>
-                  <Input />
-                </Col>
-              </Row>
-            </Col>
-
-            <Col span={10}>
-              <Row>
-                <Col span={6}>or</Col>
-                <Col span={8}>
-                  <div>
-                    <Upload {...props}>
-                      <Button>
-                        <Icon type="upload" /> 上传图片
-                      </Button>
-                    </Upload>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={14}>
-              <Row>
-                <Col span={4}>选项B:</Col>
-                <Col span={20}>
-                  <Input />
-                </Col>
-              </Row>
-            </Col>
-
-            <Col span={10}>
-              <Row>
-                <Col span={6}>or</Col>
-                <Col span={8}>
-                  <div>
-                    <Upload {...props}>
-                      <Button>
-                        <Icon type="upload" /> 上传图片
-                      </Button>
-                    </Upload>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-
-          <Row gutter={16}>
-            <Col span={14}>
-              <Row>
-                <Col span={4}>选项C:</Col>
-                <Col span={20}>
-                  <Input />
-                </Col>
-              </Row>
-            </Col>
-
-            <Col span={10}>
-              <Row>
-                <Col span={6}>or</Col>
-                <Col span={8}>
-                  <div>
-                    <Upload {...props}>
-                      <Button>
-                        <Icon type="upload" /> 上传图片
-                      </Button>
-                    </Upload>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col span={24}>
-              <Button type="primary" style={{ width: '100%' }} icon={'plus'}>
-                新增选项
-              </Button>
-            </Col>
-          </Row>
-          <Row>
-            答案: <InputNumber min={1} max={10} />
-          </Row>
-          <Row>
-            <Col span={3}>解析:</Col>
-            <Col span={11} style={{ mariginRight: 30 }}>
-              <Input.TextArea placeholder={'专项说明文本（0/180）'} rows={8} />
-            </Col>
-            <Col span={8} style={{ mariginLeft: 30 }}>
-              <Row style={{ textAlign: 'center' }}>
-                <Button style={{ width: 120 }}>清空重新录入</Button>
-              </Row>
-              <Row style={{ textAlign: 'center' }}>
-                <Button style={{ width: 120 }} type="primary">
-                  确定试题
-                </Button>
-              </Row>
-            </Col>
-          </Row>
+                    <Col span={13}>
+                      <Input.TextArea
+                        defaultValue={subItem.parse}
+                        placeholder={'专项说明文本（0/180）'}
+                        rows={8}
+                      />
+                    </Col>
+                    {subItem.topicNo === editItem.subTopics.length && (
+                      <Col span={7} className={styles.opt}>
+                        <Row>
+                          <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
+                            取消编辑
+                          </Button>
+                        </Row>
+                        <Row>
+                          <Button
+                            onClick={() => this.saveChange()}
+                            type="primary"
+                            style={{ width: '100%' }}
+                          >
+                            保存修改
+                          </Button>
+                        </Row>
+                      </Col>
+                    )}
+                  </Row>
+                </Fragment>
+              );
+            })}
         </div>
       </Fragment>
     );
@@ -453,8 +417,12 @@ class NewExam extends Component {
   render() {
     const {
       form: { getFieldDecorator },
+      examlist,
+      operate,
     } = this.props;
-    const { itemStatus } = this.state;
+    const { editItem, currentEditType, showEdit } = this.state;
+
+    const { specialList } = operate;
 
     return (
       <div className={styles.container}>
@@ -463,14 +431,9 @@ class NewExam extends Component {
             <NavLink to="/exam/list">试卷管理</NavLink>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            <NavLink
-              to="/exam/newexam"
-              activeStyle={{
-                color: '#1890FF',
-              }}
-            >
+            <a href="#" style={{ color: '#1890FF', textDecoration: 'none' }}>
               新增试卷
-            </NavLink>
+            </a>
           </Breadcrumb.Item>
         </Breadcrumb>
 
@@ -478,15 +441,19 @@ class NewExam extends Component {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item {...formItemLayout} label={'试卷名称'}>
-                {getFieldDecorator('name', {
+                {getFieldDecorator('title', {
                   rules: [{ required: true, message: '请输入名称，不超过18个字', max: 18 }],
+                  initialValue: '',
                 })(
                   <Input
                     placeholder="
-                                因果题型训练                     
-                                6/18"
+                    因果题型训练                    
+                    6/18"
                   />
                 )}
+              </Form.Item>
+              <Form.Item>
+                {getFieldDecorator('id', { initialValue: '' })(<Input type="hidden" />)}
               </Form.Item>
             </Col>
             <Col span={9}>
@@ -495,9 +462,10 @@ class NewExam extends Component {
                 wrapperCol={{ span: 8 }}
                 label="难度系数*（顶级5分）"
               >
-                {getFieldDecorator('input-number', {
+                {getFieldDecorator('level', {
                   rules: [{ required: true, message: '请输入名称' }],
-                })(<InputNumber min={1} max={10} />)}
+                  initialValue: '',
+                })(<InputNumber min={1} max={10} step={0.1} />)}
               </Form.Item>
             </Col>
           </Row>
@@ -505,17 +473,25 @@ class NewExam extends Component {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item {...formItemLayout} label={'专项选择'}>
-                <RadioGroup size="default" defaultValue="a">
-                  <RadioButton value="a">听力专项挑战</RadioButton>
-                  <RadioButton value="b">仿真模拟练习</RadioButton>
-                  <RadioButton value="c">历年真题闯关</RadioButton>
-                </RadioGroup>
+                {getFieldDecorator('specialId', {
+                  rules: [{ required: true, message: '请输入名称' }],
+                })(
+                  <RadioGroup size="default">
+                    {specialList.map(item => {
+                      return (
+                        <RadioButton key={item.id} value={item.id}>
+                          {item.title}
+                        </RadioButton>
+                      );
+                    })}
+                  </RadioGroup>
+                )}
               </Form.Item>
             </Col>
             <Col span={9}>
               <Form.Item>
-                <span style={{ marginRight: 20 }}>试卷总分：暂无</span>
-                该试卷音频总长：暂无
+                <span style={{ marginRight: 20 }}>试卷总分： {'暂无'}</span>
+                该试卷音频总长：{'暂无'}
               </Form.Item>
             </Col>
             <Col span={3}>
@@ -529,121 +505,70 @@ class NewExam extends Component {
         <Row gutter={24}>
           <Col lg={11} md={24}>
             <h2>试卷预览</h2>
-            <div className={styles.examLeft}>
-              {examList.map((item, i) => (
-                <div key={i}>
-                  <div className={styles.examTitle}>
-                    <h2 style={{ float: 'left', marginRight: 11 }}>
-                      {item.id}. {item.title}({item.score}分)
-                    </h2>
-                    <div style={{ float: 'left' }}>
-                      <a href="#" style={{ marginRight: 5 }}>
-                        编辑
-                      </a>
-                      <a href="#" onClick={() => this.deleteConfirm(item.id)}>
-                        删除
-                      </a>
-                    </div>
-                  </div>
-                  <p>A. {item.A}</p>
-                  <p>B. {item.B}</p>
-                  <p>C. {item.C}</p>
-                </div>
-              ))}
-            </div>
+            <div className={styles.examLeft} />
           </Col>
 
           <Col lg={12} md={24}>
-            <h2>新增题目</h2>
+            <h2>新增题目{editItem && editItem.topicNo}</h2>
             <div className={styles.examRight}>
               <Form onSubmit={this.handleSubmit}>
-                {/* <Row>
-                                    <Col span={12}>
-
-                                        <Form.Item
-                                            label="专项名称"
-                                            labelCol={{ span: 5 }}
-                                            wrapperCol={{ span: 17 }}
-                                        >
-                                            {getFieldDecorator('note', {
-                                                rules: [{ required: true, message: 'Please input your note!' }],
-                                            })(
-                                                <Input placeholder={'专项训练名称（不超过10个字）'} />
-                                            )}
-                                        </Form.Item>
-                                    </Col>
-                                </Row> */}
                 <Row>
                   <Form.Item label="题型选择" labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
-                    <RadioGroup onChange={this.onChangeExamType} size="default" defaultValue="1">
-                      <RadioButton value="1">选择</RadioButton>
-                      <RadioButton value="2">段落填空</RadioButton>
+                    <RadioGroup value={currentEditType} size="default">
+                      <RadioButton disabled={!(currentEditType === 1)} value={1}>
+                        选择
+                      </RadioButton>
+                      <RadioButton disabled={!(currentEditType === 2)} value={2}>
+                        段落填空
+                      </RadioButton>
                     </RadioGroup>
                   </Form.Item>
                 </Row>
-                {itemStatus == null ? (
-                  <div>
-                    <Row>
+                <div className={styles.itemHeader}>
+                  <Row>
+                    <Col span={8}>
+                      <span>上传音频: {(editItem && editItem.audio) || ''}</span>
+                    </Col>
+                    <Col span={8}>
+                      <span>该音频时长: {(editItem && editItem.audioDuration) || ''}</span>
+                    </Col>
+                    <Col span={3}>
+                      <Upload {...props}>
+                        <Button style={{ marginLeft: 60 }}>
+                          <Icon type="upload" /> 重新上传
+                        </Button>
+                      </Upload>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col span={14}>
                       <Form.Item
-                        label="上传音频 支持扩展名：mp3"
-                        labelCol={{ span: 10 }}
-                        wrapperCol={{ span: 14 }}
+                        label=" 该音频下的题目数:"
+                        labelCol={{ span: 11 }}
+                        wrapperCol={{ span: 11 }}
                       >
-                        {getFieldDecorator('note', {
-                          rules: [{ required: true, message: 'Please input your note!' }],
-                        })(
-                          <Upload {...props}>
-                            <Button style={{ marginLeft: 160 }}>
-                              <Icon type="upload" /> 上传文件
-                            </Button>
-                          </Upload>
-                        )}
+                        <InputNumber min={1} max={100} value={editItem && editItem.subNum} />
                       </Form.Item>
-                    </Row>
+                    </Col>
 
-                    <Row>
-                      <Col span={12}>
-                        <Form.Item
-                          label="该音频下的题目数"
-                          labelCol={{ span: 15 }}
-                          wrapperCol={{ span: 2 }}
-                        >
-                          {getFieldDecorator('note', {
-                            rules: [{ required: true, message: 'Please input your note!' }],
-                          })(<InputNumber min={1} max={10} />)}
-                        </Form.Item>
-                      </Col>
+                    <Col span={10}>
+                      <Form.Item
+                        label=" 每题分数:"
+                        labelCol={{ span: 11 }}
+                        wrapperCol={{ span: 12 }}
+                      >
+                        <InputNumber min={1} max={100} value={editItem && editItem.score} />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </div>
 
-                      <Col span={10}>
-                        <Form.Item
-                          label="每题分数"
-                          labelCol={{ span: 10 }}
-                          wrapperCol={{ span: 3 }}
-                        >
-                          {getFieldDecorator('note', {
-                            rules: [{ required: true, message: 'Please input your note!' }],
-                          })(<InputNumber min={1} max={10} />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={2}>
-                        <Form.Item
-                          wrapperCol={{
-                            xs: { span: 24, offset: 0 },
-                            sm: { span: 16, offset: 8 },
-                          }}
-                        >
-                          <Button type="primary" htmlType="submit">
-                            确认
-                          </Button>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </div>
-                ) : itemStatus == 1 ? (
-                  this.renderSelectQs()
-                ) : (
-                  this.renderSelectP()
-                )}
+                {showEdit && editItem.type === 1 ? this.renderSelectQs() : ''}
+                {showEdit && editItem.type === 2 ? this.renderSelectP() : ''}
+
+                {/* {currentEditType === 1 && !showEdit ? this.renderNewSelectQs() : ''} */}
+                {/* {currentEditType === 2 && !showEdit ? this.renderNewSelectP() : ''} */}
               </Form>
             </div>
           </Col>
@@ -653,4 +578,4 @@ class NewExam extends Component {
   }
 }
 
-export default NewExam;
+export default CreateExam;
