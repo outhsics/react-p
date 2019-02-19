@@ -100,7 +100,7 @@ class ExamList extends Component {
       type: 'examlist/fetchPaperList',
       payload: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 111111,
         specialId: id,
       },
     });
@@ -168,7 +168,7 @@ class ExamList extends Component {
           type: 'examlist/fetchPaperList',
           payload: {
             pageNum: 1,
-            pageSize: 10,
+            pageSize: 11111111111,
             specialId: id,
           },
         });
@@ -187,7 +187,7 @@ class ExamList extends Component {
       type: 'examlist/fetchPaperList',
       payload: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 1111111,
         specialId: tabType,
       },
     });
@@ -203,7 +203,7 @@ class ExamList extends Component {
       type: 'examlist/fetchPaperList',
       payload: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 1111111,
         specialId: id, //[0].id
       },
     });

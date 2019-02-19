@@ -102,7 +102,7 @@ class UserList extends Component {
           type: 'userlist/fetch',
           payload: {
             pageNum: 1,
-            pageSize: 10,
+            pageSize: 111111,
           },
         });
       },
@@ -369,7 +369,7 @@ class UserList extends Component {
       type: 'userlist/fetch',
       payload: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 111111,
       },
     });
   }

@@ -99,13 +99,30 @@ class Detail extends Component {
   };
   handleSubmit = () => {};
 
+  onChangeRadio = (v, event) => {
+    // console.log(v, event);
+    // debugger;
+    // console.log('radio checked', e.target.value);
+    // this.state.radioValueList[v - 1];
+
+    const { radioValueList } = this.state;
+    radioValueList[v - 1] = event.target.value;
+
+    console.log(this.state.radioValueList[v - 1], 'demo');
+
+    // debugger;
+
+    this.setState({
+      radioValueList,
+    });
+  };
+
   addOption = id => {
     const { editItem } = this.state;
     const data = editItem;
     // debugger;
     data.subTopics[id - 1].options.push({
-      // id: data.subTopics[id - 1].options.length + 1,
-      topicSubId: data.subTopics[id - 1].id,
+      // topicSubId: data.subTopics[id - 1].id,
       answer: '',
       image: '',
       isCorrect: 0,
@@ -124,10 +141,22 @@ class Detail extends Component {
 
   handleEdit = item => {
     console.log(item);
+    // radioValueList
+    const radioValueList = [];
+
+    for (let k in item.subTopics) {
+      for (let kk in item.subTopics[k].options) {
+        if (item.subTopics[k].options[kk].isCorrect === 1) {
+          radioValueList.push(item.subTopics[k].options[kk].topicNo);
+        }
+      }
+    }
+
     this.setState({
       editItem: item,
       showEdit: true,
       currentEditType: item.type,
+      radioValueList,
     });
   };
   deleteExam = () => {};
@@ -137,18 +166,17 @@ class Detail extends Component {
     const { examlist, dispatch, location } = this.props;
 
     const { paperDetail } = examlist;
-    // editItem.
 
-    for (let k in editItem.subTopics) {
-      for (let kk in editItem.subTopics[k].options) {
-        if (editItem.subTopics[k].answer === editItem.subTopics[k].options[kk].topicNo) {
-          editItem.subTopics[k].options[kk].isCorrect = 1;
-        } else {
-          editItem.subTopics[k].options[kk].isCorrect = 0;
-        }
-        delete editItem.subTopics[k].answer;
-      }
-    }
+    // for (let k in editItem.subTopics) {
+    //   for (let kk in editItem.subTopics[k].options) {
+    //     if (editItem.subTopics[k].answer === editItem.subTopics[k].options[kk].topicNo) {
+    //       editItem.subTopics[k].options[kk].isCorrect = 1;
+    //     } else {
+    //       editItem.subTopics[k].options[kk].isCorrect = 0;
+    //     }
+    //     delete editItem.subTopics[k].answer;
+    //   }
+    // }
 
     paperDetail.topics[editItem.topicNo - 1] = editItem;
 
@@ -157,8 +185,10 @@ class Detail extends Component {
     //     delete paperDetail.topics[k].subTopics.kk.answer;
     //   }
     // }
+    console.log(paperDetail, 'paperDetail');
 
     // debugger;
+    // return;
     dispatch({
       type: 'examlist/updatePaper',
       payload: paperDetail,
@@ -306,13 +336,13 @@ class Detail extends Component {
     const { editItem } = this.state;
     // const resources = editItem;
 
-    for (let k in editItem.subTopics) {
-      for (let kk in editItem.subTopics[k].options) {
-        if (editItem.subTopics[k].options[kk].isCorrect === 1) {
-          editItem.subTopics[k].answer = editItem.subTopics[k].options[kk].topicNo;
-        }
-      }
-    }
+    // for (let k in editItem.subTopics) {
+    //   for (let kk in editItem.subTopics[k].options) {
+    //     if (editItem.subTopics[k].options[kk].isCorrect === 1) {
+    //       editItem.subTopics[k].answer = editItem.subTopics[k].options[kk].topicNo;
+    //     }
+    //   }
+    // }
     // debugger;
     return (
       <Fragment>
@@ -328,36 +358,48 @@ class Detail extends Component {
                       <Input defaultValue={subItem.title} />
                     </Col>
                   </Row>
+                  <Row>
+                    <Col span={24}>
+                      <RadioGroup
+                        onChange={() => this.onChangeRadio(subItem.topicNo, event)}
+                        value={this.state.radioValueList[subItem.topicNo - 1]}
+                        style={{ width: '100%' }}
+                      >
+                        {subItem.options.map(optionItem => {
+                          return (
+                            <Row gutter={16} key={optionItem.topicNo}>
+                              <Col span={14}>
+                                <Row>
+                                  <Col span={6}>选项: {optionItem.topicNo} </Col>
+                                  <Col span={18}>
+                                    <Input defaultValue={optionItem.answer} />
+                                  </Col>
+                                </Row>
+                              </Col>
 
-                  {subItem.options.map(optionItem => {
-                    return (
-                      <Row gutter={16} key={optionItem.topicNo}>
-                        <Col span={14}>
-                          <Row>
-                            <Col span={6}>选项: {optionItem.topicNo} </Col>
-                            <Col span={18}>
-                              <Input defaultValue={optionItem.answer} />
-                            </Col>
-                          </Row>
-                        </Col>
-
-                        <Col span={10}>
-                          <Row>
-                            <Col span={6}>or</Col>
-                            <Col span={8}>
-                              <div>
-                                <Upload {...props}>
-                                  <Button>
-                                    <Icon type="upload" /> 上传图片
-                                  </Button>
-                                </Upload>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    );
-                  })}
+                              <Col span={9}>
+                                <Row>
+                                  <Col span={4}>or</Col>
+                                  <Col span={17}>
+                                    <div>
+                                      <Upload {...props}>
+                                        <Button>
+                                          <Icon type="upload" /> 上传图片
+                                        </Button>
+                                      </Upload>
+                                    </div>
+                                  </Col>
+                                  <Col span={3}>
+                                    <Radio value={optionItem.topicNo} />
+                                  </Col>
+                                </Row>
+                              </Col>
+                            </Row>
+                          );
+                        })}
+                      </RadioGroup>
+                    </Col>
+                  </Row>
 
                   <Row>
                     <Col span={24}>
@@ -371,12 +413,12 @@ class Detail extends Component {
                       </Button>
                     </Col>
                   </Row>
-                  <Row>
+                  {/* <Row>
                     <Col span={3}>答案:</Col>
                     <Col span={13}>
                       <InputNumber defaultValue={subItem.answer} min={1} max={10} />
                     </Col>
-                  </Row>
+                  </Row> */}
                   <Row className={styles.rightFooter}>
                     <Col span={3}>解析:</Col>
 
