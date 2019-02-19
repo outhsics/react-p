@@ -57,35 +57,50 @@ class Detail extends PureComponent {
     super(props, context);
     this.state = {
       uploadAudioName: null,
+      uploadAudioDuration: null,
       editItem: null,
       currentEditType: 1,
       showEdit: false,
-      uploadProps: {
-        name: 'file',
-        action: 'https://api.jze100.com/hear/admin/file/upload',
-        headers: {
-          authorization: 'authorization-text',
-        },
-        onChange(info) {
-          console.log(info.file.name, 'info123');
-
-          Detail.setState({
-            uploadAudioName: info.file.name,
-          });
-          if (info.file.status !== 'uploading') {
-            console.log(info.file, 'info.file');
-            console.log(info.fileList, ' info.fileList');
-          }
-
-          if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`);
-          } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          }
-        },
-      },
     };
   }
+
+  uploadProps = {
+    name: 'file',
+    action: 'https://api.jze100.com/hear/admin/file/upload',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    onChange: info => {
+      console.log(info.fileList, 'fileList');
+
+      if (info.fileList.length > 1) {
+        info.fileList.shift();
+      }
+      this.setState({
+        uploadAudioName: info.file.name,
+      });
+      const _this = this;
+      // if (info.fileList.l)
+
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, 'info.file');
+        console.log(info.fileList, ' info.fileList');
+      }
+
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+        if (info.file.response.code === 1) {
+          _this.setState({
+            uploadAudioDuration: info.file.response.data.duration,
+          });
+          console.log(_this.state.uploadAudioDuration, '2');
+          // debugger;
+        }
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
   // state = {
   //   uploadAudioName: null,
   //   editItem: null,
@@ -130,13 +145,13 @@ class Detail extends PureComponent {
     });
   }
 
-  onSubmitExam = () => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'exam/createPaper',
-      payload: '',
-    });
-  };
+  // onSubmitExam = () => {
+  //   const { dispatch } = this.props;
+  //   dispatch({
+  //     type: 'exam/createPaper',
+  //     payload: '',
+  //   });
+  // };
   handleSubmit = () => {};
 
   onChangeRadio = () => {
@@ -200,17 +215,45 @@ class Detail extends PureComponent {
   };
   deleteExam = () => {};
 
+  calcScore = v => {
+    let score = 0;
+    for (let k in v.topics) {
+      score += v.topics[k].score;
+    }
+    return score;
+  };
+
+  calcDuration = v => {
+    let duration = 0;
+    for (let k in v.topics) {
+      duration += v.topics[k].audioDuration;
+    }
+    return duration;
+  };
+
   saveChange = () => {
     const { editItem } = this.state;
     const { examlist, dispatch, location } = this.props;
-
     const { paperDetail } = examlist;
-
     paperDetail.topics[editItem.topicNo - 1] = editItem;
-    // return;
+
+    examlist.audio = this.state.uploadAudioName;
+    examlist.audioDuration = Number(this.state.uploadAudioDuration);
+
+    let formData = this.props.form.getFieldsValue();
+    const totalScore = this.calcScore(paperDetail);
+    const totalDuration = this.calcDuration(paperDetail);
+
+    formData = Object.assign(formData, { totalScore }, { totalDuration });
+
+    const saveData = Object.assign(paperDetail, formData);
+
+    // is Correct
+    // TODO
+    debugger;
     dispatch({
       type: 'examlist/updatePaper',
-      payload: paperDetail,
+      payload: saveData,
     });
 
     dispatch({
@@ -279,7 +322,7 @@ class Detail extends PureComponent {
                                   <Col span={4}>or</Col>
                                   <Col span={17}>
                                     <div>
-                                      <Upload {...this.state.uploadProps}>
+                                      <Upload {...this.uploadProps}>
                                         <Button>
                                           <Icon type="upload" /> 上传图片
                                         </Button>
@@ -361,7 +404,13 @@ class Detail extends PureComponent {
       examlist,
       operate,
     } = this.props;
-    const { editItem, currentEditType, showEdit, uploadAudioName } = this.state;
+    const {
+      editItem,
+      currentEditType,
+      showEdit,
+      uploadAudioName,
+      uploadAudioDuration,
+    } = this.state;
     const { paperDetail } = examlist;
     const { specialList } = operate;
 
@@ -396,7 +445,9 @@ class Detail extends PureComponent {
                   )}
                 </Form.Item>
                 <Form.Item>
-                  {getFieldDecorator('id', { initialValue: '' })(<Input type="hidden" />)}
+                  {getFieldDecorator('id', { initialValue: paperDetail.id })(
+                    <Input type="hidden" />
+                  )}
                 </Form.Item>
               </Col>
               <Col span={9}>
@@ -441,11 +492,11 @@ class Detail extends PureComponent {
                   该试卷音频总长：{paperDetail.totalDuration || '暂无'}
                 </Form.Item>
               </Col>
-              <Col span={3}>
+              {/* <Col span={3}>
                 <Button type="primary" onClick={this.onSubmitExam}>
                   提交试卷
                 </Button>
-              </Col>
+              </Col> */}
             </Row>
           </Form>
 
@@ -548,10 +599,15 @@ class Detail extends PureComponent {
                         </span>
                       </Col>
                       <Col span={8}>
-                        <span>该音频时长: {(editItem && editItem.audioDuration) || ''}</span>
+                        <span>
+                          该音频时长:
+                          {uploadAudioDuration >= 0
+                            ? uploadAudioDuration
+                            : (editItem && editItem.audioDuration) || ''}
+                        </span>
                       </Col>
                       <Col span={3}>
-                        <Upload {...this.state.uploadProps}>
+                        <Upload {...this.uploadProps}>
                           <Button style={{ marginLeft: 60 }}>
                             <Icon type="upload" /> 重新上传
                           </Button>
