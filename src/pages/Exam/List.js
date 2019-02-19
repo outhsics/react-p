@@ -9,10 +9,6 @@ import { create } from 'domain';
 const { TabPane } = Tabs;
 const confirm = Modal.confirm;
 
-// const pagination = { position: 'bottom' };
-
-const footer = () => <span style={{ color: '#1890FF' }}>该专题下共{11 || 0} 份试卷</span>;
-const showTotal = () => <span>11</span>;
 @connect(({ examlist, operate }) => ({
   examlist,
   operate,
@@ -21,20 +17,7 @@ class ExamList extends Component {
   state = {
     currentSpecial: '',
     currentPageNum: 1,
-    pagination: {
-      bordered: false,
-      loading: false,
-      pagination: {
-        total: this.props.examlist.paperTotal,
-      },
-      footer,
-      showTotal,
-      total: 85,
-      size: 'default',
-      title: undefined,
-      scroll: undefined,
-      hasData: true,
-    },
+    total: null,
   };
 
   columns = [
@@ -241,12 +224,10 @@ class ExamList extends Component {
       cbPageTotal: this.cbPageTotal,
     });
   };
+
   cbPageTotal = v => {
     this.setState({
-      pagination: {
-        ...this.state.pagination.pagination,
-        total: v,
-      },
+      total: v,
     });
   };
 
@@ -277,7 +258,7 @@ class ExamList extends Component {
 
     const { paperList, paperTotal } = examlist;
     const { specialList } = operate;
-    const { pagination } = this.state;
+    const { total } = this.state;
     // const activeKeyProps = {};
     // if (tabDefaultActiveKey !== undefined) {
     //   activeKeyProps.defaultActiveKey = tabDefaultActiveKey;
@@ -319,7 +300,10 @@ class ExamList extends Component {
 
                 <div className={styles.tabelList}>
                   <Table
-                    {...this.state.pagination}
+                    footer={() => (
+                      <span style={{ color: '#1890FF' }}>该专题下共{11 || 0} 份试卷</span>
+                    )}
+                    pagination={{ total }}
                     onChange={this.onPageChange}
                     rowKey={record => record.id}
                     columns={this.columns}

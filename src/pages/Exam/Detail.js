@@ -232,7 +232,7 @@ class Detail extends PureComponent {
   };
 
   saveChange = () => {
-    const { editItem } = this.state;
+    const { editItem,radioValueList } = this.state;
     const { examlist, dispatch, location } = this.props;
     const { paperDetail } = examlist;
     paperDetail.topics[editItem.topicNo - 1] = editItem;
@@ -248,9 +248,28 @@ class Detail extends PureComponent {
 
     const saveData = Object.assign(paperDetail, formData);
 
-    // is Correct
+    const radioValueList; [1]
+
+    // for (let k in paperDetail.topics) {
+    //   for (let kk in radioValueList) {
+    //     if(k === kk ){
+    //         for(let kkk in  paperDetail[k].subTopics){
+    //           for (let kkkk in paperDetail[k].subTopics.options) {
+    //             if (paperDetail[k].subTopics.options[kkkk].tp)
+    //           }
+
+    //         }
+    //     }
+
+    //   }
+
+    // }
+    // isCorrect
+
     // TODO
+
     debugger;
+    return;
     dispatch({
       type: 'examlist/updatePaper',
       payload: saveData,
@@ -320,7 +339,7 @@ class Detail extends PureComponent {
                               <Col span={9}>
                                 <Row>
                                   <Col span={4}>or</Col>
-                                  <Col span={17}>
+                                  <Col span={15}>
                                     <div>
                                       <Upload {...this.uploadProps}>
                                         <Button>
@@ -329,7 +348,8 @@ class Detail extends PureComponent {
                                       </Upload>
                                     </div>
                                   </Col>
-                                  <Col span={3}>
+                                  <Col span={5}>
+                                    &nbsp;&nbsp;&nbsp;
                                     <Radio value={optionItem.topicNo} />
                                   </Col>
                                 </Row>
