@@ -1,4 +1,4 @@
-import React, { Component, div, Fragment } from 'react';
+import React, { PureComponent, Component, div, Fragment } from 'react';
 import {
   Icon,
   Tabs,
@@ -18,6 +18,7 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import NavLink from 'umi/navlink';
+import update, { extend } from 'immutability-helper';
 
 import moment from 'moment';
 
@@ -46,35 +47,41 @@ const formItemLayout2 = {
   },
 };
 
-const props = {
-  name: 'file',
-  action: 'https://api.jze100.com/hear/admin/file/upload',
-  headers: {
-    authorization: 'authorization-text',
-  },
-  onChange(info) {
-    console.log(info, 'info');
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
-
 @connect(({ examlist, operate }) => ({
   examlist,
   operate,
 }))
 @Form.create()
-class Detail extends Component {
+class Detail extends PureComponent {
   state = {
+    uploadAudioName: null,
     editItem: null,
     currentEditType: 1,
     showEdit: false,
+    uploadProps: {
+      name: 'file',
+      action: 'https://api.jze100.com/hear/admin/file/upload',
+      headers: {
+        authorization: 'authorization-text',
+      },
+      onChange(info) {
+        console.log(info.file.name, 'info123');
+
+        this.setState({
+          uploadAudioName: info.file.name,
+        });
+        if (info.file.status !== 'uploading') {
+          console.log(info.file, 'info.file');
+          console.log(info.fileList, ' info.fileList');
+        }
+
+        if (info.file.status === 'done') {
+          message.success(`${info.file.name} file uploaded successfully`);
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    },
   };
 
   componentDidMount() {
@@ -99,28 +106,23 @@ class Detail extends Component {
   };
   handleSubmit = () => {};
 
-  onChangeRadio = (v, event) => {
-    // console.log(v, event);
-    // debugger;
-    // console.log('radio checked', e.target.value);
-    // this.state.radioValueList[v - 1];
+  onChangeRadio = () => {
+    const v = this.refs.radioGroup.props.topicno;
+    const copyData = this.state.radioValueList.slice(0);
 
-    const { radioValueList } = this.state;
-    radioValueList[v - 1] = event.target.value;
-
-    console.log(this.state.radioValueList[v - 1], 'demo');
-
-    // debugger;
+    copyData[v - 1] = Number(event.target.value);
 
     this.setState({
-      radioValueList,
+      radioValueList: copyData,
     });
   };
 
-  addOption = id => {
+  addOption = () => {
     const { editItem } = this.state;
-    const data = editItem;
-    // debugger;
+    const id = this.refs.addOption.props.topicno;
+
+    const data = JSON.parse(JSON.stringify(editItem));
+
     data.subTopics[id - 1].options.push({
       // topicSubId: data.subTopics[id - 1].id,
       answer: '',
@@ -128,9 +130,15 @@ class Detail extends Component {
       isCorrect: 0,
       topicNo: data.subTopics[id - 1].options.length + 1,
     });
-    this.setState({
-      editItem: data,
-    });
+
+    this.setState(
+      Object.assign(
+        {},
+        {
+          editItem: data,
+        }
+      )
+    );
   };
 
   cancelEdit = () => {
@@ -140,8 +148,6 @@ class Detail extends Component {
   };
 
   handleEdit = item => {
-    console.log(item);
-    // radioValueList
     const radioValueList = [];
 
     for (let k in item.subTopics) {
@@ -167,27 +173,7 @@ class Detail extends Component {
 
     const { paperDetail } = examlist;
 
-    // for (let k in editItem.subTopics) {
-    //   for (let kk in editItem.subTopics[k].options) {
-    //     if (editItem.subTopics[k].answer === editItem.subTopics[k].options[kk].topicNo) {
-    //       editItem.subTopics[k].options[kk].isCorrect = 1;
-    //     } else {
-    //       editItem.subTopics[k].options[kk].isCorrect = 0;
-    //     }
-    //     delete editItem.subTopics[k].answer;
-    //   }
-    // }
-
     paperDetail.topics[editItem.topicNo - 1] = editItem;
-
-    // for (let k in paperDetail.topics) {
-    //   for (let kk in paperDetail.topics[k].subTopics) {
-    //     delete paperDetail.topics[k].subTopics.kk.answer;
-    //   }
-    // }
-    console.log(paperDetail, 'paperDetail');
-
-    // debugger;
     // return;
     dispatch({
       type: 'examlist/updatePaper',
@@ -213,137 +199,13 @@ class Detail extends Component {
       contentType: undefined,
       mimeType: 'multipart/form-data',
       success: function(data) {
-        //  success
         console.log(data, '12');
       },
     });
   };
 
-  // deleteConfirm = id => {
-  //   let title = '删除试题';
-  //   let content = (
-  //     <div>
-  //       {' '}
-  //       <p>新增试卷时，试题可以删除</p> <p>题目删除后不可复原，确认删除第{id}题吗？</p>
-  //     </div>
-  //   );
-
-  //   confirm({
-  //     title,
-  //     content,
-  //     onOk() {
-  //       return new Promise((resolve, reject) => {
-  //         setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-  //       }).catch(() => console.log('Oops errors!'));
-  //     },
-  //     onCancel() {},
-  //   });
-  // };
-
-  // renderSelectP = (resources = []) => {
-  //   return (
-  //     <Fragment>
-  //       <Row>
-  //         <Col span={3}>题目：</Col>
-  //         <Col span={13}>
-  //           <Input.TextArea placeholder={'富文本框'} rows={8} />
-  //         </Col>
-  //       </Row>
-  //       <Row gutter={16}>
-  //         <Col span={5}>
-  //           <Row>
-  //             <Col span={9}>7(1)</Col>
-  //             <Col span={15}>
-  //               <Input />
-  //             </Col>
-  //           </Row>
-  //         </Col>
-
-  //         <Col span={4}>
-  //           <Row>
-  //             <Col span={9}>7(2)</Col>
-  //             <Col span={15}>
-  //               <Input />
-  //             </Col>
-  //           </Row>
-  //         </Col>
-
-  //         <Col span={4}>
-  //           <Row>
-  //             <Col span={9}>7(3)</Col>
-  //             <Col span={15}>
-  //               <Input />
-  //             </Col>
-  //           </Row>
-  //         </Col>
-
-  //         <Col span={4}>
-  //           <Row>
-  //             <Col span={9}>7(1)</Col>
-  //             <Col span={15}>
-  //               <Input />
-  //             </Col>
-  //           </Row>
-  //         </Col>
-
-  //         <Col span={4}>
-  //           <Row>
-  //             <Col span={9}>7(1)</Col>
-  //             <Col span={15}>
-  //               <Input />
-  //             </Col>
-  //           </Row>
-  //         </Col>
-  //       </Row>
-
-  //       <Row>
-  //         <Col span={4}>答案:</Col>
-
-  //         <Col span={20}>
-  //           <Row>
-  //             <Col span={10}>
-  //               <Row>
-  //                 <Col span={5}>71()</Col>
-  //                 <Col span={11}>
-  //                   <Input />
-  //                 </Col>
-  //               </Row>
-  //             </Col>
-
-  //             <Col span={7}>
-  //               <Row>
-  //                 <Col span={9}>72()</Col>
-  //                 <Col span={11}>
-  //                   <Input />
-  //                 </Col>
-  //               </Row>
-  //             </Col>
-  //           </Row>
-  //         </Col>
-  //       </Row>
-
-  //       <Row>
-  //         <Col span={3}>解析:</Col>
-  //         <Col span={11} style={{ mariginRight: 30 }}>
-  //           <Input.TextArea placeholder={'专项说明文本（0/180）'} rows={8} />
-  //         </Col>
-  //       </Row>
-  //     </Fragment>
-  //   );
-  // };
-
   renderSelectQs = v => {
     const { editItem } = this.state;
-    // const resources = editItem;
-
-    // for (let k in editItem.subTopics) {
-    //   for (let kk in editItem.subTopics[k].options) {
-    //     if (editItem.subTopics[k].options[kk].isCorrect === 1) {
-    //       editItem.subTopics[k].answer = editItem.subTopics[k].options[kk].topicNo;
-    //     }
-    //   }
-    // }
-    // debugger;
     return (
       <Fragment>
         <div className={styles.item1}>
@@ -361,8 +223,10 @@ class Detail extends Component {
                   <Row>
                     <Col span={24}>
                       <RadioGroup
-                        onChange={() => this.onChangeRadio(subItem.topicNo, event)}
+                        onChange={() => this.onChangeRadio()}
                         value={this.state.radioValueList[subItem.topicNo - 1]}
+                        topicno={subItem.topicNo}
+                        ref="radioGroup"
                         style={{ width: '100%' }}
                       >
                         {subItem.options.map(optionItem => {
@@ -382,7 +246,7 @@ class Detail extends Component {
                                   <Col span={4}>or</Col>
                                   <Col span={17}>
                                     <div>
-                                      <Upload {...props}>
+                                      <Upload {...this.state.uploadProps}>
                                         <Button>
                                           <Icon type="upload" /> 上传图片
                                         </Button>
@@ -405,7 +269,9 @@ class Detail extends Component {
                     <Col span={24}>
                       <Button
                         type="primary"
-                        onClick={() => this.addOption(subItem.topicNo)}
+                        onClick={() => this.addOption()}
+                        topicno={subItem.topicNo}
+                        ref="addOption"
                         style={{ width: '100%' }}
                         icon={'plus'}
                       >
@@ -462,7 +328,7 @@ class Detail extends Component {
       examlist,
       operate,
     } = this.props;
-    const { editItem, currentEditType, showEdit } = this.state;
+    const { editItem, currentEditType, showEdit, uploadAudioName } = this.state;
     const { paperDetail } = examlist;
     const { specialList } = operate;
 
@@ -644,13 +510,15 @@ class Detail extends Component {
                   <div className={styles.itemHeader}>
                     <Row>
                       <Col span={8}>
-                        <span>上传音频: {(editItem && editItem.audio) || ''}</span>
+                        <span>
+                          上传音频: {uploadAudioName || (editItem && editItem.audio) || ''}
+                        </span>
                       </Col>
                       <Col span={8}>
                         <span>该音频时长: {(editItem && editItem.audioDuration) || ''}</span>
                       </Col>
                       <Col span={3}>
-                        <Upload {...props}>
+                        <Upload {...this.state.uploadProps}>
                           <Button style={{ marginLeft: 60 }}>
                             <Icon type="upload" /> 重新上传
                           </Button>

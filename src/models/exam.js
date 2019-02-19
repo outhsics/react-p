@@ -62,10 +62,9 @@ export default {
         if (callback) callback();
       }
     },
-    *fetchPaperList({ payload }, { call, put }) {
+    *fetchPaperList({ payload, cbPageTotal }, { call, put }) {
       const { data } = yield call(queryPaperList, payload);
       const { code, data: list } = data;
-      // debugger;
       if (code === 1) {
         yield put({
           type: 'savePaperList',
@@ -76,6 +75,9 @@ export default {
           type: 'savePaperTotal',
           payload: list.total,
         });
+        // debugger;
+
+        if (cbPageTotal) cbPageTotal(list.total);
       }
     },
     *fetchPaperDetail({ payload, callback }, { call, put }) {

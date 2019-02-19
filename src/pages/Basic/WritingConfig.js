@@ -3,7 +3,6 @@ import moment from 'moment';
 import { message, Card, Icon, Form, Row, Col, Button, Input, DatePicker, InputNumber } from 'antd';
 import { connect } from 'dva';
 import styles from './WritingConfig.less';
-// import cloneDeep from 'lodash/cloneDeep';
 
 const MyIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_1025319_360iia8jjiu.js', // 在 iconfont.cn 上生成

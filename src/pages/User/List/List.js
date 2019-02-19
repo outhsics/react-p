@@ -70,6 +70,7 @@ class UserList extends Component {
   state = {
     // modalVisible: false,
     // updateModalVisible: false,
+    currentPageNum: 1,
     selectedTags: [],
     expandForm: false,
     filterVal: '',
@@ -101,8 +102,8 @@ class UserList extends Component {
         dispatch({
           type: 'userlist/fetch',
           payload: {
-            pageNum: 1,
-            pageSize: 111111,
+            pageNum: this.state.currentPageNum,
+            pageSize: 10,
           },
         });
       },
@@ -365,11 +366,13 @@ class UserList extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
+    const { currentPageNum } = this.state;
+
     dispatch({
       type: 'userlist/fetch',
       payload: {
-        pageNum: 1,
-        pageSize: 111111,
+        pageNum: currentPageNum,
+        pageSize: 10,
       },
     });
   }
@@ -380,6 +383,20 @@ class UserList extends Component {
     console.log('You are interested in: ', nextSelectedTags);
     this.setState({ selectedTags: nextSelectedTags });
   }
+
+  onPageChange = v => {
+    const { dispatch } = this.props;
+    this.setState({
+      currentPageNum: v.current,
+    });
+    dispatch({
+      type: 'userlist/fetch',
+      payload: {
+        pageNum: v.current,
+        pageSize: 10,
+      },
+    });
+  };
 
   render() {
     const { userlist } = this.props;
@@ -400,6 +417,7 @@ class UserList extends Component {
                   showQuickJumper: true,
                   showSizeChanger: true,
                 }}
+                onChange={this.onPageChange}
                 rowKey={record => record.id}
                 columns={this.columns}
                 dataSource={list}

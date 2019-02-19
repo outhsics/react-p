@@ -9,6 +9,10 @@ import { create } from 'domain';
 const { TabPane } = Tabs;
 const confirm = Modal.confirm;
 
+// const pagination = { position: 'bottom' };
+
+const footer = () => <span style={{ color: '#1890FF' }}>该专题下共{11 || 0} 份试卷</span>;
+const showTotal = () => <span>11</span>;
 @connect(({ examlist, operate }) => ({
   examlist,
   operate,
@@ -16,6 +20,21 @@ const confirm = Modal.confirm;
 class ExamList extends Component {
   state = {
     currentSpecial: '',
+    currentPageNum: 1,
+    pagination: {
+      bordered: false,
+      loading: false,
+      pagination: {
+        total: this.props.examlist.paperTotal,
+      },
+      footer,
+      showTotal,
+      total: 85,
+      size: 'default',
+      title: undefined,
+      scroll: undefined,
+      hasData: true,
+    },
   };
 
   columns = [
@@ -85,27 +104,35 @@ class ExamList extends Component {
 
   deleteSuccess = () => {
     const { dispatch, operate } = this.props;
+    const { currentPageNum } = this.state;
     const { specialList } = operate;
-    let id;
-
-    if (!this.state.currentSpecial) {
-      id = specialList.length && specialList[0].id;
-    } else {
-      id = this.state.currentSpecial;
-    }
 
     message.success('删除成功');
 
     dispatch({
       type: 'examlist/fetchPaperList',
       payload: {
-        pageNum: 1,
-        pageSize: 111111,
-        specialId: id,
+        pageNum: currentPageNum,
+        pageSize: 10,
+        specialId: this.state.currentSpecial,
       },
     });
   };
 
+  onPageChange = v => {
+    const { dispatch } = this.props;
+    this.setState({
+      currentPageNum: v.current,
+    });
+    dispatch({
+      type: 'examlist/fetchPaperList',
+      payload: {
+        pageNum: v.current,
+        pageSize: 10,
+        specialId: this.state.currentSpecial,
+      },
+    });
+  };
   showDeleteConfirm = record => {
     const { dispatch } = this.props;
     const _this = this;
@@ -142,16 +169,10 @@ class ExamList extends Component {
   showConfirm = (flag, record) => {
     let title = flag ? `是否确认启用${record.title}该试卷？` : `是否确认禁用${record.title}该试卷?`;
     let content = flag ? '启用后，小程序端可以看到该试卷并答题' : '禁用后，小程序端看不到该试卷';
-    let id;
 
     const { dispatch, operate } = this.props;
+    const { currentPageNum } = this.state;
     const { specialList } = operate;
-
-    if (!this.state.currentSpecial) {
-      id = specialList.length && specialList[0].id;
-    } else {
-      id = this.state.currentSpecial;
-    }
 
     confirm({
       title,
@@ -167,9 +188,9 @@ class ExamList extends Component {
         dispatch({
           type: 'examlist/fetchPaperList',
           payload: {
-            pageNum: 1,
-            pageSize: 11111111111,
-            specialId: id,
+            pageNum: currentPageNum,
+            pageSize: 10,
+            specialId: this.state.currentSpecial,
           },
         });
       },
@@ -178,7 +199,8 @@ class ExamList extends Component {
   };
 
   onTabChange = tabType => {
-    console.log(tabType, 'tabType');
+    const { currentPageNum } = this.state;
+
     const { dispatch } = this.props;
     this.setState({
       currentSpecial: tabType,
@@ -186,8 +208,8 @@ class ExamList extends Component {
     dispatch({
       type: 'examlist/fetchPaperList',
       payload: {
-        pageNum: 1,
-        pageSize: 1111111,
+        pageNum: currentPageNum,
+        pageSize: 10,
         specialId: tabType,
       },
     });
@@ -197,19 +219,40 @@ class ExamList extends Component {
   createExam = () => {};
 
   callback = id => {
-    const { dispatch } = this.props;
+    if (!id) return;
+
+    this.setState({
+      currentSpecial: id,
+    });
+
+    // console.log('this.state.currentSpecial', this.state.currentSpecial);
+    const { dispatch, examlist } = this.props;
+    // const { paperTotal } = examlist;
+
+    const { currentPageNum } = this.state;
 
     dispatch({
       type: 'examlist/fetchPaperList',
       payload: {
-        pageNum: 1,
-        pageSize: 1111111,
-        specialId: id, //[0].id
+        pageNum: currentPageNum,
+        pageSize: 10,
+        specialId: this.state.currentSpecial,
+      },
+      cbPageTotal: this.cbPageTotal,
+    });
+  };
+  cbPageTotal = v => {
+    this.setState({
+      pagination: {
+        ...this.state.pagination.pagination,
+        total: v,
       },
     });
   };
 
   componentDidMount() {
+    console.log(this.props.examlist.paperTotal, 'this.props.examlist.paperTotal');
+
     const { dispatch, operate } = this.props;
     dispatch({
       type: 'operate/fetchSpecialList',
@@ -234,6 +277,7 @@ class ExamList extends Component {
 
     const { paperList, paperTotal } = examlist;
     const { specialList } = operate;
+    const { pagination } = this.state;
     // const activeKeyProps = {};
     // if (tabDefaultActiveKey !== undefined) {
     //   activeKeyProps.defaultActiveKey = tabDefaultActiveKey;
@@ -275,9 +319,8 @@ class ExamList extends Component {
 
                 <div className={styles.tabelList}>
                   <Table
-                    footer={() => (
-                      <span style={{ color: '#1890FF' }}>该专题下共{paperTotal || 0} 份试卷</span>
-                    )}
+                    {...this.state.pagination}
+                    onChange={this.onPageChange}
                     rowKey={record => record.id}
                     columns={this.columns}
                     dataSource={paperList}
