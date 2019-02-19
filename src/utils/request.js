@@ -38,6 +38,17 @@
 //   });
 // };
 
+// const data = await response.json();
+
+// const ret = {
+//   data,
+//   headers: {},
+// };
+
+// if (response.headers.get('x-token')) {
+//   ret.headers['x-token'] = response.headers.get('x-token');
+// }
+
 // /**
 //  * 配置request请求时的默认参数
 //  */
@@ -51,14 +62,8 @@
 
 // export default request;
 
-
-
-
 import axios from 'axios';
-import {
-  notification
-} from 'antd';
-
+import { notification } from 'antd';
 
 const service = axios.create({
   // baseURL: 'https://some-domain.com/api/',
@@ -72,7 +77,7 @@ const service = axios.create({
 service.interceptors.response.use(
   response => response,
   error => {
-    console.log('err' + error) // for debug
+    console.log('err' + error); // for debug
     // Message({
     //   message: error.message,
     //   type: 'error',
@@ -82,7 +87,8 @@ service.interceptors.response.use(
       message: error.message,
       description: error.message,
     });
-    return Promise.reject(error)
-  })
+    return Promise.reject(error);
+  }
+);
 
-export default service
+export default service;
