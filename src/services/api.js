@@ -12,7 +12,7 @@ export async function queryActivities() {
 }
 
 export async function queryUserList(params) {
-  // return request(`${apiConfig.queryDataHub.getUserList}?pageNum=${params.pageNum}&pageSize=${params.pageSize}`);
+  // TODO 分页  pagesize 参数
   return request({
     url: `${apiConfig.queryDataHub.getUserList}`,
     method: 'get',
