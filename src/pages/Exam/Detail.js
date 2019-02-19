@@ -53,36 +53,69 @@ const formItemLayout2 = {
 }))
 @Form.create()
 class Detail extends PureComponent {
-  state = {
-    uploadAudioName: null,
-    editItem: null,
-    currentEditType: 1,
-    showEdit: false,
-    uploadProps: {
-      name: 'file',
-      action: 'https://api.jze100.com/hear/admin/file/upload',
-      headers: {
-        authorization: 'authorization-text',
-      },
-      onChange(info) {
-        console.log(info.file.name, 'info123');
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      uploadAudioName: null,
+      editItem: null,
+      currentEditType: 1,
+      showEdit: false,
+      uploadProps: {
+        name: 'file',
+        action: 'https://api.jze100.com/hear/admin/file/upload',
+        headers: {
+          authorization: 'authorization-text',
+        },
+        onChange(info) {
+          console.log(info.file.name, 'info123');
 
-        this.setState({
-          uploadAudioName: info.file.name,
-        });
-        if (info.file.status !== 'uploading') {
-          console.log(info.file, 'info.file');
-          console.log(info.fileList, ' info.fileList');
-        }
+          Detail.setState({
+            uploadAudioName: info.file.name,
+          });
+          if (info.file.status !== 'uploading') {
+            console.log(info.file, 'info.file');
+            console.log(info.fileList, ' info.fileList');
+          }
 
-        if (info.file.status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-          message.error(`${info.file.name} file upload failed.`);
-        }
+          if (info.file.status === 'done') {
+            message.success(`${info.file.name} file uploaded successfully`);
+          } else if (info.file.status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+          }
+        },
       },
-    },
-  };
+    };
+  }
+  // state = {
+  //   uploadAudioName: null,
+  //   editItem: null,
+  //   currentEditType: 1,
+  //   showEdit: false,
+  //   uploadProps: {
+  //     name: 'file',
+  //     action: 'https://api.jze100.com/hear/admin/file/upload',
+  //     headers: {
+  //       authorization: 'authorization-text',
+  //     },
+  //     onChange(info) {
+  //       console.log(info.file.name, 'info123');
+
+  //       this.setState({
+  //         uploadAudioName: info.file.name,
+  //       });
+  //       if (info.file.status !== 'uploading') {
+  //         console.log(info.file, 'info.file');
+  //         console.log(info.fileList, ' info.fileList');
+  //       }
+
+  //       if (info.file.status === 'done') {
+  //         message.success(`${info.file.name} file uploaded successfully`);
+  //       } else if (info.file.status === 'error') {
+  //         message.error(`${info.file.name} file upload failed.`);
+  //       }
+  //     },
+  //   },
+  // };
 
   componentDidMount() {
     const { location, dispatch, examlist } = this.props;
