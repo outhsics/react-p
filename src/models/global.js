@@ -1,7 +1,14 @@
 import { queryNotices } from '@/services/user';
+import createLogger from 'redux-logger';
+// import { message } from 'antd';
 
 export default {
   namespace: 'global',
+  // onAction: createLogger(1),
+
+  onError(e) {
+    message.error(e.message, /* duration */ 3);
+  },
 
   state: {
     collapsed: false,
@@ -89,7 +96,7 @@ export default {
   },
 
   subscriptions: {
-    setup({ history }) {
+    setup({ history, dispatch }, done) {
       // Subscribe history(url) change, trigger `load` action if pathname is `/`
       return history.listen(({ pathname, search }) => {
         if (typeof window.ga !== 'undefined') {

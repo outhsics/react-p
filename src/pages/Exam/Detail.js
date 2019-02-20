@@ -204,7 +204,10 @@ class Detail extends PureComponent {
 
     for (let k in item.subTopics) {
       for (let kk in item.subTopics[k].options) {
-        if (item.subTopics[k].options[kk].isCorrect === 1) {
+        if (
+          item.subTopics[k].options[kk].isCorrect &&
+          item.subTopics[k].options[kk].isCorrect === 1
+        ) {
           radioValueList.push(item.subTopics[k].options[kk].topicNo);
         }
       }
@@ -273,8 +276,8 @@ class Detail extends PureComponent {
 
     // TODO
 
-    // debugger;
-    // return;
+    debugger;
+    return;
     dispatch({
       type: 'examlist/updatePaper',
       payload: saveData,
