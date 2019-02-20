@@ -70,12 +70,17 @@ class Detail extends PureComponent {
     headers: {
       authorization: 'authorization-text',
     },
+    showUploadList: false,
     onChange: info => {
       console.log(info.fileList, 'fileList');
 
       if (info.fileList.length > 1) {
         info.fileList.shift();
       }
+      // info.fileList = info.fileList.map(file => {
+      //   delete file.name;
+      //   return file;
+      // });
       this.setState({
         uploadAudioName: info.file.name,
       });
@@ -175,7 +180,6 @@ class Detail extends PureComponent {
       // topicSubId: data.subTopics[id - 1].id,
       answer: '',
       image: '',
-      isCorrect: 0,
       topicNo: data.subTopics[id - 1].options.length + 1,
     });
 
@@ -269,8 +273,8 @@ class Detail extends PureComponent {
 
     // TODO
 
-    debugger;
-    return;
+    // debugger;
+    // return;
     dispatch({
       type: 'examlist/updatePaper',
       payload: saveData,
