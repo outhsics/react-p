@@ -232,7 +232,7 @@ class Detail extends PureComponent {
   };
 
   saveChange = () => {
-    const { editItem,radioValueList } = this.state;
+    const { editItem, radioValueList } = this.state;
     const { examlist, dispatch, location } = this.props;
     const { paperDetail } = examlist;
     paperDetail.topics[editItem.topicNo - 1] = editItem;
@@ -248,7 +248,7 @@ class Detail extends PureComponent {
 
     const saveData = Object.assign(paperDetail, formData);
 
-    const radioValueList; [1]
+    // const radioValueList; [1]
 
     // for (let k in paperDetail.topics) {
     //   for (let kk in radioValueList) {
@@ -264,6 +264,7 @@ class Detail extends PureComponent {
     //   }
 
     // }
+
     // isCorrect
 
     // TODO
