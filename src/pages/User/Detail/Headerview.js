@@ -41,10 +41,10 @@ class HeaderView extends Component {
                 <span>城市:{user.city}</span>
               </div>
               <div className={styles.middle_row}>
-                <span>创建时间:{moment(user.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                <span>创建时间:{moment(user.createTime).format('YYYY-MM-DD HH:mm')}</span>
                 {userExt.lastLoginTime ? (
                   <span>
-                    最近登录:{moment(userExt.lastLoginTime).format('YYYY-MM-DD HH:mm:ss')}
+                    最近登录:{moment(userExt.lastLoginTime).format('YYYY-MM-DD HH:mm')}
                   </span>
                 ) : (
                   '最近登录 :null'
@@ -58,7 +58,7 @@ class HeaderView extends Component {
                   学习时长： {(userExt.duration / 60).toFixed(1)}分钟
                 </h2>
                 <div className={styles.overUser}>
-                  {userExt.surpass > 0 ? `'超过' ${userExt.surpass}'用户'` : ''}
+                  {userExt.surpass > 0 ? `超过 ${userExt.surpass* 100}% 用户` : ''}
                 </div>
               </div>
             </div>

@@ -172,7 +172,7 @@ class OperateTool extends Component {
     const { operate } = this.props;
     const { specialList } = operate;
 
-    // debugger
+
     const { getFieldDecorator } = this.props.form;
 
     return (

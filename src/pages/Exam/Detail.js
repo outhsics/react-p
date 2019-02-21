@@ -77,15 +77,11 @@ class Detail extends PureComponent {
       if (info.fileList.length > 1) {
         info.fileList.shift();
       }
-      // info.fileList = info.fileList.map(file => {
-      //   delete file.name;
-      //   return file;
-      // });
+
       this.setState({
         uploadAudioName: info.file.name,
       });
       const _this = this;
-      // if (info.fileList.l)
 
       if (info.file.status !== 'uploading') {
         console.log(info.file, 'info.file');
@@ -106,36 +102,6 @@ class Detail extends PureComponent {
       }
     },
   };
-  // state = {
-  //   uploadAudioName: null,
-  //   editItem: null,
-  //   currentEditType: 1,
-  //   showEdit: false,
-  //   uploadProps: {
-  //     name: 'file',
-  //     action: 'https://api.jze100.com/hear/admin/file/upload',
-  //     headers: {
-  //       authorization: 'authorization-text',
-  //     },
-  //     onChange(info) {
-  //       console.log(info.file.name, 'info123');
-
-  //       this.setState({
-  //         uploadAudioName: info.file.name,
-  //       });
-  //       if (info.file.status !== 'uploading') {
-  //         console.log(info.file, 'info.file');
-  //         console.log(info.fileList, ' info.fileList');
-  //       }
-
-  //       if (info.file.status === 'done') {
-  //         message.success(`${info.file.name} file uploaded successfully`);
-  //       } else if (info.file.status === 'error') {
-  //         message.error(`${info.file.name} file upload failed.`);
-  //       }
-  //     },
-  //   },
-  // };
 
   componentDidMount() {
     const { location, dispatch, examlist } = this.props;
@@ -529,7 +495,7 @@ class Detail extends PureComponent {
           </Form>
 
           <Row gutter={24}>
-            <Col lg={11} md={24}>
+            <Col lg={9} md={24}>
               <h2>试卷预览</h2>
               <div className={styles.examLeft}>
                 {paperDetail.topics &&
@@ -603,7 +569,7 @@ class Detail extends PureComponent {
               </div>
             </Col>
 
-            <Col lg={12} md={24}>
+            <Col lg={15} md={24}>
               <h2>编辑题目{editItem && editItem.topicNo}</h2>
               <div className={styles.examRight}>
                 <Form onSubmit={this.handleSubmit}>

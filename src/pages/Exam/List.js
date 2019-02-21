@@ -301,7 +301,7 @@ class ExamList extends Component {
                 <div className={styles.tabelList}>
                   <Table
                     footer={() => (
-                      <span style={{ color: '#1890FF' }}>该专题下共{11 || 0} 份试卷</span>
+                      <span style={{ color: '#1890FF' }}>该专题下共{total || 0} 份试卷</span>
                     )}
                     pagination={{ total }}
                     onChange={this.onPageChange}
