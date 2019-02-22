@@ -18,7 +18,6 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import NavLink from 'umi/navlink';
-import update, { extend } from 'immutability-helper';
 
 import moment from 'moment';
 import _ from 'lodash'
@@ -55,7 +54,35 @@ const formItemLayout2 = {
   operate,
 }))
 @Form.create()
-class Detail extends PureComponent {
+class NewExam extends PureComponent {
+
+   uploadProps = {
+    action: '//jsonplaceholder.typicode.com/posts/',
+    onChange({ file, fileList }) {
+      if (file.status !== 'uploading') {
+        console.log(file, fileList);
+      }
+    },
+    defaultFileList: [{
+      uid: '1',
+      name: 'xxx.png',
+      status: 'done',
+      response: 'Server Error 500', // custom error message to show
+      url: 'http://www.baidu.com/xxx.png',
+    }, {
+      uid: '2',
+      name: 'yyy.png',
+      status: 'done',
+      url: 'http://www.baidu.com/yyy.png',
+    }, {
+      uid: '3',
+      name: 'zzz.png',
+      status: 'error',
+      response: 'Server Error 500', // custom error message to show
+      url: 'http://www.baidu.com/zzz.png',
+    }],
+  };
+
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -114,9 +141,9 @@ class Detail extends PureComponent {
 // 确认新增题目
 onAddSubTopicsSubmit = e => {
     // const { dispatch } = this.props;
-    const { subTopicsListTemp } = this.state;
+    // const { subTopicsListTemp } = this.state;
 
-    const data =  _.cloneDeep(subTopicsListTemp);
+    const data =  [];
 
     e.preventDefault();
    
@@ -143,8 +170,7 @@ onAddSubTopicsSubmit = e => {
                 },
                 {
                   "answer": "",
-                  "image": "",
-                  "isCorrect": 1
+                  "image": ""
                 },
                 {
                   "answer": "",
@@ -187,28 +213,29 @@ onAddSubTopicsSubmit = e => {
   }
 
   handleGetInputText= (index,event)=>{
+    // debugger
     // console.log(e,'e')
     // console.log(event.target.value,'e')
     // console.log(index)
     // debugger
-    const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+    const {subTopicsListTemp} = this.state;
+    const examTmp = _.cloneDeep(subTopicsListTemp);
 
-    examTmp.subTopics[index].parse = event.target.value;
+    examTmp[index].parse = event.target.value;
     this.setState({
-      editItem:examTmp
+      subTopicsListTemp:examTmp
     })
   }
 
   handleGetInputValue= (index,event)=>{
     // console.log(e,'e')
     // console.log(event.target.value,'e')
-    const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+    const {subTopicsListTemp} = this.state;
+    const examTmp = _.cloneDeep(subTopicsListTemp);
 
-    examTmp.subTopics[index-1].title = event.target.value;
+    examTmp[index].title = event.target.value;
     this.setState({
-      editItem:examTmp
+      subTopicsListTemp:examTmp
     })
   }
 
@@ -271,33 +298,42 @@ onAddSubTopicsSubmit = e => {
   }
   handleGetInputChoice= (index,optionsIndex,event)=>{
     // console.log(e,'e')
-    console.log(event.target.value,'e')
-    console.log(index)
-    console.log(optionsIndex)
-    // debugger
-    const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
-
-    examTmp.subTopics[index].options[optionsIndex].answer = event.target.value;
+    const {subTopicsListTemp} = this.state;
+    const examTmp = _.cloneDeep(subTopicsListTemp);
+    
+    examTmp[index].options[optionsIndex].answer = event.target.value;
     this.setState({
-      editItem:examTmp
+      subTopicsListTemp:examTmp
     })
   }
 
+  // const {subTopicsListTemp} = this.state;
+  // const examTmp = _.cloneDeep(subTopicsListTemp);
+
+  // examTmp[index].title = event.target.value;
+  // this.setState({
+  //   subTopicsListTemp:examTmp
+  // })
+  // debugger
+
+  onChangeCurrentEditType = (event)=>{
+    this.setState({
+      currentEditType:event.target.value
+    })
+  }
 
   onChangeRadio = (index,event) => {
     console.log(event.target.value,'e')
     console.log(index)
 
-    const {editItem} = this.state;
+    const {subTopicsListTemp} = this.state;
 
-    const examTmp = _.cloneDeep(editItem);
+    const examTmp = _.cloneDeep(subTopicsListTemp);
 
     // this.state.radioValueList[index] = event.target.value;
     // const v = this.refs.radioGroup.props.topicno;
     const copyData =  _.cloneDeep(this.state.radioValueList)
     // const copyData = this.state.radioValueList.slice(0);
-
 
 
     copyData[index] = Number(event.target.value);
@@ -311,22 +347,24 @@ onAddSubTopicsSubmit = e => {
     const currentItem = mapRadioToOptions(copyData,examTmp);
 
     this.setState({
-      editItem: currentItem,
+      subTopicsListTemp: currentItem,
     });
+// debugger
+
 
   };
 
-  addOption = (id,v) => {
-    let editItem = v
+  addOption = (index,v) => {
+    // let editItem = v
     // const id = this.refs.addOption.props.topicno;
+// debugger
+    const data =  _.cloneDeep(v);
 
-    const data =  _.cloneDeep(editItem);
-
-    data.subTopics[id - 1].options.push({
+    data[index].options.push({
       // topicSubId: data.subTopics[id - 1].id,
       answer: '',
       image: '',
-      topicNo: data.subTopics[id - 1].options.length + 1,
+      topicNo: data[index].options.length + 1,
     });
     // debugger
 
@@ -334,7 +372,7 @@ onAddSubTopicsSubmit = e => {
       Object.assign(
         {},
         {
-          editItem:data,
+          subTopicsListTemp:data,
         }
       )
     );
@@ -342,7 +380,7 @@ onAddSubTopicsSubmit = e => {
 
   cancelEdit = () => {
     this.setState({
-      showEdit: false,
+      subTopicsListTemp: [],
     });
   };
 
@@ -389,12 +427,53 @@ onAddSubTopicsSubmit = e => {
     return duration;
   };
 
+  saveTopic=(v)=>{
+    const { 
+      radioValueList,
+      subTopicsListTemp,
+      uploadAudioDuration,
+      uploadAudioName,
+      currentEditType,
+      topicsListTemp
+    } = this.state;
+
+      const formData = this.props.form.getFieldsValue();
+      // const copyData = _.cloneDeep(topicsListTemp);
+
+      // currentEditType
+
+      
+      const topicsList = [];
+      const topicsListObj = {
+        type:currentEditType,
+        audio:uploadAudioName,
+        audioDuration:uploadAudioDuration,
+        score:formData.topicScore,
+        subTopics:subTopicsListTemp
+      };
+      topicsList.push(topicsListObj);
+
+      const mergeData = topicsListTemp.concat(topicsList)
+
+      this.setState({
+
+        topicsListTemp:mergeData
+      })
+      
+      this.setState({
+        subTopicsListTemp:[]
+      })
+      debugger
+  }
   saveChange = (v) => {
-    const { radioValueList } = this.state;
+    const { radioValueList,subTopicsListTemp } = this.state;
     const {editItem} = this.state;
+
+    // const examTmp = _.cloneDeep(subTopicsListTemp);
+
     // const editItem  =v;
 
-    // debugger
+    debugger
 
     // console.log(editItem,'');
     const { examlist, dispatch, location } = this.props;
@@ -526,10 +605,10 @@ onAddSubTopicsSubmit = e => {
               return (
                 <Fragment key={itemIndex}>
                   <Row>
-                    <Col span={6}>题目（{itemIndex+1}）:</Col>
+                    <Col span={5}>题目（{itemIndex+1}）:</Col>
 
                     <Col span={18}>
-                      <Input value={item.title} onChange={()=>this.handleGetInputValue(itemIndex+1,event)} />
+                      <Input value={item.title} onChange={()=>this.handleGetInputValue(itemIndex,event)} />
                     </Col>
                   </Row>
                   <Row>
@@ -546,9 +625,9 @@ onAddSubTopicsSubmit = e => {
                             <Row gutter={16} key={optionsIndex}>
                               <Col span={14}>
                                 <Row>
-                                  <Col span={6}>选项: {optionsIndex} </Col>
+                                  <Col span={6}>选项: {optionsIndex+1} </Col>
                                   <Col span={18}>
-                                    <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(index,optionsIndex,event)} />
+                                    <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(itemIndex,optionsIndex,event)} />
                                   </Col>
                                 </Row>
                               </Col>
@@ -582,7 +661,7 @@ onAddSubTopicsSubmit = e => {
                     <Col span={24}>
                       <Button
                         type="primary"
-                        onClick={() => this.addOption(itemIndex+1,editItem)}
+                        onClick={() => this.addOption(itemIndex,v)}
                         // topicno={}
                         // ref="addOption"
                         style={{ width: '100%' }}
@@ -604,25 +683,25 @@ onAddSubTopicsSubmit = e => {
                     <Col span={13}>
                       <Input.TextArea
                         value={item.parse}
-                        onChange={()=>this.handleGetInputText(index,event)}                        
+                        onChange={()=>this.handleGetInputText(itemIndex,event)}                        
                         placeholder={'专项说明文本（0/180）'}
                         rows={8}
                       />
                     </Col>
-                    {itemIndex+1 === item.length && (
+                    {itemIndex+1 === v.length && (
                       <Col span={7} className={styles.opt}>
                         <Row>
                           <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
-                            取消编辑
+                            清空重新录入
                           </Button>
                         </Row>
                         <Row>
                           <Button
-                            onClick={() => this.saveChange(editItem)}
+                            onClick={() => this.saveTopic(v)}
                             type="primary"
                             style={{ width: '100%' }}
                           >
-                            保存修改
+                            确认试题
                           </Button>
                         </Row>
                       </Col>
@@ -650,7 +729,8 @@ onAddSubTopicsSubmit = e => {
       uploadAudioDuration,
       paperDetail,
       title,
-      subTopicsListTemp
+      subTopicsListTemp,
+      topicsListTemp
     } = this.state;
 
     const { specialList } = operate;
@@ -779,26 +859,29 @@ onAddSubTopicsSubmit = e => {
             <Col lg={9} md={24}>
               <h2>试卷预览</h2>
               <div className={styles.examLeft}>
-                {paperDetail.topics &&
-
-                  paperDetail.topics.map((item,ItemIndex) => (
+                {
+                  topicsListTemp.map((item,itemIndex) => (
                     <Card
-                      key={ItemIndex}
+                      key={itemIndex}
                       bordered={false}
                       hoverable
                       onClick={() => this.handleEdit(item)}
                     >
                       {item.type === 1 ? (
-                        <div key={ItemIndex}>
+                        <div>
                           {item.subTopics.map((subItem,subItemIndex) => {
                             return (
                               <div key={subItemIndex}>
                                 <div className={styles.examTitle}>
+
                                   <h2 style={{ float: 'left', marginRight: 11 }}>
-                                    {item.topicNo === subItem.topicNo ? item.topicNo : ''} (
-                                    {subItem.topicNo}).{subItem.title}({item.score}分)
+                                  
+                                    {/* {itemIndex === subItemIndex ? ItemIndex : ''}  */}
+
+                                    {subItemIndex+1}.{subItem.title}({item.score}分)
                                   </h2>
-                                  {item.topicNo === subItem.topicNo && (
+
+                                  {itemIndex === subItemIndex && (
                                     <a
                                       onClick={() => this.handleEdit(item)}
                                       style={{ marginRight: 5, float: 'right' }}
@@ -806,12 +889,13 @@ onAddSubTopicsSubmit = e => {
                                       编辑
                                     </a>
                                   )}
+
                                 </div>
 
-                                {subItem.options.map(subOption,subOptionIndex => {
+                                {subItem.options.map((subOption,subOptionIndex) => {
                                   return (
                                     <div key={subOptionIndex} style={{ lineHeight: '31px' }}>
-                                      <span> {subOptionIndex}</span>
+                                      <span> {subOptionIndex+1}</span>
                                       <span> {subOption.answer}</span>
                                       {subOption.image && subOption.image.includes('http') && (
                                         <img src={subOption.image} />
@@ -827,7 +911,7 @@ onAddSubTopicsSubmit = e => {
                         <div key={itemIndex}>
                           <div className={styles.examTitle}>
                             <h2 style={{ float: 'left', marginRight: 11 }}>
-                              {item.id}.({item.score}分)
+                              {itemIndex+1}.({item.score}分)
                             </h2>
                             <div style={{ float: 'right' }}>
                               <a onClick={() => this.handleEdit(item)} style={{ marginRight: 5 }}>
@@ -835,7 +919,7 @@ onAddSubTopicsSubmit = e => {
                               </a>
                             </div>
                           </div>
-                          {item.subTopics.map(subItem,subIndex => {
+                          {item.subTopics.map((subItem,subIndex) => {
                             return (
                               <div key={subIndex}>
                                 <h2>
@@ -852,12 +936,14 @@ onAddSubTopicsSubmit = e => {
             </Col>
 
             <Col lg={15} md={24}>
-              <h2>编辑题目{editItem && editItem.topicNo}</h2>
+              <h2>新增题目</h2>
               <div className={styles.examRight}>
                 <Form onSubmit={this.onAddSubTopicsSubmit}>
                     <Row>
                       <Form.Item label="题型选择" labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
-                        <RadioGroup value={currentEditType} size="default">
+                        <RadioGroup 
+                        onChange={()=>this.onChangeCurrentEditType(event)}
+                        value={currentEditType} size="default">
                           <RadioButton disabled={!(currentEditType === 1)} value={1}>
                             选择
                           </RadioButton>
@@ -867,22 +953,18 @@ onAddSubTopicsSubmit = e => {
                         </RadioGroup>
                       </Form.Item>
                     </Row>
-                    <div className={styles.itemHeader}>
-
+                  <div className={styles.itemHeader}>
                     <Row>
                       <Col span={10}>
                         <span>
-                          上传音频: {uploadAudioName || (editItem && editItem.audio) || ''}
+                          上传音频: {uploadAudioName || ''}
                           </span>
                       </Col>
                       <Col span={5}>
                         <span>
                         该音频时长:
-                            {uploadAudioDuration >= 0
-                              ? uploadAudioDuration
-                              : (editItem && editItem.audioDuration) || ''}
+                            {uploadAudioDuration || ''}
                           </span>
-                        
                       </Col>
                       <Col span={6}>
                       <Upload {...this.uploadProps}>
@@ -952,4 +1034,4 @@ onAddSubTopicsSubmit = e => {
 
 
 
-export default Detail;
+export default NewExam;
