@@ -59,13 +59,16 @@ class Detail extends PureComponent {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      radioValueList:[],
       uploadAudioName: null,
       uploadAudioDuration: null,
       editItem: null,
       currentEditType: 1,
       showEdit: false,
       // editItem.subTopics
-      currentAddExamItem:{},
+      subTopicsListTemp:[], // 新增题目的临时List
+      topicsListTemp:[], // 预览题目的临时List
+      paperDetailHeader:{}, // 试卷头部info
       paperDetail:{
         "title": "",
         "specialId": 20,
@@ -108,11 +111,12 @@ class Detail extends PureComponent {
 
 
   
-// 提交新增题目
-onAddExamSubmit = e => {
+// 确认新增题目
+onAddSubTopicsSubmit = e => {
     // const { dispatch } = this.props;
-    const { currentAddExamItem } = this.state;
-    const subTopics = [];
+    const { subTopicsListTemp } = this.state;
+
+    const data =  _.cloneDeep(subTopicsListTemp);
 
     e.preventDefault();
    
@@ -129,7 +133,7 @@ onAddExamSubmit = e => {
         // debugger
         // 2
         for(let i =0;i <values.topicNum;i++) {
-          subTopics.push({
+          data.push({
               "title": "",
               "parse": "",
               "options": [
@@ -152,12 +156,9 @@ onAddExamSubmit = e => {
 
 
       this.setState({
-        currentAddExamItem:{
-        ...currentAddExamItem,
-          subTopics
-        }
+        subTopicsListTemp:data
       })
-      console.log(currentAddExamItem,'currentAddExamItem')
+      // console.log(currentAddExamItem,'currentAddExamItem')
       // debugger
     }
   })
@@ -507,7 +508,6 @@ onAddExamSubmit = e => {
 
   renderSelectNewQs = (v) => {
     // editItem.subTopics
-    const editItem  = v;
     // subTopics
     // debugger
     // subTopics.push({
@@ -522,7 +522,7 @@ onAddExamSubmit = e => {
     return (
       <Fragment>
         <div className={styles.item1}>
-          {editItem && editItem.subTopics && editItem.subTopics.map((item,itemIndex) => {
+          {v && v.map((item,itemIndex) => {
               return (
                 <Fragment key={itemIndex}>
                   <Row>
@@ -603,13 +603,13 @@ onAddExamSubmit = e => {
 
                     <Col span={13}>
                       <Input.TextArea
-                        value={subItem.parse}
+                        value={item.parse}
                         onChange={()=>this.handleGetInputText(index,event)}                        
                         placeholder={'专项说明文本（0/180）'}
                         rows={8}
                       />
                     </Col>
-                    {subItem.topicNo === editItem.subTopics.length && (
+                    {itemIndex+1 === item.length && (
                       <Col span={7} className={styles.opt}>
                         <Row>
                           <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
@@ -649,8 +649,8 @@ onAddExamSubmit = e => {
       uploadAudioName,
       uploadAudioDuration,
       paperDetail,
-      currentAddExamItem,
-      title
+      title,
+      subTopicsListTemp
     } = this.state;
 
     const { specialList } = operate;
@@ -854,8 +854,7 @@ onAddExamSubmit = e => {
             <Col lg={15} md={24}>
               <h2>编辑题目{editItem && editItem.topicNo}</h2>
               <div className={styles.examRight}>
-                <Form onSubmit={this.onAddExamSubmit}>
-              
+                <Form onSubmit={this.onAddSubTopicsSubmit}>
                     <Row>
                       <Form.Item label="题型选择" labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
                         <RadioGroup value={currentEditType} size="default">
@@ -935,7 +934,7 @@ onAddExamSubmit = e => {
                     </div>
                 </Form>
 
-                { this.renderSelectNewQs(currentAddExamItem)}
+                { this.renderSelectNewQs(subTopicsListTemp)}
 
                 {/* {this.renderSelectP() : ''} */}
                 </div>
