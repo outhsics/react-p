@@ -37,11 +37,15 @@ export default {
   effects: {
     *createPaper({ payload, callback }, { call, put }) {
       const response = yield call(createPaper, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
+      // yield put({
+      //   type: 'save',
+      //   payload: response,
+      // });
+      if(response.data.code ===1) {
+
+        if (callback) callback();
+        // debugger
+      }
     },
     *updatePaperState({ payload, callback }, { call, put }) {
       const response = yield call(updatePaperState, payload);

@@ -56,14 +56,43 @@ const formItemLayout2 = {
 @Form.create()
 class NewExam extends PureComponent {
 
-   uploadProps = {
-    action: '//jsonplaceholder.typicode.com/posts/',
-    onChange({ file, fileList }) {
-      if (file.status !== 'uploading') {
-        console.log(file, fileList);
+  uploadProps = {
+    name: 'file',
+    action: 'https://api.jze100.com/hear/admin/file/upload',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    showUploadList: false,
+    onChange: info => {
+      console.log(info.fileList, 'fileList');
+
+      if (info.fileList.length > 1) {
+        info.fileList.shift();
+      }
+
+      this.setState({
+        uploadAudioName: info.file.name,
+      });
+      const _this = this;
+
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, 'info.file');
+        console.log(info.fileList, ' info.fileList');
+      }
+
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+        if (info.file.response.code === 1) {
+          _this.setState({
+            uploadAudioDuration: info.file.response.data.duration,
+          });
+          console.log(_this.state.uploadAudioDuration, '2');
+          // debugger;
+        }
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
       }
     },
-    defaultFileList: [],
   };
 
   constructor(props, context) {
@@ -78,7 +107,13 @@ class NewExam extends PureComponent {
       // editItem.subTopics
       subTopicsListTemp:[], // 新增题目的临时List
       topicsListTemp:[], // 预览题目的临时List
-      paperDetailHeader:{}, // 试卷头部info
+      paperDetailHeader:{
+        title:'',
+        specialId:null,
+        level:null,
+        totalScore:null,
+        totalDuration:null,
+      }, // 试卷头部info
       paperDetail:{
         "title": "",
         "specialId": 20,
@@ -233,8 +268,8 @@ onAddSubTopicsSubmit = e => {
 
     // examTmp.subTopics[index].title = event.target.value;
     this.setState({
-      paperDetail:{
-        ...this.state.paperDetail,
+      paperDetailHeader:{
+        ...this.state.paperDetailHeader,
         title:event.target.value
       }
     })
@@ -258,8 +293,8 @@ onAddSubTopicsSubmit = e => {
 
     // debugger
     this.setState({
-      paperDetail:{
-        ...this.state.paperDetail,
+      paperDetailHeader:{
+        ...this.state.paperDetailHeader,
         specialId: Number(event.target.value)
       }
     })
@@ -273,8 +308,8 @@ onAddSubTopicsSubmit = e => {
 
     // examTmp.subTopics[index].title = event.target.value;
     this.setState({
-      paperDetail:{
-        ...this.state.paperDetail,
+      paperDetailHeader:{
+        ...this.state.paperDetailHeader,
         level:Number(event.target.value)
       }
     })
@@ -298,6 +333,7 @@ onAddSubTopicsSubmit = e => {
   //   subTopicsListTemp:examTmp
   // })
   // debugger
+
 
   onChangeCurrentEditType = (event)=>{
     this.setState({
@@ -446,8 +482,48 @@ onAddSubTopicsSubmit = e => {
       this.setState({
         subTopicsListTemp:[]
       })
-      debugger
+
   }
+
+
+  onSubmitPaper = ()=>{
+    const {paperDetailHeader, topicsListTemp} = this.state;
+    const {dispatch} = this.props;
+
+    // console.log(paperDetailHeader,'pageDetailHeader')
+
+    const mergeData = {
+      ...paperDetailHeader,
+      topics:topicsListTemp
+    }
+    dispatch({
+      type:'examlist/createPaper',
+      payload:mergeData,
+      callback:this.cbSuccessPaper
+    })
+    // debugger
+
+  }
+
+  cbSuccessPaper = ()=>{
+    message.success(
+      '创建试卷成功'
+    );
+    this.props.form.resetFields();
+    this.setState({
+      topicsListTemp: [],
+      paperDetailHeader:{
+        title:'',
+        specialId:null,
+        level:null,
+        totalScore:null,
+        totalDuration:null,
+      }
+    })
+
+
+  }
+
   saveChange = (v) => {
     const { radioValueList,subTopicsListTemp } = this.state;
     const {editItem} = this.state;
@@ -569,18 +645,7 @@ onAddSubTopicsSubmit = e => {
   };
 
   renderSelectNewQs = (v) => {
-    // editItem.subTopics
-    // subTopics
-    // debugger
-    // subTopics.push({
-    //   "title": "",
-    //   "parse": "",
-    //   "options": [
-    //     {
-    //       "answer": "",
-    //       "image": ""
-    //     },
-    // debugger
+    
     return (
       <Fragment>
         <div className={styles.item1}>
@@ -621,7 +686,7 @@ onAddSubTopicsSubmit = e => {
                                   <Col span={15}>
                                     <div>
                                       <Upload {...this.uploadProps}>
-                                        <Button>
+                                        <Button disabled={optionItem.answer}>
                                           <Icon type="upload" /> 上传图片
                                         </Button>
                                       </Upload>
@@ -710,7 +775,7 @@ onAddSubTopicsSubmit = e => {
       showEdit,
       uploadAudioName,
       uploadAudioDuration,
-      paperDetail,
+      paperDetailHeader,
       title,
       subTopicsListTemp,
       topicsListTemp
@@ -720,7 +785,6 @@ onAddSubTopicsSubmit = e => {
 
 
     return (
-      paperDetail &&
       specialList && (
         <div className={styles.container}>
           <Breadcrumb>
@@ -753,13 +817,9 @@ onAddSubTopicsSubmit = e => {
                      </Col>
                      <Col span={9}>
                     <Input
-                value={paperDetail.title}
+                value={paperDetailHeader.title}
                 onChange={()=>this.handleGetTitle(event)}
-                      placeholder="
-                    因果题型训练                    
-                    6/18"
-                    />
-
+                      placeholder="因果题型训练6/18"/>
                      </Col>
                      </Row>
 
@@ -767,7 +827,7 @@ onAddSubTopicsSubmit = e => {
                 </Form.Item> */}
                 {/* <Form.Item>
                   {getFieldDecorator('id', { initialValue: paperDetail.id })( */}
-                    <Input type="hidden"    value={paperDetail.id} />
+                    {/* <Input type="hidden"    value={paperDetailHeader.id} /> */}
                   {/* )}
                 </Form.Item> */}
               </Col>
@@ -791,7 +851,7 @@ onAddSubTopicsSubmit = e => {
 
                     <InputNumber
                      onChange={()=>this.handleGetLevel(event)} 
-                     min={1} max={10} step={0.1} value={paperDetail.level} />
+                     min={1} max={10} step={0.1} value={paperDetailHeader.level} />
                      </Col>
                      </Row>
               </Col>
@@ -809,7 +869,7 @@ onAddSubTopicsSubmit = e => {
                      <Col span={17}>
                     <RadioGroup size="default" 
                     onChange={()=>this.handleGetSpecial(event)} 
-                    value={ paperDetail.specialId}>
+                    value={ paperDetailHeader.specialId}>
                       {specialList.map(item => {
                         return (
                           <RadioButton key={item.id} value={item.id}>
@@ -826,11 +886,13 @@ onAddSubTopicsSubmit = e => {
               </Col>
               <Col span={12}>
                   <span style={{ marginRight: 20 }}>
-                    试卷总分： {paperDetail.totalScore || '暂无'}
+                    试卷总分： {paperDetailHeader.totalScore || '暂无'}
                   </span>
-                  该试卷音频总长：{paperDetail.totalDuration || '暂无'}
+                  该试卷音频总长：{paperDetailHeader.totalDuration || '暂无'}
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <Button  style={{ width: 120 }} type="primary">
+                    <Button  style={{ width: 120 }} 
+                    onClick={this.onSubmitPaper}
+                    type="primary">
                     提交试卷
                     </Button>
 

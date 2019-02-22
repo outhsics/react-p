@@ -50,8 +50,7 @@ const formItemLayout2 = {
   },
 };
 
-@connect(({ examlist, operate }) => ({
-  examlist,
+@connect(({  operate }) => ({
   operate,
 }))
 @Form.create()
@@ -59,15 +58,65 @@ class Detail extends PureComponent {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      subTopicsListTemp:[],
       uploadAudioName: null,
       uploadAudioDuration: null,
       editItem: null,
       currentEditType: 1,
       showEdit: false,
       paperDetail:{},
-      title:''
+      title:'',
+      newExam:false
     };
   }
+
+
+  uploadProps = {
+    name: 'file',
+    action: 'https://api.jze100.com/hear/admin/file/upload',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    showUploadList: false,
+    onChange: info => {
+      console.log(info.fileList, 'fileList');
+
+      if (info.fileList.length > 1) {
+        info.fileList.shift();
+      }
+
+      this.setState({
+        uploadAudioName: info.file.name,
+      });
+      const _this = this;
+
+      if (info.file.status !== 'uploading') {
+        console.log(info.file, 'info.file');
+        console.log(info.fileList, ' info.fileList');
+      }
+
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+        if (info.file.response.code === 1) {
+          _this.setState({
+            uploadAudioDuration: info.file.response.data.duration,
+          });
+
+
+          this.setState({
+            newExam:true,
+            showEdit:false
+          })
+
+          console.log(_this.state.uploadAudioDuration, '2');
+          // debugger;
+        }
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
 
 
   cbSetPageDetail = (v)=>{
@@ -133,13 +182,16 @@ class Detail extends PureComponent {
   
 
   handleTopicSubNum =  (event)=>{
-    const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
 
-    examTmp.subNum = Number(event.target.value);
-    this.setState({
-      editItem:examTmp
-    })
+    // const {editItem} = this.state;
+    // const examTmp = _.cloneDeep(editItem);
+
+    // examTmp.subNum = Number(event.target.value);
+
+    // this.setState({
+    //   editItem:examTmp
+    // })
+
   }
 
   handleGetInputText= (index,event)=>{
@@ -173,16 +225,14 @@ class Detail extends PureComponent {
 
   handleGetTitle= (event)=>{
     // console.log(e,'e')
-    console.log(event.target.value,'e')
+    // console.log(event.target.value,'e')
 
-    // const examTmp = _.cloneDeep(editItem);
+    const data = _.cloneDeep(this.state.paperDetail);
+    data.title = event.target.value;
 
     // examTmp.subTopics[index].title = event.target.value;
     this.setState({
-      paperDetail:{
-        ...this.state.paperDetail,
-        title:event.target.value
-      }
+      paperDetail:data
     })
   }
 
@@ -200,15 +250,16 @@ class Detail extends PureComponent {
     // console.log(event,'e')
     // console.log(event.target.value,'e')
 
-    // const examTmp = _.cloneDeep(editItem);
 
-    // debugger
+    const data = _.cloneDeep(this.state.paperDetail);
+
+    data.specialId =  Number(event.target.value);
+
     this.setState({
-      paperDetail:{
-        ...this.state.paperDetail,
-        specialId: Number(event.target.value)
-      }
+      paperDetail:data
     })
+    // debugger
+
   }
 
   handleGetLevel = (event)=>{
@@ -216,13 +267,10 @@ class Detail extends PureComponent {
     console.log(event.target.value,'e')
 
     // const examTmp = _.cloneDeep(editItem);
-
-    // examTmp.subTopics[index].title = event.target.value;
+    const data = _.cloneDeep(this.state.paperDetail);
+    data.level =  Number(event.target.value);
     this.setState({
-      paperDetail:{
-        ...this.state.paperDetail,
-        level:Number(event.target.value)
-      }
+      paperDetail:data
     })
   }
   handleGetInputChoice= (index,index2,event)=>{
@@ -303,6 +351,8 @@ class Detail extends PureComponent {
   };
 
   handleEdit = item => {
+
+    
     const radioValueList = [];
 
 
@@ -346,41 +396,17 @@ class Detail extends PureComponent {
   };
 
   saveChange = (v) => {
-    const { radioValueList } = this.state;
+    const { radioValueList,paperDetail } = this.state;
     const {editItem} = this.state;
-    // const editItem  =v;
 
-    // debugger
+    const { dispatch, location } = this.props;
 
-    // console.log(editItem,'');
-    const { examlist, dispatch, location } = this.props;
-    const { paperDetail } = examlist;
     const currentItem = mapRadioToOptions(radioValueList,editItem);
     
     paperDetail.topics[editItem.topicNo - 1] = currentItem;
-    // debugger;
-    
 
-    // for (let k in paperDetail.topics) {
-    //   for (let kk in radioValueList) {
-    //     if(k === kk ){
-    //         for(let kkk in  paperDetail.topics[k].subTopics){
-    //           for (let kkkk in paperDetail.topics[k].subTopics.options) {
-    //             // if (paperDetail[k].subTopics.options[kkkk].tp)
-    //             console.log(kkkk,'kkkk');
-    //           }
-
-    //         }
-    //     }
-    //   }
-
-    // }
-
-
-
-
-    examlist.audio = this.state.uploadAudioName;
-    examlist.audioDuration = Number(this.state.uploadAudioDuration);
+    editItem.audio = this.state.uploadAudioName;
+    editItem.audioDuration = Number(this.state.uploadAudioDuration);
 
     let formData = this.props.form.getFieldsValue();
     const totalScore = this.calcScore(paperDetail);
@@ -505,7 +531,7 @@ class Detail extends PureComponent {
                                   <Col span={15}>
                                     <div>
                                       <Upload {...this.uploadProps}>
-                                        <Button>
+                                      <Button disabled={optionItem.answer}>
                                           <Icon type="upload" /> 上传图片
                                         </Button>
                                       </Upload>
@@ -582,10 +608,129 @@ class Detail extends PureComponent {
     );
   };
 
+
+  renderSelectNewQs = (v) => {
+    
+    return (
+      <Fragment>
+        <div className={styles.item1}>
+          {v && v.map((item,itemIndex) => {
+              return (
+                <Fragment key={itemIndex}>
+                  <Row>
+                    <Col span={5}>题目（{itemIndex+1}）:</Col>
+
+                    <Col span={18}>
+                      <Input value={item.title} onChange={()=>this.handleGetInputValue(itemIndex,event)} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={24}>
+                      <RadioGroup
+                        onChange={() => this.onChangeRadio(itemIndex,event)}
+                        value={this.state.radioValueList[itemIndex]}
+                        // topicno={item.topicNo}
+                        // ref="radioGroup"
+                        style={{ width: '100%' }}
+                      >
+                        {item.options.map((optionItem,optionsIndex) => {
+                          return (
+                            <Row gutter={16} key={optionsIndex}>
+                              <Col span={14}>
+                                <Row>
+                                  <Col span={6}>选项: {optionsIndex+1} </Col>
+                                  <Col span={18}>
+                                    <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(itemIndex,optionsIndex,event)} />
+                                  </Col>
+                                </Row>
+                              </Col>
+
+                              <Col span={9}>
+                                <Row>
+                                  <Col span={4}>or</Col>
+                                  <Col span={15}>
+                                    <div>
+                                      <Upload {...this.uploadProps}>
+                                        <Button disabled={optionItem.answer}>
+                                          <Icon type="upload" /> 上传图片
+                                        </Button>
+                                      </Upload>
+                                    </div>
+                                  </Col>
+                                  <Col span={5}>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <Radio value={optionsIndex+1} />
+                                  </Col>
+                                </Row>
+                              </Col>
+                            </Row>
+                          );
+                        })}
+                      </RadioGroup>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col span={24}>
+                      <Button
+                        type="primary"
+                        onClick={() => this.addOption(itemIndex,v)}
+                        // topicno={}
+                        // ref="addOption"
+                        style={{ width: '100%' }}
+                        icon={'plus'}
+                      >
+                        新增选项
+                      </Button>
+                    </Col>
+                  </Row>
+                  {/* <Row>
+                    <Col span={3}>答案:</Col>
+                    <Col span={13}>
+                      <InputNumber defaultValue={subItem.answer} min={1} max={10} />
+                    </Col>
+                  </Row> */}
+                  <Row className={styles.rightFooter}>
+                    <Col span={3}>解析:</Col>
+
+                    <Col span={13}>
+                      <Input.TextArea
+                        value={item.parse}
+                        onChange={()=>this.handleGetInputText(itemIndex,event)}                        
+                        placeholder={'专项说明文本（0/180）'}
+                        rows={8}
+                      />
+                    </Col>
+                    {itemIndex+1 === v.length && (
+                      <Col span={7} className={styles.opt}>
+                        <Row>
+                          <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
+                            清空重新录入
+                          </Button>
+                        </Row>
+                        <Row>
+                          <Button
+                            onClick={() => this.saveTopic(v)}
+                            type="primary"
+                            style={{ width: '100%' }}
+                          >
+                            确认试题
+                          </Button>
+                        </Row>
+                      </Col>
+                    )}
+                  </Row>
+                </Fragment>
+              );
+            })}
+        </div>
+      </Fragment>
+    );
+  };
+
   render() {
     const {
       form: { getFieldDecorator },
-      examlist,
       operate,
     } = this.props;
     const {
@@ -595,6 +740,8 @@ class Detail extends PureComponent {
       uploadAudioName,
       uploadAudioDuration,
       paperDetail,
+      subTopicsListTemp,
+      newExam,
       title
     } = this.state;
     // const { paperDetail } = examlist;
@@ -639,10 +786,7 @@ class Detail extends PureComponent {
                     <Input
                 value={paperDetail.title}
                 onChange={()=>this.handleGetTitle(event)}
-                      placeholder="
-                    因果题型训练                    
-                    6/18"
-                    />
+                      placeholder="因果题型训练6/18"/>
 
                      </Col>
                      </Row>
@@ -874,9 +1018,9 @@ class Detail extends PureComponent {
                   </div>
 
                   {/* {showEdit && editItem.type === 1 ? <SelectQs subItem={subItem} addOption={this.addOption} editItem={editItem} radioValueList={this.state.radioValueList} saveChange={this.saveChange}/> : ''} */}
-                  {showEdit && editItem.type === 1 ? this.renderSelectQs(editItem) : ''}
+                  {!newExam && showEdit && editItem.type === 1 ? this.renderSelectQs(editItem) : ''}
                   {showEdit && editItem.type === 2 ? this.renderSelectP() : ''}
-
+                  { newExam &&  renderSelectNewQs(subTopicsListTemp)}
                   {/* {currentEditType === 1 && !showEdit ? this.renderNewSelectQs() : ''} */}
                   {/* {currentEditType === 2 && !showEdit ? this.renderNewSelectP() : ''} */}
                 
@@ -889,6 +1033,7 @@ class Detail extends PureComponent {
     );
   }
 }
+
 
 
 
