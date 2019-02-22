@@ -127,7 +127,15 @@ class CreateExam extends Component {
     editItem: null,
     currentEditType: 1,
     showEdit: false,
-    paperDetail
+    paperDetail,
+    currentAddExamItem:	{
+			"type": 1,
+			"audio": "String",
+			"audioDuration": 100,
+			"score": 100.55,
+			"subNum": 1,
+			"subTopics": []
+		}
   };
 
 
@@ -197,9 +205,41 @@ class CreateExam extends Component {
   handleSubmit = () => {};
 
   onAddExam = () => {
-    let formData = this.props.form.getfieldValues;
-// console.log(formData)
-  debugger
+    const formData = this.props.form.getFieldsValue();
+
+    const subTopics = [];
+
+       // formData.topicNum
+    // formData.topicScore
+    // 2
+    for(let i =0;i <= formData.topicNum.length;i++) {
+      subTopics.push({
+          "title": "",
+          "parse": "",
+          "options": [
+            {
+              "answer": "",
+              "image": ""
+            },
+            {
+              "answer": "",
+              "image": "",
+              "isCorrect": 1
+            },
+            {
+              "answer": "",
+              "image": ""
+            }
+          ]
+      })
+    }  
+
+    this.setState({
+      currentAddExamItem:{
+        ...this.state.currentAddExamItem,
+        subTopics
+      }
+    })
   };
 
   addOption = id => {
@@ -291,25 +331,25 @@ class CreateExam extends Component {
     });
   };
 
-  deleteConfirm = id => {
-    debugger
-    // let title = '删除试题';
-    // let content = (
-    //   <div>
-    //     <p>新增试卷时，试题可以删除</p> <p>题目删除后不可复原，确认删除第{id}题吗？</p>
-    //   </div>
-    // );
+  deleteConfirm = item => {
+    // debugger
+    let title = '删除试题';
+    let content = (
+      <div>
+        <p>新增试卷时，试题可以删除</p> <p>题目删除后不可复原，确认删除第{item.id}题吗？</p>
+      </div>
+    );
 
-    // confirm({
-    //   title,
-    //   content,
-    //   onOk() {
-    //     return new Promise((resolve, reject) => {
-    //       setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-    //     }).catch(() => console.log('Oops errors!'));
-    //   },
-    //   onCancel() {},
-    // });
+    confirm({
+      title,
+      content,
+      onOk() {
+        return new Promise((resolve, reject) => {
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        }).catch(() => console.log('Oops errors!'));
+      },
+      onCancel() {},
+    });
   };
 
   // renderSelectP = (resources = []) => {
@@ -404,68 +444,140 @@ class CreateExam extends Component {
   //   );
   // };
 
-  renderSelectQs = v => {
-    const { editItem } = this.state;
-    // const resources = editItem;
 
-    for (let k in editItem.subTopics) {
-      for (let kk in editItem.subTopics[k].options) {
-        if (editItem.subTopics[k].options[kk].isCorrect === 1) {
-          editItem.subTopics[k].answer = editItem.subTopics[k].options[kk].topicNo;
-        }
-      }
-    }
-    // debugger;
+  handleGetInputChoice= (index,index2,event)=>{
+    // console.log(e,'e')
+    console.log(event.target.value,'e')
+    console.log(index)
+    console.log(index2)
+    // debugger
+    const {editItem} = this.state;
+    const examTmp = _.cloneDeep(editItem);
+
+    examTmp.subTopics[index].options[index2].answer = event.target.value;
+    this.setState({
+      editItem:examTmp
+    })
+  }
+
+  handleGetInputValue= (index,event)=>{
+    // console.log(e,'e')
+    console.log(event.target.value,'e')
+    console.log(index)
+    console.log(index2)
+    // debugger
+    const {editItem} = this.state;
+    const examTmp = _.cloneDeep(editItem);
+
+    examTmp.subTopics[index-1].title = event.target.value;
+    this.setState({
+      editItem:examTmp
+    })
+  }
+
+
+  onChangeRadio = (index,event) => {
+    console.log(event.target.value,'e')
+    console.log(index)
+
+    const {editItem} = this.state;
+
+    const examTmp = _.cloneDeep(editItem);
+
+    // this.state.radioValueList[index] = event.target.value;
+    // const v = this.refs.radioGroup.props.topicno;
+    const copyData =  _.cloneDeep(this.state.radioValueList)
+    // const copyData = this.state.radioValueList.slice(0);
+
+
+
+    copyData[index] = Number(event.target.value);
+
+
+
+    this.setState({
+      radioValueList:copyData
+    })
+    
+    const currentItem = mapRadioToOptions(copyData,examTmp);
+
+    this.setState({
+      editItem: currentItem,
+    });
+
+  };
+
+
+
+  renderSelectQs = v => {
+    const editItem  = v;
     return (
       <Fragment>
         <div className={styles.item1}>
           {editItem &&
-            editItem.subTopics.map(subItem => {
+            editItem.subTopics.map((subItem,index) => {
               return (
                 <Fragment key={subItem.topicNo}>
                   <Row>
                     <Col span={6}>题目（{subItem.topicNo}）:</Col>
 
                     <Col span={18}>
-                      <Input defaultValue={subItem.title} />
+                      <Input value={subItem.title} onChange={()=>this.handleGetInputValue(subItem.topicNo,event)} />
                     </Col>
                   </Row>
+                  <Row>
+                    <Col span={24}>
+                      <RadioGroup
+                        onChange={() => this.onChangeRadio(subItem.topicNo - 1,event)}
+                        value={this.state.radioValueList[subItem.topicNo - 1]}
+                        // topicno={subItem.topicNo}
+                        // ref="radioGroup"
+                        style={{ width: '100%' }}
+                      >
+                        {subItem.options.map((optionItem,index2) => {
+                          return (
+                            <Row gutter={16} key={optionItem.topicNo}>
+                              <Col span={14}>
+                                <Row>
+                                  <Col span={6}>选项: {optionItem.topicNo} </Col>
+                                  <Col span={18}>
+                                    <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(index,index2,event)} />
+                                  </Col>
+                                </Row>
+                              </Col>
 
-                  {subItem.options.map(optionItem => {
-                    return (
-                      <Row gutter={16} key={optionItem.topicNo}>
-                        <Col span={14}>
-                          <Row>
-                            <Col span={6}>选项: {optionItem.topicNo} </Col>
-                            <Col span={18}>
-                              <Input defaultValue={optionItem.answer} />
-                            </Col>
-                          </Row>
-                        </Col>
-
-                        <Col span={10}>
-                          <Row>
-                            <Col span={6}>or</Col>
-                            <Col span={8}>
-                              <div>
-                                <Upload {...this.uploadProps}>
-                                  <Button>
-                                    <Icon type="upload" /> 上传图片
-                                  </Button>
-                                </Upload>
-                              </div>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    );
-                  })}
+                              <Col span={9}>
+                                <Row>
+                                  <Col span={4}>or</Col>
+                                  <Col span={15}>
+                                    <div>
+                                      <Upload {...this.uploadProps}>
+                                        <Button>
+                                          <Icon type="upload" /> 上传图片
+                                        </Button>
+                                      </Upload>
+                                    </div>
+                                  </Col>
+                                  <Col span={5}>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <Radio value={optionItem.topicNo} />
+                                  </Col>
+                                </Row>
+                              </Col>
+                            </Row>
+                          );
+                        })}
+                      </RadioGroup>
+                    </Col>
+                  </Row>
 
                   <Row>
                     <Col span={24}>
                       <Button
                         type="primary"
-                        onClick={() => this.addOption(subItem.topicNo)}
+                        onClick={() => this.addOption(subItem.topicNo,editItem)}
+                        // topicno={}
+                        // ref="addOption"
                         style={{ width: '100%' }}
                         icon={'plus'}
                       >
@@ -473,18 +585,19 @@ class CreateExam extends Component {
                       </Button>
                     </Col>
                   </Row>
-                  <Row>
+                  {/* <Row>
                     <Col span={3}>答案:</Col>
                     <Col span={13}>
                       <InputNumber defaultValue={subItem.answer} min={1} max={10} />
                     </Col>
-                  </Row>
+                  </Row> */}
                   <Row className={styles.rightFooter}>
                     <Col span={3}>解析:</Col>
 
                     <Col span={13}>
                       <Input.TextArea
-                        defaultValue={subItem.parse}
+                        value={subItem.parse}
+                        onChange={()=>this.handleGetInputText(index,event)}                        
                         placeholder={'专项说明文本（0/180）'}
                         rows={8}
                       />
@@ -493,16 +606,16 @@ class CreateExam extends Component {
                       <Col span={7} className={styles.opt}>
                         <Row>
                           <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
-                          清空重新录入
+                            取消编辑
                           </Button>
                         </Row>
                         <Row>
                           <Button
-                            onClick={() => this.saveChange()}
+                            onClick={() => this.saveChange(editItem)}
                             type="primary"
                             style={{ width: '100%' }}
                           >
-                            确认试题
+                            保存修改
                           </Button>
                         </Row>
                       </Col>
@@ -515,6 +628,7 @@ class CreateExam extends Component {
       </Fragment>
     );
   };
+
 
   render() {
     const {
@@ -529,6 +643,7 @@ class CreateExam extends Component {
       uploadAudioName,
       uploadAudioDuration,
       paperDetail,
+      currentAddExamItem
     } = this.state;
     // const { paperDetail } = examlist;
 
@@ -663,7 +778,7 @@ class CreateExam extends Component {
                                     <div key={subOption.topicNo} style={{ lineHeight: '31px' }}>
                                       <span> {subOption.topicNo}</span>
                                       <span> {subOption.answer}</span>
-                                      {subOption.image.includes('http') && (
+                                      {subOption.image && subOption.image.includes('http') && (
                                         <img src={subOption.image} />
                                       )}
                                     </div>
@@ -705,18 +820,19 @@ class CreateExam extends Component {
             <h2>新增题目{editItem && editItem.topicNo}</h2>
             <div className={styles.examRight}>
               <Form onSubmit={this.handleSubmit}>
+             
                 <Row>
-                  <Form.Item label="题型选择" labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
-                    <RadioGroup value={currentEditType} size="default">
-                      <RadioButton  value={1}>
-                        选择
-                      </RadioButton>
-                      <RadioButton value={2}>
-                        段落填空
-                      </RadioButton>
-                    </RadioGroup>
-                  </Form.Item>
-                </Row>
+                    <Form.Item label="题型选择" labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
+                      <RadioGroup value={currentEditType} size="default">
+                        <RadioButton disabled={!(currentEditType === 1)} value={1}>
+                          选择
+                        </RadioButton>
+                        <RadioButton disabled={!(currentEditType === 2)} value={2}>
+                          段落填空
+                        </RadioButton>
+                      </RadioGroup>
+                    </Form.Item>
+                  </Row>
                 <div className={styles.itemHeader}>
                   <Row>
                     <Col span={10}>
@@ -786,7 +902,7 @@ class CreateExam extends Component {
 
                 </div>
 
-                {showEdit && editItem.type === 1 ? this.renderSelectQs() : ''}
+                {showEdit && editItem.type === 1 ? this.renderSelectQs(currentAddExamItem) : ''}
                 {showEdit && editItem.type === 2 ? this.renderSelectP() : ''}
 
               </Form>
