@@ -120,6 +120,27 @@ class Detail extends PureComponent {
   };
 
 
+  handleTopicScore =  (event)=>{
+    const {editItem} = this.state;
+    const examTmp = _.cloneDeep(editItem);
+
+    examTmp.score = Number(event.target.value);
+    this.setState({
+      editItem:examTmp
+    })
+  }
+
+  
+
+  handleTopicSubNum =  (event)=>{
+    const {editItem} = this.state;
+    const examTmp = _.cloneDeep(editItem);
+
+    examTmp.subNum = Number(event.target.value);
+    this.setState({
+      editItem:examTmp
+    })
+  }
 
   handleGetInputText= (index,event)=>{
     // console.log(e,'e')
@@ -176,8 +197,8 @@ class Detail extends PureComponent {
   // }
 
   handleGetSpecial = (event)=>{
-    console.log(event,'e')
-    console.log(event.target.value,'e')
+    // console.log(event,'e')
+    // console.log(event.target.value,'e')
 
     // const examTmp = _.cloneDeep(editItem);
 
@@ -579,7 +600,7 @@ class Detail extends PureComponent {
     // const { paperDetail } = examlist;
     const { specialList } = operate;
 
-    const copyEditItem =   _.cloneDeep(editItem);
+    // const copyEditItem =   _.cloneDeep(editItem);
     // const title = _.cloneDeep();
 
     return (
@@ -778,7 +799,7 @@ class Detail extends PureComponent {
             </Col>
 
             <Col lg={15} md={24}>
-              <h2>编辑题目{copyEditItem && copyEditItem.topicNo}</h2>
+              <h2>编辑题目{editItem && editItem.topicNo}</h2>
               <div className={styles.examRight}>
                   <Row>
                     <Form.Item label="题型选择" labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
@@ -796,7 +817,7 @@ class Detail extends PureComponent {
                     <Row>
                       <Col span={8}>
                         <span>
-                          上传音频: {uploadAudioName || (copyEditItem && copyEditItem.audio) || ''}
+                          上传音频: {uploadAudioName || (editItem && editItem.audio) || ''}
                         </span>
                       </Col>
                       <Col span={8}>
@@ -804,7 +825,7 @@ class Detail extends PureComponent {
                           该音频时长:
                           {uploadAudioDuration >= 0
                             ? uploadAudioDuration
-                            : (copyEditItem && copyEditItem.audioDuration) || ''}
+                            : (editItem && editItem.audioDuration) || ''}
                         </span>
                       </Col>
                       <Col span={3}>
@@ -818,35 +839,43 @@ class Detail extends PureComponent {
 
                     <Row>
                       <Col span={14}>
-                        <Form.Item
+                        {/* <Form.Item
                           label=" 该音频下的题目数:"
                           labelCol={{ span: 11 }}
                           wrapperCol={{ span: 11 }}
-                        >
-                        {getFieldDecorator('paperNum', { initialValue: copyEditItem && copyEditItem.subNum })(
-                          <InputNumber min={0} max={100}/>
-                      )}
-                        </Form.Item>
+                        > */}
+                        {/* {getFieldDecorator('paperNum', { initialValue: editItem && editItem.subNum })( */}
 
+                          <Row>
+                            <Col span={14}>
+                            该音频下的题目数:
+                            </Col>
+                            <Col span={3}>
+                                <InputNumber min={0} max={100} value={ editItem && editItem.subNum} 
+                                onChange={()=>this.handleTopicSubNum(event)}
+                                 />
+                            </Col>
+
+                            </Row>
                       </Col>
 
                       <Col span={10}>
-                        <Form.Item
-                          label=" 每题分数:"
-                          labelCol={{ span: 11 }}
-                          wrapperCol={{ span: 12 }}
-                        >
-                          {getFieldDecorator('paperScore', { initialValue: copyEditItem && copyEditItem.score })(
-                          <InputNumber min={0} max={100} />
-                      )}
-                        </Form.Item>
+                          <Row>
+                            <Col span={8}>
+                            每题分数:
+                            </Col>
+                            <Col span={3}>
+                              <InputNumber min={0} max={100} value={editItem && editItem.score} 
+                              onChange={()=>this.handleTopicScore(event)} ></InputNumber>
+                            </Col>
+                          </Row>
                       </Col>
                     </Row>
                   </div>
 
-                  {/* {showEdit && copyEditItem.type === 1 ? <SelectQs subItem={subItem} addOption={this.addOption} editItem={copyEditItem} radioValueList={this.state.radioValueList} saveChange={this.saveChange}/> : ''} */}
-                  {showEdit && copyEditItem.type === 1 ? this.renderSelectQs(copyEditItem) : ''}
-                  {showEdit && copyEditItem.type === 2 ? this.renderSelectP() : ''}
+                  {/* {showEdit && editItem.type === 1 ? <SelectQs subItem={subItem} addOption={this.addOption} editItem={editItem} radioValueList={this.state.radioValueList} saveChange={this.saveChange}/> : ''} */}
+                  {showEdit && editItem.type === 1 ? this.renderSelectQs(editItem) : ''}
+                  {showEdit && editItem.type === 2 ? this.renderSelectP() : ''}
 
                   {/* {currentEditType === 1 && !showEdit ? this.renderNewSelectQs() : ''} */}
                   {/* {currentEditType === 2 && !showEdit ? this.renderNewSelectP() : ''} */}
