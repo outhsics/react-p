@@ -163,28 +163,10 @@ class NewExam extends PureComponent {
       paperDetailHeader:{
         title:'',
         specialId:null,
-        level:null,
+        level:'',
         totalScore:null,
         totalDuration:null,
       }, // 试卷头部info
-      paperDetail:{
-        "title": "",
-        "specialId": 20,
-        "level": 100.55,
-        "totalScore": 100.55,
-        "totalDuration": 100,
-        "topics": [
-          {
-            "type": 1,
-            "audio": "String",
-            "audioDuration": 100,
-            "score": 100.55,
-            "subNum": 1,
-            "subTopics": [
-            ]
-          }
-        ]
-      }
     };
   }
 
@@ -315,7 +297,7 @@ onAddSubTopicsSubmit = e => {
 
   handleGetTitle= (event)=>{
     // console.log(e,'e')
-    console.log(event.target.value,'e')
+    // console.log(event.target.value,'e')
 
     // const examTmp = _.cloneDeep(editItem);
 
@@ -326,6 +308,7 @@ onAddSubTopicsSubmit = e => {
         title:event.target.value
       }
     })
+    // debugger
   }
 
   // handleGetId =  (event)=>{
@@ -344,28 +327,24 @@ onAddSubTopicsSubmit = e => {
 
     // const examTmp = _.cloneDeep(editItem);
 
-    // debugger
     this.setState({
       paperDetailHeader:{
         ...this.state.paperDetailHeader,
         specialId: Number(event.target.value)
       }
     })
+    // debugger
+
   }
 
-  handleGetLevel = (event)=>{
-    // console.log(e,'e')
-    console.log(event.target.value,'e')
-
-    // const examTmp = _.cloneDeep(editItem);
-
-    // examTmp.subTopics[index].title = event.target.value;
+  handleGetLevel = (v)=>{
     this.setState({
       paperDetailHeader:{
         ...this.state.paperDetailHeader,
-        level:Number(event.target.value)
+        level:Number(v)
       }
     })
+    // debugger
   }
   handleGetInputChoice= (index,optionsIndex,event)=>{
     // console.log(e,'e')
@@ -464,14 +443,19 @@ onAddSubTopicsSubmit = e => {
     <div>题目删除后不可复原，确认删除第{itemIndex+1}题吗？</div>  </Fragment>;
 
     const { dispatch, operate } = this.props;
-    const { currentPageNum } = this.state;
+    const { currentPageNum,topicsListTemp } = this.state;
     const { specialList } = operate;
 
+    const dataList = _.cloneDeep(topicsListTemp);
+    const _this = this;
     confirm({
       title,
       content,
       onOk() {
-
+        dataList.splice(itemIndex,1);
+        _this.setState({
+          topicsListTemp:dataList
+        })
       },
       onCancel() {},
     });
@@ -1060,8 +1044,8 @@ onAddSubTopicsSubmit = e => {
                      <Col span={5}>
 
                     <InputNumber
-                     onChange={()=>this.handleGetLevel(event)} 
-                     min={1} max={10} step={0.1} value={paperDetailHeader.level} />
+                     onChange={this.handleGetLevel} 
+                     min={1} max={10} step={0.1} defaultValue={Number(paperDetailHeader.level)} />
                      </Col>
                      </Row>
               </Col>
@@ -1138,6 +1122,7 @@ onAddSubTopicsSubmit = e => {
 
                                   {itemIndex === subItemIndex && (
                                     <div>
+                                 
                                     <a
                                       onClick={() => this.handleEdit(item)}
                                       style={{ marginRight: 5, float: 'right' }}
@@ -1150,6 +1135,7 @@ onAddSubTopicsSubmit = e => {
                                     >
                                       删除
                                     </a>
+                                 
                                     </div>
                                   )}
 
