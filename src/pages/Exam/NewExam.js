@@ -56,6 +56,59 @@ const formItemLayout2 = {
 @Form.create()
 class NewExam extends PureComponent {
 
+  // onChangeUpload = (event)=>{
+  //     // console.log(fileList, 'fileList');
+  //     // console.log(itemIndex, 'itemIndex');
+  //     // console.log(optionIndex, 'optionIndex');
+  //     console.log(event,'eeee')
+  //     // debugger
+  //     // // const data = JSON.parse(event.target.response);
+  //     // if(data.code === 1) {
+  //     //    console.log(data.data,'data.data')
+  //   // }
+  // }
+  onChangeUpload2 = (index,index2)=>{
+    console.log(index,'12')
+    console.log(index2)
+
+
+  }
+
+  onChangeUpload= (info)=>{
+  // onChangeUpload = (event )=> {
+      // console.log(event.ProgressEvent, 'fileList');
+
+      // console.log(event.total, 'fileList');
+      console.log(info, 'fileList');
+
+      // if (info.fileList.length > 1) {
+      //   info.fileList.shift();
+      // }
+
+      // this.setState({
+      //   uploadAudioName: info.file.name,
+      // });
+      // const _this = this;
+
+      // if (info.file.status !== 'uploading') {
+      //   console.log(info.file, 'info.file');
+      //   console.log(info.fileList, ' info.fileList');
+      // }
+
+      // if (info.file.status === 'done') {
+      //   message.success(`${info.file.name} file uploaded successfully`);
+      //   if (info.file.response.code === 1) {
+      //     _this.setState({
+      //       uploadAudioDuration: info.file.response.data.duration,
+      //     });
+      //     console.log(_this.state.uploadAudioDuration, '2');
+      //     // debugger;
+      //   }
+      // } else if (info.file.status === 'error') {
+      //   message.error(`${info.file.name} file upload failed.`);
+      // }
+    };
+
   uploadProps = {
     name: 'file',
     action: 'https://api.jze100.com/hear/admin/file/upload',
@@ -63,36 +116,36 @@ class NewExam extends PureComponent {
       authorization: 'authorization-text',
     },
     showUploadList: false,
-    onChange: info => {
-      console.log(info.fileList, 'fileList');
+    // onChange: info => {
+    //   console.log(info.fileList, 'fileList');
 
-      if (info.fileList.length > 1) {
-        info.fileList.shift();
-      }
+    //   if (info.fileList.length > 1) {
+    //     info.fileList.shift();
+    //   }
 
-      this.setState({
-        uploadAudioName: info.file.name,
-      });
-      const _this = this;
+    //   this.setState({
+    //     uploadAudioName: info.file.name,
+    //   });
+    //   const _this = this;
 
-      if (info.file.status !== 'uploading') {
-        console.log(info.file, 'info.file');
-        console.log(info.fileList, ' info.fileList');
-      }
+    //   if (info.file.status !== 'uploading') {
+    //     console.log(info.file, 'info.file');
+    //     console.log(info.fileList, ' info.fileList');
+    //   }
 
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-        if (info.file.response.code === 1) {
-          _this.setState({
-            uploadAudioDuration: info.file.response.data.duration,
-          });
-          console.log(_this.state.uploadAudioDuration, '2');
-          // debugger;
-        }
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
+    //   if (info.file.status === 'done') {
+    //     message.success(`${info.file.name} file uploaded successfully`);
+    //     if (info.file.response.code === 1) {
+    //       _this.setState({
+    //         uploadAudioDuration: info.file.response.data.duration,
+    //       });
+    //       console.log(_this.state.uploadAudioDuration, '2');
+    //       // debugger;
+    //     }
+    //   } else if (info.file.status === 'error') {
+    //     message.error(`${info.file.name} file upload failed.`);
+    //   }
+    // },
   };
 
   constructor(props, context) {
@@ -168,7 +221,7 @@ onAddSubTopicsSubmit = e => {
     this.props.form.validateFields({ force: true }, (err, values) => {
       if (!err && values && values.topicNum>0) {
         // debugger
-        console.log(this.props.form.getFieldsValue(),'--2')
+        // console.log(this.props.form.getFieldsValue(),'--2')
 
         // const formData = values;
 
@@ -403,11 +456,30 @@ onAddSubTopicsSubmit = e => {
     });
   };
 
+
+  showConfirmDelete = (itemIndex) => {
+    let title = '删除试题';
+    let content = <Fragment>
+      <span style={{color:'#1890ff'}}> 新增试卷时,试题可以删除</span>
+    <div>题目删除后不可复原，确认删除第{itemIndex+1}题吗？</div>  </Fragment>;
+
+    const { dispatch, operate } = this.props;
+    const { currentPageNum } = this.state;
+    const { specialList } = operate;
+
+    confirm({
+      title,
+      content,
+      onOk() {
+
+      },
+      onCancel() {},
+    });
+  };
+
+
   handleEdit = item => {
     const radioValueList = [];
-
-
-
     for (let k in item.subTopics) {
       for (let kk in item.subTopics[k].options) {
         if (
@@ -490,7 +562,8 @@ onAddSubTopicsSubmit = e => {
     const {paperDetailHeader, topicsListTemp} = this.state;
     const {dispatch} = this.props;
 
-    // console.log(paperDetailHeader,'pageDetailHeader')
+    console.log(paperDetailHeader,'pageDetailHeader')
+    debugger
 
     const mergeData = {
       ...paperDetailHeader,
@@ -525,7 +598,7 @@ onAddSubTopicsSubmit = e => {
   }
 
   saveChange = (v) => {
-    const { radioValueList,subTopicsListTemp } = this.state;
+    const { radioValueList,subTopicsListTemp,paperDetail } = this.state;
     const {editItem} = this.state;
 
     // const examTmp = _.cloneDeep(subTopicsListTemp);
@@ -536,7 +609,8 @@ onAddSubTopicsSubmit = e => {
 
     // console.log(editItem,'');
     const { examlist, dispatch, location } = this.props;
-    const { paperDetail } = examlist;
+    // const { paperDetail } = examlist;
+
     const currentItem = mapRadioToOptions(radioValueList,editItem);
     
     paperDetail.topics[editItem.topicNo - 1] = currentItem;
@@ -644,6 +718,128 @@ onAddSubTopicsSubmit = e => {
     });
   };
 
+
+  renderSelectQs = v => {
+    const editItem  = v;
+    return (
+      <Fragment>
+        <div className={styles.item1}>
+          {editItem &&
+            editItem.subTopics.map((subItem,subIndex) => {
+              return (
+                <Fragment key={subIndex}>
+                  <Row>
+                    <Col span={6}>题目（{subIndex}）:</Col>
+
+                    <Col span={18}>
+                      <Input value={subItem.title} onChange={()=>this.handleGetInputValue(subIndex,event)} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={24}>
+                      <RadioGroup
+                        onChange={() => this.onChangeRadio(subIndex,event)}
+                        value={this.state.radioValueList[subIndex]}
+                        // topicno={subItem.topicNo}
+                        // ref="radioGroup"
+                        style={{ width: '100%' }}
+                      >
+                        {subItem.options.map((optionItem,optionIndex) => {
+                          return (
+                            <Row gutter={16} key={optionIndex}>
+                              <Col span={14}>
+                                <Row>
+                                  <Col span={6}>选项: {optionIndex+1} </Col>
+                                  <Col span={18}>
+                                    <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(subIndex,optionIndex,event)} />
+                                  </Col>
+                                </Row>
+                              </Col>
+
+                              <Col span={9}>
+                                <Row>
+                                  <Col span={4}>or</Col>
+                                  <Col span={15}>
+                                    <div>
+                                      <Upload  {...this.uploadProps}>
+                                      <Button disabled={optionItem.answer}>
+                                          <Icon type="upload" /> 上传图片
+                                        </Button>
+                                      </Upload>
+                                    </div>
+                                  </Col>
+                                  <Col span={5}>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <Radio value={optionIndex+1} />
+                                  </Col>
+                                </Row>
+                              </Col>
+                            </Row>
+                          );
+                        })}
+                      </RadioGroup>
+                    </Col>
+                  </Row>
+
+                  <Row>
+                    <Col span={24}>
+                      <Button
+                        type="primary"
+                        onClick={() => this.addOption(subIndex,editItem)}
+                        // topicno={}
+                        // ref="addOption"
+                        style={{ width: '100%' }}
+                        icon={'plus'}
+                      >
+                        新增选项
+                      </Button>
+                    </Col>
+                  </Row>
+                  {/* <Row>
+                    <Col span={3}>答案:</Col>
+                    <Col span={13}>
+                      <InputNumber defaultValue={subItem.answer} min={1} max={10} />
+                    </Col>
+                  </Row> */}
+                  <Row className={styles.rightFooter}>
+                    <Col span={3}>解析:</Col>
+
+                    <Col span={13}>
+                      <Input.TextArea
+                        value={subItem.parse}
+                        onChange={()=>this.handleGetInputText(subIndex,event)}                        
+                        placeholder={'专项说明文本（0/180）'}
+                        rows={8}
+                      />
+                    </Col>
+                    {subIndex+1 === editItem.subTopics.length && (
+                      <Col span={7} className={styles.opt}>
+                        <Row>
+                          <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
+                            取消编辑
+                          </Button>
+                        </Row>
+                        <Row>
+                          <Button
+                            onClick={() => this.saveChange(editItem,subIndex)}
+                            type="primary"
+                            style={{ width: '100%' }}
+                          >
+                            保存修改
+                          </Button>
+                        </Row>
+                      </Col>
+                    )}
+                  </Row>
+                </Fragment>
+              );
+            })}
+        </div>
+      </Fragment>
+    );
+  };
+
+
   renderSelectNewQs = (v) => {
     
     return (
@@ -684,9 +880,23 @@ onAddSubTopicsSubmit = e => {
                                 <Row>
                                   <Col span={4}>or</Col>
                                   <Col span={15}>
-                                    <div>
-                                      <Upload {...this.uploadProps}>
-                                        <Button disabled={optionItem.answer}>
+                                    <div 
+                                        // onClick={this.onChangeUpload2(itemIndex,optionsIndex)}
+                                    
+                                    >
+                                      <Upload 
+                                    {...this.uploadProps}
+                                      //  action="//jsonplaceholder.typicode.com/posts/"
+          // listType="picture-card"
+          // fileList={fileList}
+          // onPreview={this.handlePreview}
+          onChange={()=>this.onChangeUpload}
+          // onChange={this.onChangeUpload(event)}
+                                      showUploadList={true}
+                                      {...this.uploadProps}>
+                                        <Button
+
+                                         disabled={optionItem.answer}>
                                           <Icon type="upload" /> 上传图片
                                         </Button>
                                       </Upload>
@@ -891,6 +1101,7 @@ onAddSubTopicsSubmit = e => {
                   该试卷音频总长：{paperDetailHeader.totalDuration || '暂无'}
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <Button  style={{ width: 120 }} 
+                    disabled={!topicsListTemp.length}
                     onClick={this.onSubmitPaper}
                     type="primary">
                     提交试卷
@@ -906,10 +1117,9 @@ onAddSubTopicsSubmit = e => {
               <div className={styles.examLeft}>
                 {
                   topicsListTemp.map((item,itemIndex) => (
-                    <Card
+                    <div
                       key={itemIndex}
-                      bordered={false}
-                      hoverable
+                      className={styles.card}
                       onClick={() => this.handleEdit(item)}
                     >
                       {item.type === 1 ? (
@@ -927,12 +1137,20 @@ onAddSubTopicsSubmit = e => {
                                   </h2>
 
                                   {itemIndex === subItemIndex && (
+                                    <div>
                                     <a
                                       onClick={() => this.handleEdit(item)}
                                       style={{ marginRight: 5, float: 'right' }}
                                     >
                                       编辑
                                     </a>
+                                    <a
+                                      onClick={() => this.showConfirmDelete(itemIndex)}
+                                      style={{ marginRight: 5, float: 'right' }}
+                                    >
+                                      删除
+                                    </a>
+                                    </div>
                                   )}
 
                                 </div>
@@ -975,7 +1193,7 @@ onAddSubTopicsSubmit = e => {
                           })}
                         </div>
                       )}
-                    </Card>
+                    </div>
                   ))}
               </div>
             </Col>
@@ -1061,7 +1279,8 @@ onAddSubTopicsSubmit = e => {
                     </div>
                 </Form>
 
-                { this.renderSelectNewQs(subTopicsListTemp)}
+                { !showEdit &&  this.renderSelectNewQs(subTopicsListTemp)}
+                { showEdit && this.renderSelectQs(editItem)}
 
                 {/* {this.renderSelectP() : ''} */}
                 </div>
