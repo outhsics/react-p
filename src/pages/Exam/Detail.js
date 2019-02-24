@@ -104,8 +104,8 @@ class Detail extends PureComponent {
 
 
           this.setState({
-            newExam:true,
-            showEdit:false
+            // newExam:true,
+            // showEdit:false
           })
 
           console.log(_this.state.uploadAudioDuration, '2');
@@ -313,7 +313,7 @@ class Detail extends PureComponent {
       editItem: currentItem,
     })
 
-debugger
+// debugger
 
 
   };
@@ -354,7 +354,7 @@ debugger
     const radioValueList = [];
 
 
-
+// debugger
     for (let k in item.subTopics) {
       for (let kk in item.subTopics[k].options) {
         if (
@@ -487,12 +487,13 @@ debugger
     });
   };
 
-  renderSelectQs = v => {
-    const editItem  = v;
+  renderSelectQs = () => {
+    const {editItem} = this.state ;
+    // debugger
     return (
       <Fragment>
         <div className={styles.item1}>
-          {editItem &&
+          {editItem && editItem.subTopics && 
             editItem.subTopics.map((subItem,index) => {
               return (
                 <Fragment key={subItem.topicNo}>
@@ -886,10 +887,13 @@ debugger
                               <div key={subItem.topicNo}>
                                 <div className={styles.examTitle}>
                                   <h2 style={{ float: 'left', marginRight: 11 }}>
-                                    {item.topicNo === subItem.topicNo ? item.topicNo : ''} (
-                                    {subItem.topicNo}).{subItem.title}({item.score}分)
+                                    {/* {item.topicNo === subItem.topicNo ? item.topicNo : ''} (
+                                    {subItem.topicNo}).{subItem.title}({item.score}分) */}
+
+                                    {item.subTopics.length>1 ?`${item.topicNo} (${subItem.topicNo})`:item.topicNo}.{subItem.title}({item.score}分)
+
                                   </h2>
-                                  {item.topicNo === subItem.topicNo && (
+                                  {item.topicNo === 1 && (
                                     <a
                                       onClick={() => this.handleEdit(item)}
                                       style={{ marginRight: 5, float: 'right' }}
@@ -960,7 +964,7 @@ debugger
                   <div className={styles.itemHeader}>
                     <Row>
                       <Col span={8}>
-                        <span>
+                        <span style={{width:10,textOverflow:'ellipsis'}}>
                           上传音频: {uploadAudioName || (editItem && editItem.audio) || ''}
                         </span>
                       </Col>
@@ -1018,11 +1022,11 @@ debugger
 
                   {/* {showEdit && editItem.type === 1 ? <SelectQs subItem={subItem} addOption={this.addOption} editItem={editItem} radioValueList={this.state.radioValueList} saveChange={this.saveChange}/> : ''} */}
 
-                  {!newExam && showEdit && editItem.type === 1 ? this.renderSelectQs(editItem) : ''}
+                  { editItem && editItem.type === 1 ? this.renderSelectQs() : ''}
 
-                  {showEdit && editItem.type === 2 ? this.renderSelectP() : ''}
-                  
-                  { newExam &&  renderSelectNewQs(subTopicsListTemp)}
+                  {/* {showEdit && editItem.type === 2 ? this.renderSelectP() : ''} */}
+
+                  {/* { newExam &&  renderSelectNewQs(subTopicsListTemp)} */}
                 
               </div>
             </Col>
