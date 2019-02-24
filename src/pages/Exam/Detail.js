@@ -292,7 +292,6 @@ class Detail extends PureComponent {
   onChangeRadio = (index,event) => {
     console.log(event.target.value,'e')
     console.log(index)
-
     const {editItem} = this.state;
 
     const examTmp = _.cloneDeep(editItem);
@@ -306,17 +305,16 @@ class Detail extends PureComponent {
 
     copyData[index] = Number(event.target.value);
 
+    const currentItem = mapRadioToOptions(copyData,examTmp,true);
 
 
     this.setState({
-      radioValueList:copyData
-    })
-    
-    const currentItem = mapRadioToOptions(copyData,examTmp);
-
-    this.setState({
+      radioValueList:copyData,
       editItem: currentItem,
-    });
+    })
+
+debugger
+
 
   };
 
@@ -401,7 +399,8 @@ class Detail extends PureComponent {
 
     const { dispatch, location } = this.props;
 
-    const currentItem = mapRadioToOptions(radioValueList,editItem);
+    const currentItem = mapRadioToOptions(radioValueList,editItem,true);
+    // debugger
     
     paperDetail.topics[editItem.topicNo - 1] = currentItem;
 
@@ -857,7 +856,8 @@ class Detail extends PureComponent {
                   <span style={{ marginRight: 20 }}>
                     试卷总分： {paperDetail.totalScore || '暂无'}
                   </span>
-                  该试卷音频总长：{paperDetail.totalDuration || '暂无'}
+        该试卷音频总长:{paperDetail.totalDuration ? `${((paperDetail.totalDuration/60).toFixed(0))}mins` : '暂无'}
+
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               {/* <Button htmlType="submit" style={{ width: 120 }} type="primary">
               提交试卷
@@ -873,12 +873,12 @@ class Detail extends PureComponent {
               <div className={styles.examLeft}>
                 {paperDetail.topics &&
                   paperDetail.topics.map(item => (
-                    <Card
+                    <div
                       key={item.topicNo}
-                      bordered={false}
-                      hoverable
+                      className={styles.card}
                       onClick={() => this.handleEdit(item)}
                     >
+
                       {item.type === 1 ? (
                         <div key={item.id}>
                           {item.subTopics.map(subItem => {
@@ -937,7 +937,7 @@ class Detail extends PureComponent {
                           })}
                         </div>
                       )}
-                    </Card>
+                    </div>
                   ))}
               </div>
             </Col>
@@ -967,9 +967,8 @@ class Detail extends PureComponent {
                       <Col span={8}>
                         <span>
                           该音频时长:
-                          {uploadAudioDuration >= 0
-                            ? uploadAudioDuration
-                            : (editItem && editItem.audioDuration) || ''}
+
+                          {uploadAudioDuration ? `${((uploadAudioDuration/60).toFixed(0))}mins` :  (editItem && editItem.audioDuration) || ''}
                         </span>
                       </Col>
                       <Col span={3}>
@@ -1018,11 +1017,12 @@ class Detail extends PureComponent {
                   </div>
 
                   {/* {showEdit && editItem.type === 1 ? <SelectQs subItem={subItem} addOption={this.addOption} editItem={editItem} radioValueList={this.state.radioValueList} saveChange={this.saveChange}/> : ''} */}
+
                   {!newExam && showEdit && editItem.type === 1 ? this.renderSelectQs(editItem) : ''}
+
                   {showEdit && editItem.type === 2 ? this.renderSelectP() : ''}
+                  
                   { newExam &&  renderSelectNewQs(subTopicsListTemp)}
-                  {/* {currentEditType === 1 && !showEdit ? this.renderNewSelectQs() : ''} */}
-                  {/* {currentEditType === 2 && !showEdit ? this.renderNewSelectP() : ''} */}
                 
               </div>
             </Col>

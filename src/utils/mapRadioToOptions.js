@@ -1,6 +1,9 @@
 // [1,3] 
-export default function mapRadioToOptions(radioValueList,currentTopic) {
+export default function mapRadioToOptions(radioValueList,currentTopic,arg3) {
     // return val * 1 < 10 ? `0${val}` : val;
+    if(arg3 === true) {
+      currentTopic = currentTopic.subTopics;
+    }
     for (let subKey in currentTopic) {
       for (let radioKey in radioValueList) {
         if(subKey === radioKey ){
@@ -25,4 +28,5 @@ export default function mapRadioToOptions(radioValueList,currentTopic) {
     return currentTopic;
 
   }
+
   
