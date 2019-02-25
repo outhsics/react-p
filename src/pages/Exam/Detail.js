@@ -32,6 +32,8 @@ const confirm = Modal.confirm;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
+const staticPrefix = 'http://media.jze100.com/hear';
+
 const optionTransfer = [
   'A',
   'B','C','D','E','F','G','H','I','J','K','L'
@@ -74,55 +76,101 @@ class Detail extends PureComponent {
     };
   }
 
-
-  uploadProps = {
+  uploadImgProps = {
     name: 'file',
     action: 'https://api.jze100.com/hear/admin/file/upload',
     headers: {
       authorization: 'authorization-text',
     },
     showUploadList: false,
-    onChange: info => {
-      console.log(info.fileList, 'fileList');
+    accept:".jpg, .jpeg, .png",
+  };
 
-      if (info.fileList.length > 1) {
-        info.fileList.shift();
-      }
 
-      this.setState({
-        uploadAudioName: info.file.name,
-      });
-      const _this = this;
+  uploadFileProps = {
+    name: 'file',
+    action: 'https://api.jze100.com/hear/admin/file/upload',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    showUploadList: false,
+    accept:".mp3",
+    onChange:(info)=>{
+        const _this = this;
+        if (info.fileList.length > 1) {
+          info.fileList.shift();
+        }
 
       if (info.file.status !== 'uploading') {
         console.log(info.file, 'info.file');
         console.log(info.fileList, ' info.fileList');
       }
-
+      
       if (info.file.status === 'done') {
+        // debugger
         message.success(`${info.file.name} file uploaded successfully`);
         if (info.file.response.code === 1) {
           _this.setState({
             uploadAudioDuration: info.file.response.data.duration,
           });
-
-
-          this.setState({
-            // newExam:true,
-            // showEdit:false
-          })
-
+          _this.setState({
+            uploadAudioName: info.file.name,
+          });
           console.log(_this.state.uploadAudioDuration, '2');
           // debugger;
+          }
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
         }
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+    }
+  }
+
+
+  onChangeUploadImgProps =(info,subItemIndex,optionIndex)=>{
+    
+    const { editItem } = this.state;
+    const copySub = _.cloneDeep(editItem.subTopics);
+   
+    // console.log(info)
+    // debugger
+
+    const _this = this;
+    if (info.fileList.length > 1) {
+      info.fileList.shift();
+    }
+
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, 'info.file');
+    console.log(info.fileList, ' info.fileList');
+  }
+  
+  if (info.file.status === 'done') {
+    // debugger
+    message.success(`${info.file.name} file uploaded successfully`);
+    if (info.file.response.code === 1) {
+      // _this.setState({
+      //   uploadAudioDuration: info.file.response.data.duration,
+      // });
+      // _this.setState({
+      //   uploadAudioName: info.file.name,
+      // });
+      copySub[subItemIndex].options[optionIndex].image = staticPrefix+info.file.response.data.path;
+      this.setState({
+        editItem:{
+          ...editItem,
+          subTopics:copySub
+        }
+      })
+    // debugger
+
+      // console.log(_this.state.uploadAudioDuration, '2');
+      // debugger;
       }
-    },
-  };
-
-
-
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  }
+  
   cbSetPageDetail = (v)=>{
     const {  dispatch } = this.props;
 
@@ -545,7 +593,16 @@ class Detail extends PureComponent {
                                   <Col span={4}>or</Col>
                                   <Col span={15}>
                                     <div>
-                                      <Upload {...this.uploadProps}>
+                                      {/* <Upload {...this.uploadProps}>
+                                      <Button disabled={optionItem.answer}>
+                                          <Icon type="upload" /> 上传图片
+                                        </Button>
+                                      </Upload>
+                                       */}
+                                      <Upload
+                                      // data={{subIndex,optionIndex}}
+                                      onChange={(info)=>this.onChangeUploadImgProps(info,subItem.topicNo-1,optionItem.topicNo-1)}
+                                      {...this.uploadImgProps}>
                                       <Button disabled={optionItem.answer}>
                                           <Icon type="upload" /> 上传图片
                                         </Button>
