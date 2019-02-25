@@ -18,7 +18,7 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import NavLink from 'umi/navlink';
-
+import E from 'wangeditor';
 import moment from 'moment';
 import _ from 'lodash'
 import mapRadioToOptions from '@/utils/mapRadioToOptions';
@@ -31,6 +31,12 @@ const confirm = Modal.confirm;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
+const staticPrefix = 'http://media.jze100.com/hear';
+
+const optionTransfer = [
+  'A',
+  'B','C','D','E','F','G','H','I','J','K','L'
+]
 const formItemLayout = {
   labelCol: {
     span: 5,
@@ -146,7 +152,46 @@ class NewExam extends PureComponent {
         }
       }
   }
+  onChangeUploadImgProps =(info,subItemIndex,optionIndex)=>{
+    const { subTopicsListTemp } = this.state;
+    const copySub = _.cloneDeep(subTopicsListTemp);
+   
+    // console.log(info)
+    // debugger
 
+    const _this = this;
+    if (info.fileList.length > 1) {
+      info.fileList.shift();
+    }
+
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, 'info.file');
+    console.log(info.fileList, ' info.fileList');
+  }
+  
+  if (info.file.status === 'done') {
+    // debugger
+    message.success(`${info.file.name} file uploaded successfully`);
+    if (info.file.response.code === 1) {
+      // _this.setState({
+      //   uploadAudioDuration: info.file.response.data.duration,
+      // });
+      // _this.setState({
+      //   uploadAudioName: info.file.name,
+      // });
+      copySub[subItemIndex].options[optionIndex].image = staticPrefix+info.file.response.data.path;
+      this.setState({
+        subTopicsListTemp:copySub
+      })
+    // debugger
+
+      // console.log(_this.state.uploadAudioDuration, '2');
+      // debugger;
+      }
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  }
   uploadImgProps = {
     name: 'file',
     action: 'https://api.jze100.com/hear/admin/file/upload',
@@ -154,12 +199,49 @@ class NewExam extends PureComponent {
       authorization: 'authorization-text',
     },
     showUploadList: false,
-    accept:".jpg, .jpeg, .png"
+    accept:".jpg, .jpeg, .png",
+    data:{
+      xname:'x',
+      xage:"cc"
+    },
+    // onChange:(info,c)=>{
+    //   const _this = this;
+
+    //   if (info.fileList.length > 1) {
+    //     info.fileList.shift();
+    //   }
+    //   debugger
+
+    // if (info.file.status !== 'uploading') {
+    //   console.log(info.file, 'info.file');
+    //   console.log(info.fileList, ' info.fileList');
+    // }
+    
+    // if (info.file.status === 'done') {
+    //   // debugger
+    //   message.success(`${info.file.name} file uploaded successfully`);
+    //   if (info.file.response.code === 1) {
+    //     _this.setState({
+    //       uploadAudioDuration: info.file.response.data.duration,
+    //     });
+    //     _this.setState({
+    //       uploadAudioName: info.file.name,
+    //     });
+    //     console.log(_this.state.uploadAudioDuration, '2');
+    //     // debugger;
+    //     }
+    //   } else if (info.file.status === 'error') {
+    //     message.error(`${info.file.name} file upload failed.`);
+    //   }
+    // }
   };
 
   constructor(props, context) {
     super(props, context);
     this.state = {
+      ctxImg:'',
+      count:0,
+      editorContent: '',
       currentEditIndex:'',
       radioValueList:[],
       uploadAudioName: null,
@@ -185,11 +267,16 @@ class NewExam extends PureComponent {
   componentDidMount() {
     const { location, dispatch, examlist } = this.props;
     // const{paperDetail} =examlist;
-    
+
+   
     dispatch({
       type: 'operate/fetchSpecialList',
     });
   }
+
+  clickHandle() {
+    alert(this.state.editorContent)
+}
 
   // onSubmitExam = () => {
   //   const { dispatch } = this.props;
@@ -201,14 +288,9 @@ class NewExam extends PureComponent {
 
 
   
-// 确认新增题目
-onAddSubTopicsSubmit = e => {
-    // const { dispatch } = this.props;
-    // const { subTopicsListTemp } = this.state;
 
+  addSelectTopic = ()=>{
     const data =  [];
-
-    e.preventDefault();
    
     this.props.form.validateFields({ force: true }, (err, values) => {
       if (!err && values && values.topicNum>0) {
@@ -235,12 +317,50 @@ onAddSubTopicsSubmit = e => {
       }
 
 
-      this.setState({
-        subTopicsListTemp:data
-      })
-      // debugger
+        this.setState({
+          subTopicsListTemp:data
+        })
+      }
+    })
+  }
+// 确认新增题目
+onAddSubTopicsSubmit = e => {
+    // const { dispatch } = this.props;
+    const { currentEditType } = this.state;
+
+    // const data =  [];
+
+    e.preventDefault();
+   
+    if(currentEditType ===1) {
+      this.addSelectTopic()
+      return 
     }
-  })
+
+    this.props.form.validateFields({ force: true }, (err, values) => {
+      const options =[];
+      const data = [];
+      if (!err && values && values.topicNum>0) {
+
+        for(let i =0;i <values.topicNum;i++) {
+          options.push({
+              "answer": "",
+              "image": ""
+          })
+      }
+      data.push({
+        "title": "",
+        "parse": "",
+        options
+      })
+
+// debugger
+        this.setState({
+          subTopicsListTemp:data
+        })
+      }
+    })
+
   }
 
   handleTopicScore =  (event)=>{
@@ -380,9 +500,12 @@ onAddSubTopicsSubmit = e => {
 
 
   onChangeCurrentEditType = (event)=>{
+
     this.setState({
-      currentEditType:event.target.value
+      currentEditType: Number(event.target.value),
+      subTopicsListTemp:[]
     })
+    // debugger
   }
 
   onChangeRadio = (index,event) => {
@@ -469,7 +592,7 @@ onAddSubTopicsSubmit = e => {
       title,
       content,
       onOk() { 
-        this.props.form.resetFields();
+        _this.props.form.resetFields();
         _this.setState({
           paperDetailHeader:{
             title:'',
@@ -602,13 +725,25 @@ onAddSubTopicsSubmit = e => {
     const {paperDetailHeader, topicsListTemp} = this.state;
     const {dispatch} = this.props;
 
-    console.log(paperDetailHeader,'pageDetailHeader')
-    debugger
+    // console.log(paperDetailHeader,'pageDetailHeader')
+    // debugger
 
     const mergeData = {
       ...paperDetailHeader,
       topics:topicsListTemp
     }
+
+    this.setState({
+      topicsListTemp: [],
+      paperDetailHeader:{
+        title:'',
+        specialId:null,
+        level:0,
+        totalScore:null,
+        totalDuration:null,
+      }
+    })
+
     dispatch({
       type:'examlist/createPaper',
       payload:mergeData,
@@ -674,17 +809,6 @@ onAddSubTopicsSubmit = e => {
       '创建试卷成功'
     );
     this.props.form.resetFields();
-    this.setState({
-      topicsListTemp: [],
-      paperDetailHeader:{
-        title:'',
-        specialId:null,
-        level:0,
-        totalScore:null,
-        totalDuration:null,
-      }
-    })
-
 
   }
 
@@ -761,7 +885,8 @@ onAddSubTopicsSubmit = e => {
       paperDetailHeader
     } = this.state;
 
-    
+    const sub = [];
+    const obj = subTopicsListTemp;
 
       const formData = this.props.form.getFieldsValue();
       // const copyData = _.cloneDeep(topicsListTemp);
@@ -769,13 +894,22 @@ onAddSubTopicsSubmit = e => {
       // currentEditType
 
       
+
+    if(currentEditType === 2) {
+      const obj = [{
+        ...this.subTopicsListTemp,
+        title:this.state.editorContent
+      } ]
+      // subTopicsListTemp[0].title = this.state.editorContent;
+    }
+
       const topicsList = [];
       const topicsListObj = {
         type:currentEditType,
         audio:uploadAudioName,
         audioDuration:uploadAudioDuration,
         score:formData.topicScore,
-        subTopics:subTopicsListTemp,
+        subTopics:obj,
         subNum:formData.topicNum
       };
       topicsList.push(topicsListObj);
@@ -792,14 +926,10 @@ onAddSubTopicsSubmit = e => {
     const totalDuration = mergeData.reduce(function(accumalator,cur){
       return accumalator+Number(cur.audioDuration)
     },0)
-      // this.setState({
-
-      //   topicsListTemp:mergeData,
-      //   subTopicsListTemp:[]
-      // })
 
 
     this.props.form.resetFields();
+
 
     this.setState({
       showEdit:false,
@@ -825,6 +955,109 @@ onAddSubTopicsSubmit = e => {
     });
   };
 
+  componentDidUpdate(nextProps, nextState){
+    // debugger
+      // let count =0;
+     const {count}  = this.state;
+     if(nextState.currentEditType===1) {
+       this.setState({
+         count:0
+       })
+     }
+    if(count ===0 && nextState.currentEditType===2) {
+      this.setState({
+        count:1
+      })
+      // count++;
+      // debugger
+      // if(count) {
+     
+
+    }
+
+
+  }
+
+  renderEditor=()=>{
+    // debugger
+
+    const elem = this.refs.editorElem
+    if(!elem){
+      const editor = elem && new E(elem)
+      editor.customConfig.onchange = html => {
+        this.setState({
+          editorContent: html
+        })
+      }
+      editor.customConfig.menus = [
+        'image',  // 插入图片
+      ];
+      editor.customConfig.uploadImgMaxSize = 5 * 1024 * 1024;
+      editor.customConfig.uploadImgMaxLength = 1
+      editor.customConfig.uploadImgServer = 'https://api.jze100.com/hear/admin/file/upload';
+      editor.customConfig.uploadImgHooks = {
+        before: function (xhr, editor, files) {
+            // 图片上传之前触发
+            // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，files 是选择的图片文件
+            
+            // 如果返回的结果是 {prevent: true, msg: 'xxxx'} 则表示用户放弃上传
+            // return {
+            //     prevent: true,
+            //     msg: '放弃上传'
+            // }
+        },
+        success: function (xhr, editor, result) {
+            // 图片上传并返回结果，图片插入成功之后触发
+            // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+            // console.log(xhr)
+            // console.log(editor)
+            // console.log(result)
+             const path = staticPrefix +result.data.path;
+            //  var btnId = editor.imgMenuId;
+             editor.cmd.do('insertHtml', '<img src="' + path + '" style="max-width:100%;"/>')
+
+            // this.setState({
+            //   ctxImg:path
+            // })
+            //  debugger
+
+            //  btnId.src = path;
+            //  this.setState({
+              //  subTopicsListTemp=
+            //  })
+            // debugger
+        },
+        fail: function (xhr, editor, result) {
+            // 图片上传并返回结果，但图片插入错误时触发
+            // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+        },
+        error: function (xhr, editor) {
+            // 图片上传出错时触发
+            // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
+        },
+        timeout: function (xhr, editor) {
+            // 图片上传超时时触发
+            // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
+        },
+    
+        // 如果服务器端返回的不是 {errno:0, data: [...]} 这种格式，可使用该配置
+        // （但是，服务器端返回的必须是一个 JSON 格式字符串！！！否则会报错）
+        customInsert: function (insertImg, result, editor) {
+            // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
+            // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
+    
+            // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
+            var url = result.url
+            insertImg(url)
+    
+            // result 必须是一个 JSON 格式字符串！！！否则报错
+        }
+      }
+      editor.customConfig.showLinkImg = false
+      editor.create()
+    
+  }
+  }
 
   onUpload = () => {
     $.ajax({
@@ -844,7 +1077,6 @@ onAddSubTopicsSubmit = e => {
      const {subTopicsListTemp,showEdit} = this.state;
     // const editItem  = v;
     // subTopicsListTemp
-    // debugger
     return (
       <Fragment>
         <div className={styles.item1}>
@@ -853,7 +1085,7 @@ onAddSubTopicsSubmit = e => {
               return (
                 <Fragment key={subIndex}>
                   <Row>
-                    <Col span={4}>题目（{subIndex+1}):</Col>
+                    <Col span={4}>题目({subIndex+1}):</Col>
 
                     <Col span={18}>
                       <Input value={subItem.title} onChange={()=>this.handleGetInputValue(subIndex,event)} />
@@ -873,7 +1105,7 @@ onAddSubTopicsSubmit = e => {
                             <Row gutter={16} key={optionIndex}>
                               <Col span={14}>
                                 <Row>
-                                  <Col span={6}>选项: {optionIndex+1} </Col>
+                                  <Col span={6}>选项: {optionTransfer[optionIndex]} </Col>
                                   <Col span={18}>
                                     <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(subIndex,optionIndex,event)} />
                                   </Col>
@@ -885,7 +1117,10 @@ onAddSubTopicsSubmit = e => {
                                   <Col span={4}>or</Col>
                                   <Col span={15}>
                                     <div>
-                                      <Upload  {...this.uploadImgProps}>
+                                      <Upload
+                                      // data={{subIndex,optionIndex}}
+                                      onChange={(info)=>this.onChangeUploadImgProps(info,subIndex,optionIndex)}
+                                      {...this.uploadImgProps}>
                                       <Button disabled={optionItem.answer}>
                                           <Icon type="upload" /> 上传图片
                                         </Button>
@@ -964,164 +1199,182 @@ onAddSubTopicsSubmit = e => {
     );
   };
 
-// 新增试题
-  renderSelectNewQs = (v) => {
-    
-    return (
-      <Fragment>
-        <div className={styles.item1}>
-          {v && v.map((item,itemIndex) => {
-              return (
-                <Fragment key={itemIndex}>
-                  <Row>
-                    <Col span={5}>题目（{itemIndex+1}）:</Col>
+  renderSelectP = () => {
+    const {subTopicsListTemp,showEdit,currentEditIndex} = this.state;
+    const _this=this;
+    // setTimeout(()=>{
 
-                    <Col span={18}>
-                      <Input value={item.title} onChange={()=>this.handleGetInputValue(itemIndex,event)} />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={24}>
-                      <RadioGroup
-                        onChange={() => this.onChangeRadio(itemIndex,event)}
-                        value={this.state.radioValueList[itemIndex]}
-                        // topicno={item.topicNo}
-                        // ref="radioGroup"
-                        style={{ width: '100%' }}
-                      >
-                        {item.options.map((optionItem,optionsIndex) => {
-                          return (
-                            <Row gutter={16} key={optionsIndex}>
-                              <Col span={14}>
-                                <Row>
-                                  <Col span={6}>选项: {optionsIndex+1} </Col>
-                                  <Col span={18}>
-                                    <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(itemIndex,optionsIndex,event)} />
-                                  </Col>
-                                </Row>
-                              </Col>
+    //   const elem = this.refs.editorElem
+    //   const editor = elem && new E(elem)
+      
+    //   editor.customConfig.onchange = html => {
+    //     _this.setState({
+    //       editorContent: html
+    //     })
+    //   }
+    //   editor.customConfig.menus = [
+    //     'image',  // 插入图片
+    // ]
+    //   editor.create()
 
-                              <Col span={9}>
-                                <Row>
-                                  <Col span={4}>or</Col>
-                                  <Col span={15}>
-                                    <div 
-                                        // onClick={this.onChangeUpload2(itemIndex,optionsIndex)}
-                                    
-                                    >
-                                      <Upload 
-                                    {...this.uploadImgProps}
-                                      //  action="//jsonplaceholder.typicode.com/posts/"
-          // listType="picture-card"
-          // fileList={fileList}
-          // onPreview={this.handlePreview}
-          onChange={()=>this.onChangeUpload}
-          // onChange={this.onChangeUpload(event)}
-                                      showUploadList={true}
-                                      >
-                                        <Button
+    // },100)
 
-                                         disabled={optionItem.answer}>
-                                          <Icon type="upload" /> 上传图片
-                                        </Button>
-                                      </Upload>
-                                    </div>
-                                  </Col>
-                                  <Col span={5}>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <Radio value={optionsIndex+1} />
-                                  </Col>
-                                </Row>
-                              </Col>
-                            </Row>
-                          );
-                        })}
-                      </RadioGroup>
-                    </Col>
-                  </Row>
 
-                  <Row>
-                    <Col span={24}>
-                      <Button
-                        type="primary"
-                        onClick={() => this.addOption(itemIndex,v)}
-                        // topicno={}
-                        // ref="addOption"
-                        style={{ width: '100%' }}
-                        icon={'plus'}
-                      >
-                        新增选项
-                      </Button>
-                    </Col>
-                  </Row>
-                  {/* <Row>
-                    <Col span={3}>答案:</Col>
-                    <Col span={13}>
-                      <InputNumber defaultValue={subItem.answer} min={1} max={10} />
-                    </Col>
-                  </Row> */}
-                  <Row className={styles.rightFooter}>
-                    <Col span={3}>解析:</Col>
 
-                    <Col span={13}>
-                      <Input.TextArea
-                        value={item.parse}
-                        onChange={()=>this.handleGetInputText(itemIndex,event)}                        
+   // const editItem  = v;
+   // subTopicsListTemp
+   return (
+     <Fragment>
+       <div className={styles.item1}>
+         {subTopicsListTemp.length &&
+           subTopicsListTemp.map((subItem,subIndex) => {
+             return (
+               <Fragment key={subIndex}>
+                 <Row>
+                   <Col span={4}>题目:</Col>
+
+                   <Col span={18}>
+                     {/* <Input value={subItem.title} onChange={()=>this.handleGetInputValue(subIndex,event)} /> */}
+                     {/* <Input.TextArea
+                        value={subItem.title}
+                        onChange={()=>this.handleGetInputValue(index,event)}                        
                         placeholder={'专项说明文本（0/180）'}
                         rows={8}
-                      />
-                    </Col>
-                    {itemIndex+1 === v.length && (
-                      <Col span={7} className={styles.opt}>
-                        <Row>
-                          <Button onClick={this.showEmptyModal} style={{ width: '100%' }}>
-                            清空重新录入
-                          </Button>
-                        </Row>
-                        <Row>
-                          <Button
-                            onClick={() => this.saveTopic(v)}
-                            type="primary"
-                            style={{ width: '100%' }}
-                          >
-                            确认试题
-                          </Button>
-                        </Row>
-                      </Col>
-                    )}
-                  </Row>
-                </Fragment>
-              );
-            })}
-        </div>
-      </Fragment>
-    );
-  };
+                      /> */}
+                      <div ref="editorElem" style={{textAlign: 'left'}}>
+                      </div>  
+                      {/* {this.renderEditor()}} */}
+                      
+                      {/* <button onClick={this.clickHandle.bind(this)}>获取内容</button> */}
+                   </Col>
+                 </Row>
+                 <Row>
+                   <Col span={24}>
+                     
+                   </Col>
+                 </Row>
+
+                 <Row>
+                   <Col span={4}>答案:</Col>
+                   <Col span={18}>
+                   <div className={styles.flex}>
+                   {subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
+                     return (
+                      <Fragment key={optionIndex}>
+
+                       {/* {currentEditIndex+1} ({optionIndex}) */}
+                       {currentEditIndex+1}
+                       <div className={styles.flexItem}> 
+                      <Input  placeholder={optionItem.answer}></Input>
+                       </div>
+                     </Fragment>
+                     )
+                   })}
+                   </div>
+
+                   </Col>
 
 
+                 </Row>
+                 {/* <Row>
+                   <Col span={3}>答案:</Col>
+                   <Col span={13}>
+                     <InputNumber defaultValue={subItem.answer} min={1} max={10} />
+                   </Col>
+                 </Row> */}
+                 <Row className={styles.rightFooter}>
+                   <Col span={3}>解析:</Col>
+
+                   <Col span={13}>
+                     <Input.TextArea
+                       value={subItem.parse}
+                       onChange={()=>this.handleGetInputText(subIndex,event)}                        
+                       placeholder={'专项说明文本（0/180）'}
+                       rows={8}
+                     />
+                   </Col>
+                   {subIndex+1 === subTopicsListTemp.length && (
+                     <Col span={7} className={styles.opt}>
+                       <Row>
+                         <Button onClick={this.cancelEditOrEmpty} style={{ width: '100%' }}>
+                           {/*  */}
+                     { showEdit ? '取消编辑':'清空重新录入'}
+                         </Button>
+                       </Row>
+                       <Row>
+                         <Button
+                           onClick={() => this.saveChangeOrTopic()}
+                           type="primary"
+                           style={{ width: '100%' }}
+                         >
+                     { showEdit ? '保存修改':'确认试题'}
+                         </Button>
+                       </Row>
+                     </Col>
+                   )}
+                 </Row>
+               </Fragment>
+             );
+           })}
+       </div>
+     </Fragment>
+   );
+ };
+
+ dispatchEditContent = (html)=>{
+   this.setState({
+     editorContent:html
+   })
+ }
   getSpaceTopic = (item,itemIndex)=>{
     return (
-        <div key={itemIndex}>
-          <div className={styles.examTitle}>
-            <h2 style={{ float: 'left', marginRight: 11 }}>
-              {itemIndex+1}.({item.score}分)
-            </h2>
-            <div style={{ float: 'right' }}>
-              <a onClick={() => this.handleEdit(item)} style={{ marginRight: 5 }}>
-                编辑
-              </a>
+      <div>
+      {item.subTopics.map((subItem,subItemIndex) => {
+        return (
+          <div key={subItemIndex}>
+            <div className={styles.examTitle}>
+
+              <h2 style={{ float: 'left', marginRight: 11 }}>
+              
+                {/* {itemIndex === subItemIndex ? ItemIndex : ''}  */}
+
+                {itemIndex+1}.{subItem.title}({item.score}分)
+              </h2>
+
+              {subItemIndex === 0 && (
+                <div style={{float:'right'}}>
+             
+                <a
+                  onClick={() => this.handleEdit(item,itemIndex)}
+                  style={{ marginRight: 5}}
+                >
+                  编辑
+                </a>
+                <a
+                  onClick={() => this.showConfirmDelete(itemIndex)}
+                  // style={{ marginRight: 5, float: 'right' }}
+                >
+                  删除
+                </a>
+             
+                </div>
+              )}
+
             </div>
+
+            {subItem.options.map((subOption,subOptionIndex) => {
+              return (
+                <ul key={subOptionIndex} style={{padding:0, lineHeight: '31px' }}>
+                  <li> {optionTransfer[subOptionIndex]}.&nbsp;
+                  { subOption.answer}
+                  </li>
+                </ul>
+              );
+            })}
           </div>
-          {item.subTopics.map((subItem,subIndex) => {
-            return (
-              <div key={subIndex}>
-                <h2>
-                  {subItem.id} .{subItem.title}
-                </h2>
-              </div>
-            );
-          })}
-        </div>
+        );
+      })}
+    </div>
     )
   }
 
@@ -1312,13 +1565,13 @@ onAddSubTopicsSubmit = e => {
 
                                 {subItem.options.map((subOption,subOptionIndex) => {
                                   return (
-                                    <div key={subOptionIndex} style={{ lineHeight: '31px' }}>
-                                      <span> {subOptionIndex+1}</span>
-                                      <span> {subOption.answer}</span>
+                                    <ul key={subOptionIndex} style={{padding:0, lineHeight: '31px' }}>
+                                      <li> {optionTransfer[subOptionIndex]}.&nbsp;
+                                      {!subOption.image.includes('http') && subOption.answer}
                                       {subOption.image && subOption.image.includes('http') && (
-                                        <img src={subOption.image} />
-                                      )}
-                                    </div>
+                                        <img style={{width:75,height:'auto'}} src={subOption.image} />
+                                      )}</li>
+                                    </ul>
                                   );
                                 })}
                               </div>
@@ -1344,10 +1597,10 @@ onAddSubTopicsSubmit = e => {
                         <RadioGroup 
                         onChange={()=>this.onChangeCurrentEditType(event)}
                         value={currentEditType} size="default">
-                          <RadioButton disabled={!(currentEditType === 1)} value={1}>
+                          <RadioButton  disabled={showEdit && currentEditType===2} value={1}>
                             选择
                           </RadioButton>
-                          <RadioButton disabled={!(currentEditType === 2)} value={2}>
+                          <RadioButton   disabled={showEdit && currentEditType===1} value={2}>
                             段落填空
                           </RadioButton>
                         </RadioGroup>
@@ -1419,7 +1672,12 @@ onAddSubTopicsSubmit = e => {
                     </div>
                 </Form>
 
-                { subTopicsListTemp.length>0 &&  this.renderSelectQs()}
+                { currentEditType ===1 && subTopicsListTemp.length>0 &&  this.renderSelectQs()}
+                { currentEditType ===2 && subTopicsListTemp.length>0 &&  <RenderSelectP
+                showEdit={showEdit}
+                dispatchEditContent={this.dispatchEditContent}
+                currentEditIndex={currentEditIndex}
+                 subTopicsListTemp={subTopicsListTemp}/>}
                 
                 </div>
             </Col>
@@ -1434,8 +1692,246 @@ onAddSubTopicsSubmit = e => {
   }
 }
 
-
-
-
-
 export default NewExam;
+
+class RenderSelectP extends PureComponent {
+
+
+//  constructor(props){
+//    super(props)
+
+
+//  }
+
+
+renderEditors=()=>{
+  const elem = this.refs.editorElem
+  // debugger
+  if(elem!== undefined){
+    const editor = elem && new E(elem)
+    editor.customConfig.onchange = html => {
+      // this.setState({
+      //   editorContent: html
+      // })
+      this.props.dispatchEditContent(html)
+    }
+    editor.customConfig.menus = [
+      'image',  // 插入图片
+    ];
+    editor.customConfig.uploadImgMaxSize = 5 * 1024 * 1024;
+    editor.customConfig.uploadImgMaxLength = 1
+    editor.customConfig.uploadImgServer = 'https://api.jze100.com/hear/admin/file/upload';
+    editor.customConfig.uploadImgHooks = {
+      before: function (xhr, editor, files) {
+          // 图片上传之前触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，files 是选择的图片文件
+          
+          // 如果返回的结果是 {prevent: true, msg: 'xxxx'} 则表示用户放弃上传
+          // return {
+          //     prevent: true,
+          //     msg: '放弃上传'
+          // }
+      },
+      success: function (xhr, editor, result) {
+          // 图片上传并返回结果，图片插入成功之后触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+          // console.log(xhr)
+          // console.log(editor)
+          // console.log(result)
+           const path = staticPrefix +result.data.path;
+          //  var btnId = editor.imgMenuId;
+           editor.cmd.do('insertHtml', '<img src="' + path + '" style="max-width:100%;"/>')
+
+          // this.setState({
+          //   ctxImg:path
+          // })
+          //  debugger
+
+          //  btnId.src = path;
+          //  this.setState({
+            //  subTopicsListTemp=
+          //  })
+          // debugger
+      },
+      fail: function (xhr, editor, result) {
+          // 图片上传并返回结果，但图片插入错误时触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象，result 是服务器端返回的结果
+      },
+      error: function (xhr, editor) {
+          // 图片上传出错时触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
+      },
+      timeout: function (xhr, editor) {
+          // 图片上传超时时触发
+          // xhr 是 XMLHttpRequst 对象，editor 是编辑器对象
+      },
+  
+      // 如果服务器端返回的不是 {errno:0, data: [...]} 这种格式，可使用该配置
+      // （但是，服务器端返回的必须是一个 JSON 格式字符串！！！否则会报错）
+      customInsert: function (insertImg, result, editor) {
+          // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
+          // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
+  
+          // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
+          var url = result.url
+          insertImg(url)
+  
+          // result 必须是一个 JSON 格式字符串！！！否则报错
+      }
+    }
+    editor.customConfig.showLinkImg = false
+    editor.create()
+  
+}
+}
+
+componentDidMount(){
+  // ;
+  setTimeout(this.renderEditors(),1100)
+  console.log(this.parent).
+  // props.form.getFieldsValue()
+
+}
+
+handleGetInputText= (index,event)=>{
+  // debugger
+  // console.log(e,'e')
+  // console.log(event.target.value,'e')
+  // console.log(index)
+  // debugger
+  const {subTopicsListTemp} = this.state;
+  const examTmp = _.cloneDeep(subTopicsListTemp);
+
+  examTmp[index].parse = event.target.value;
+  this.setState({
+    subTopicsListTemp:examTmp
+  })
+}
+
+
+// cancelEditOrEmpty = () => {
+//   const { showEdit}= this.state;
+//   if(showEdit) {
+//     // 取消编辑
+//     this.parent.props.form.resetFields();
+//     this.setState({
+//       showEdit:false,
+//       subTopicsListTemp:[],
+//       uploadAudioDuration:null,
+//       uploadAudioName:null,
+//       currentEditType:1,
+//     })
+//     return
+//   } 
+//   // 清空重新录入
+//   this.showEmptyModal();
+
+// };
+
+
+  render(){
+  const {subTopicsListTemp,showEdit,currentEditIndex,dispatchEditContent} = this.props;
+  debugger
+
+    return (
+      <Fragment>
+        <div className={styles.item1}>
+          {subTopicsListTemp.length ?
+            subTopicsListTemp.map((subItem,subIndex) => {
+              return (
+                <Fragment key={subIndex}>
+                  <Row>
+                    <Col span={4}>题目:</Col>
+  
+                    <Col span={18}>
+                      {/* <Input value={subItem.title} onChange={()=>this.handleGetInputValue(subIndex,event)} /> */}
+                      {/* <Input.TextArea
+                         value={subItem.title}
+                         onChange={()=>this.handleGetInputValue(index,event)}                        
+                         placeholder={'专项说明文本（0/180）'}
+                         rows={8}
+                       /> */}
+                       <div ref="editorElem" style={{textAlign: 'left'}}>
+                       </div>  
+                       {/* {this.renderEditor()}} */}
+                       
+                       {/* <button onClick={this.clickHandle.bind(this)}>获取内容</button> */}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={24}>
+                      
+                    </Col>
+                  </Row>
+  
+                  <Row>
+                    <Col span={4}>答案:</Col>
+                    <Col span={18}>
+                    <div className={styles.flex}>
+                    {subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
+                      return (
+                       <Fragment key={optionIndex}>
+  
+                        {/* {currentEditIndex+1} ({optionIndex}) */}
+                        {currentEditIndex+1}
+                        <div className={styles.flexItem}> 
+                       <Input  placeholder={optionItem.answer}></Input>
+                        </div>
+                      </Fragment>
+                      )
+                    })}
+                    </div>
+  
+                    </Col>
+  
+  
+                  </Row>
+                  {/* <Row>
+                    <Col span={3}>答案:</Col>
+                    <Col span={13}>
+                      <InputNumber defaultValue={subItem.answer} min={1} max={10} />
+                    </Col>
+                  </Row> */}
+                  <Row className={styles.rightFooter}>
+                    <Col span={3}>解析:</Col>
+  
+                    <Col span={13}>
+                      <Input.TextArea
+                        value={subItem.parse}
+                        onChange={()=>this.handleGetInputText(subIndex,event)}                        
+                        placeholder={'专项说明文本（0/180）'}
+                        rows={8}
+                      />
+                    </Col>
+                    {subIndex+1 === subTopicsListTemp.length && (
+                      <Col span={7} className={styles.opt}>
+                        <Row>
+                          <Button onClick={this.cancelEditOrEmpty} style={{ width: '100%' }}>
+                            {/*  */}
+                      { showEdit ? '取消编辑':'清空重新录入'}
+                          </Button>
+                        </Row>
+                        <Row>
+                          <Button
+                            onClick={() => this.saveChangeOrTopic()}
+                            type="primary"
+                            style={{ width: '100%' }}
+                          >
+                      { showEdit ? '保存修改':'确认试题'}
+                          </Button>
+                        </Row>
+                      </Col>
+                    )}
+                  </Row>
+                </Fragment>
+              );
+            }) :null}
+        </div>
+      </Fragment>
+    );
+  }
+
+}
+
+// export default RenderSelectP;
+

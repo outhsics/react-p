@@ -32,6 +32,10 @@ const confirm = Modal.confirm;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
+const optionTransfer = [
+  'A',
+  'B','C','D','E','F','G','H','I','J','K','L'
+]
 const formItemLayout = {
   labelCol: {
     span: 5,
@@ -518,7 +522,7 @@ class Detail extends PureComponent {
                             <Row gutter={16} key={optionItem.topicNo}>
                               <Col span={14}>
                                 <Row>
-                                  <Col span={6}>选项: {optionItem.topicNo} </Col>
+                                  <Col span={6}>选项: {optionTransfer[optionItem.topicNo-1]}</Col>
                                   <Col span={18}>
                                     <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(index,index2,event)} />
                                   </Col>
@@ -903,15 +907,16 @@ class Detail extends PureComponent {
                                   )}
                                 </div>
 
-                                {subItem.options.map(subOption => {
+
+                                {subItem.options.map((subOption) => {
                                   return (
-                                    <div key={subOption.topicNo} style={{ lineHeight: '31px' }}>
-                                      <span> {subOption.topicNo}</span>
-                                      <span> {subOption.answer}</span>
+                                    <ul  key={subOption.topicNo} style={{padding:0, lineHeight: '31px' }}>
+                                      <li> { optionTransfer[subOption.topicNo-1]}.&nbsp;
+                                      {!subOption.image.includes('http') && subOption.answer}
                                       {subOption.image && subOption.image.includes('http') && (
-                                        <img src={subOption.image} />
-                                      )}
-                                    </div>
+                                        <img style={{width:75,height:'auto'}} src={subOption.image} />
+                                      )}</li>
+                                    </ul>
                                   );
                                 })}
                               </div>
