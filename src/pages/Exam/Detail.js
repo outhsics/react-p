@@ -382,19 +382,30 @@ class Detail extends PureComponent {
   deleteExam = () => {};
 
   calcScore = v => {
-    let score = 0;
-    for (let k in v.topics) {
-      score += v.topics[k].score;
-    }
-    return score;
+    // let score = 0;
+    // for (let k in v.topics) {
+    //   score += v.topics[k].score;
+    // }
+    // return score;
+
+
+    const totalScore = v.topics.reduce(function(accumalator,cur){
+      return accumalator+Number(cur.score)
+    },0)
+    return totalScore;
+
   };
 
   calcDuration = v => {
-    let duration = 0;
-    for (let k in v.topics) {
-      duration += v.topics[k].audioDuration;
-    }
-    return duration;
+    // let duration = 0;
+    // for (let k in v.topics) {
+    //   duration += v.topics[k].audioDuration;
+    // }
+    // return duration;
+    const totalDuration = v.topics.reduce(function(accumalator,cur){
+      return accumalator+Number(cur.audioDuration)
+    },0)
+    return totalDuration;
   };
 
   saveChange = (v) => {
@@ -404,7 +415,6 @@ class Detail extends PureComponent {
     const { dispatch, location } = this.props;
 
     const currentItem = mapRadioToOptions(radioValueList,editItem,true);
-    // debugger
     
     paperDetail.topics[editItem.topicNo - 1] = currentItem;
 
@@ -453,7 +463,8 @@ class Detail extends PureComponent {
     // isCorrect
 
     // TODO
-    // debugger;
+    debugger;
+    return
 
     console.log(saveData,'saveData')
     // return;

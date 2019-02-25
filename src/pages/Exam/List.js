@@ -156,6 +156,7 @@ class ExamList extends Component {
     const { dispatch, operate } = this.props;
     const { currentPageNum } = this.state;
     const { specialList } = operate;
+    const _this = this;
 
     confirm({
       title,
@@ -173,7 +174,7 @@ class ExamList extends Component {
           payload: {
             pageNum: currentPageNum,
             pageSize: 10,
-            specialId: this.state.currentSpecial,
+            specialId: _this.state.currentSpecial,
           },
         });
       },
@@ -203,7 +204,7 @@ class ExamList extends Component {
 
   callback = id => {
     if (!id) return;
-
+debugger
     this.setState({
       currentSpecial: id,
     });

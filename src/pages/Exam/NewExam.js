@@ -1326,6 +1326,12 @@ onAddSubTopicsSubmit = e => {
      editorContent:html
    })
  }
+
+ dispatchSubTopicsListTemp = (cloneSubTopicsListTemp)=>{
+   this.setState({
+     subTopicsListTemp:cloneSubTopicsListTemp
+   })
+ }
   getSpaceTopic = (item,itemIndex)=>{
     return (
       <div>
@@ -1675,6 +1681,8 @@ onAddSubTopicsSubmit = e => {
                 { currentEditType ===1 && subTopicsListTemp.length>0 &&  this.renderSelectQs()}
                 { currentEditType ===2 && subTopicsListTemp.length>0 &&  <RenderSelectP
                 showEdit={showEdit}
+                saveChangeOrTopic={this.saveChangeOrTopic}
+                dispatchSubTopicsListTemp={this.dispatchSubTopicsListTemp}
                 dispatchEditContent={this.dispatchEditContent}
                 currentEditIndex={currentEditIndex}
                  subTopicsListTemp={subTopicsListTemp}/>}
@@ -1788,7 +1796,7 @@ renderEditors=()=>{
 componentDidMount(){
   // ;
   setTimeout(this.renderEditors(),1100)
-  console.log(this.parent).
+  // console.log(this.parent).
   // props.form.getFieldsValue()
 
 }
@@ -1799,13 +1807,26 @@ handleGetInputText= (index,event)=>{
   // console.log(event.target.value,'e')
   // console.log(index)
   // debugger
-  const {subTopicsListTemp} = this.state;
-  const examTmp = _.cloneDeep(subTopicsListTemp);
+  const {subTopicsListTemp} = this.props;
+  const cloneSubTopicsListTemp = _.cloneDeep(subTopicsListTemp);
 
-  examTmp[index].parse = event.target.value;
-  this.setState({
-    subTopicsListTemp:examTmp
-  })
+  cloneSubTopicsListTemp[index].parse = event.target.value;
+  this.props.dispatchSubTopicsListTemp (
+    cloneSubTopicsListTemp
+  )
+}
+
+saveChangeOrTopic = ()=>{
+
+  // const {showEdit} = this.props;
+  // if(showEdit){
+  //   //  保存修改
+  //   this.props.saveChange()
+  //  return
+  // }
+  // this.props.saveTopic();
+
+  this.props.saveChangeOrTopic()
 }
 
 
