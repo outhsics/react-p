@@ -237,7 +237,8 @@ class RenderSelectP extends PureComponent {
                            <Fragment key={optionIndex}>
       
                             {/* {currentEditIndex+1} ({optionIndex}) */}
-                            {currentEditIndex+1}({optionIndex+1})
+                             {showEdit && currentEditIndex+1}
+                             ({optionIndex+1})
                             <div className={styles.flexItem}> 
                            <Input 
                             onChange={()=>this.handleGetInputAnswer(subIndex,optionIndex,event)}                        
