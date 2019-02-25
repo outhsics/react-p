@@ -115,6 +115,7 @@ class RenderSelectP extends PureComponent {
           }
         }
         editor.customConfig.showLinkImg = false
+        editor.customConfig.zIndex = 100
         editor.create()
       
     }

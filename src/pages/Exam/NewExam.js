@@ -1035,6 +1035,7 @@ onAddSubTopicsSubmit = e => {
         }
       }
       editor.customConfig.showLinkImg = false
+      editor.customConfig.zIndex = 100
       editor.create()
     
   }
