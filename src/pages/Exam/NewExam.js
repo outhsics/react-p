@@ -742,7 +742,7 @@ onAddSubTopicsSubmit = e => {
     let title = '提交试卷';
     let content = <div className={styles.modalList}>
 
-      <span> 默认提交后，试卷状态为启用</span>
+      {/* <span> 默认提交后，试卷状态为启用</span> */}
       <ul>
         <li>
           试卷名称: {paperDetailHeader.title}
