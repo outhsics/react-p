@@ -19,6 +19,8 @@ import {
 import { connect } from 'dva';
 import NavLink from 'umi/navlink';
 import update, { extend } from 'immutability-helper';
+import RenderSelectP from './components/RenderSelectP'
+
 
 import moment from 'moment';
 import _ from 'lodash'
@@ -64,6 +66,7 @@ class Detail extends PureComponent {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      currentEditIndex:'',
       editorContent:'',
       subTopicsListTemp:[],
       uploadAudioName: null,
@@ -407,7 +410,7 @@ class Detail extends PureComponent {
     });
   };
 
-  handleEdit = item => {
+  handleEdit = (item,itemIndex) => {
 
     
     const radioValueList = [];
@@ -424,14 +427,19 @@ class Detail extends PureComponent {
         }
       }
     }
-
+    let editorContentData= '';
+    if(item.type ===2){
+      editorContentData  = item.subTopics[0].title;
+    }
     this.setState({
       editItem: item,
       showEdit: true,
       currentEditType: item.type,
+      currentEditIndex: itemIndex,
+      editorContent:editorContentData,
       radioValueList,
     });
-    // debugger
+    debugger
 
   };
   deleteExam = () => {};
@@ -463,6 +471,25 @@ class Detail extends PureComponent {
     },0)
     return totalDuration;
   };
+
+
+ dispatchSubTopicsListTemp = (cloneSubTopicsListTemp)=>{
+   const {editItem} = this.state;
+  this.setState({
+    editItem :{
+      ...editItem,
+      subTopics:cloneSubTopicsListTemp
+    }
+  })
+}
+
+
+
+dispatchEditContent = (html)=>{
+  this.setState({
+    editorContent:html
+  })
+}
 
   saveChange = (v) => {
     const { radioValueList,paperDetail } = this.state;
@@ -706,124 +733,6 @@ class Detail extends PureComponent {
   };
 
 
-  renderSelectNewQs = (v) => {
-    
-    return (
-      <Fragment>
-        <div className={styles.item1}>
-          {v && v.map((item,itemIndex) => {
-              return (
-                <Fragment key={itemIndex}>
-                  <Row>
-                    <Col span={5}>题目（{itemIndex+1}）:</Col>
-
-                    <Col span={18}>
-                      <Input value={item.title} onChange={()=>this.handleGetInputValue(itemIndex,event)} />
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={24}>
-                      <RadioGroup
-                        onChange={() => this.onChangeRadio(itemIndex,event)}
-                        value={this.state.radioValueList[itemIndex]}
-                        // topicno={item.topicNo}
-                        // ref="radioGroup"
-                        style={{ width: '100%' }}
-                      >
-                        {item.options.map((optionItem,optionsIndex) => {
-                          return (
-                            <Row gutter={16} key={optionsIndex}>
-                              <Col span={14}>
-                                <Row>
-                                  <Col span={6}>选项: {optionsIndex+1} </Col>
-                                  <Col span={18}>
-                                    <span value={optionItem.answer} onChange={()=>this.handleGetInputChoice(itemIndex,optionsIndex,event)} />
-                                  </Col>
-                                </Row>
-                              </Col>
-
-                              <Col span={9}>
-                                <Row>
-                                  <Col span={4}>or</Col>
-                                  <Col span={15}>
-                                    <div>
-                                      <Upload {...this.uploadProps}>
-                                        <Button disabled={optionItem.answer}>
-                                          <Icon type="upload" /> 上传图片
-                                        </Button>
-                                      </Upload>
-                                    </div>
-                                  </Col>
-                                  <Col span={5}>
-                                    &nbsp;&nbsp;&nbsp;
-                                    <Radio value={optionsIndex+1} />
-                                  </Col>
-                                </Row>
-                              </Col>
-                            </Row>
-                          );
-                        })}
-                      </RadioGroup>
-                    </Col>
-                  </Row>
-
-                  <Row>
-                    <Col span={24}>
-                      <Button
-                        type="primary"
-                        onClick={() => this.addOption(itemIndex,v)}
-                        // topicno={}
-                        // ref="addOption"
-                        style={{ width: '100%' }}
-                        icon={'plus'}
-                      >
-                        新增选项
-                      </Button>
-                    </Col>
-                  </Row>
-                  {/* <Row>
-                    <Col span={3}>答案:</Col>
-                    <Col span={13}>
-                      <InputNumber defaultValue={subItem.answer} min={1} max={10} />
-                    </Col>
-                  </Row> */}
-                  <Row className={styles.rightFooter}>
-                    <Col span={3}>解析:</Col>
-
-                    <Col span={13}>
-                      <Input.TextArea
-                        value={item.parse}
-                        onChange={()=>this.handleGetInputText(itemIndex,event)}                        
-                        placeholder={'专项说明文本（0/180）'}
-                        rows={8}
-                      />
-                    </Col>
-                    {itemIndex+1 === v.length && (
-                      <Col span={7} className={styles.opt}>
-                        <Row>
-                          <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
-                            清空重新录入
-                          </Button>
-                        </Row>
-                        <Row>
-                          <Button
-                            onClick={() => this.saveTopic(v)}
-                            type="primary"
-                            style={{ width: '100%' }}
-                          >
-                            确认试题
-                          </Button>
-                        </Row>
-                      </Col>
-                    )}
-                  </Row>
-                </Fragment>
-              );
-            })}
-        </div>
-      </Fragment>
-    );
-  };
 
   render() {
     const {
@@ -837,6 +746,8 @@ class Detail extends PureComponent {
       uploadAudioName,
       uploadAudioDuration,
       paperDetail,
+      currentEditIndex,
+      editorContent,
       subTopicsListTemp,
       newExam,
       title
@@ -970,11 +881,11 @@ class Detail extends PureComponent {
               <h2>试卷预览</h2>
               <div className={styles.examLeft}>
                 {paperDetail.topics &&
-                  paperDetail.topics.map(item => (
+                  paperDetail.topics.map((item,itemIndex) => (
                     <div
                       key={item.topicNo}
                       className={styles.card}
-                      onClick={() => this.handleEdit(item)}
+                      onClick={() => this.handleEdit(item,itemIndex)}
                     >
 
                       {item.type === 1 ? (
@@ -992,7 +903,7 @@ class Detail extends PureComponent {
                                   </h2>
                                   {item.topicNo === 1 && (
                                     <a
-                                      onClick={() => this.handleEdit(item)}
+                                      onClick={() => this.handleEdit(item,itemIndex)}
                                       style={{ marginRight: 5, float: 'right' }}
                                     >
                                       编辑
@@ -1035,7 +946,7 @@ class Detail extends PureComponent {
 
                                   </div>
                                     <a
-                                      onClick={() => this.handleEdit(item)}
+                                      onClick={() => this.handleEdit(item,itemIndex)}
                                       style={{ marginRight: 5, float: 'right' }}
                                     >
                                       编辑
@@ -1144,17 +1055,17 @@ class Detail extends PureComponent {
 
                   {/* {showEdit && editItem.type === 1 ? <SelectQs subItem={subItem} addOption={this.addOption} editItem={editItem} radioValueList={this.state.radioValueList} saveChange={this.saveChange}/> : ''} */}
 
-                  { showEdit && editItem && editItem.type === 1 ? this.renderSelectQs() : ''}
+                  { showEdit  && editItem.type === 1 ? this.renderSelectQs() : ''}
 
-                  {/* { editItem.type ===2 && editItem.subTopics.length>0 &&  <RenderSelectP
+                   {showEdit &&  editItem.type ===2 && editItem.subTopics.length>0 &&  <RenderSelectP
                 showEdit={showEdit}
-                cancelEditOrEmpty={this.cancelEditOrEmpty}
+                cancelEditOrEmpty={this.cancelEdit}
                 editorContent={editorContent}
                 saveChangeOrTopic={this.saveChange}
                 dispatchSubTopicsListTemp={this.dispatchSubTopicsListTemp}
                 dispatchEditContent={this.dispatchEditContent}
                 currentEditIndex={currentEditIndex}
-                 subTopicsListTemp={subTopicsListTemp}/>} */}
+                 subTopicsListTemp={editItem.subTopics}/>}
 
 
                   {/* {showEdit && editItem.type === 2 ? this.renderSelectP() : ''} */}

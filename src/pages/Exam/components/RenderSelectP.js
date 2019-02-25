@@ -152,7 +152,7 @@ class RenderSelectP extends PureComponent {
         const {subTopicsListTemp} = this.props;
         const cloneSubTopicsListTemp = _.cloneDeep(subTopicsListTemp);
         
-        debugger
+        // debugger
         cloneSubTopicsListTemp[index].options[optionIndex].answer = event.target.value;
         this.props.dispatchSubTopicsListTemp (
           cloneSubTopicsListTemp
