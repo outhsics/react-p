@@ -652,6 +652,7 @@ onAddSubTopicsSubmit = e => {
         }
       }
     }
+    
     if(item.type ===2) {
       editorContent = item.subTopics[0].title
     }
@@ -1214,7 +1215,7 @@ onAddSubTopicsSubmit = e => {
 
                 </div>
                   <a
-                    onClick={() => this.handleEdit(item)}
+                    onClick={() => this.handleEdit(item,itemIndex)}
                     style={{ marginRight: 5 }}
                   >
                     编辑

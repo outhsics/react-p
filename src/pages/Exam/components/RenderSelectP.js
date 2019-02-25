@@ -37,7 +37,7 @@ class RenderSelectP extends PureComponent {
     renderEditors=()=>{
       const elem = this.refs.editorElem
       // debugger
-      if(elem!== undefined){
+      // if(elem!== undefined){
         const editor = elem && new E(elem)
         editor.customConfig.onchange = html => {
           // this.setState({
@@ -118,7 +118,7 @@ class RenderSelectP extends PureComponent {
         editor.customConfig.zIndex = 100
         editor.create()
       
-    }
+    // }
     }
     
     componentDidMount(){

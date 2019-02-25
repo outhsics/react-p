@@ -439,7 +439,7 @@ class Detail extends PureComponent {
       editorContent:editorContentData,
       radioValueList,
     });
-    debugger
+    // debugger
 
   };
   deleteExam = () => {};
