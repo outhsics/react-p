@@ -712,7 +712,7 @@ class Detail extends PureComponent {
                                 <Row>
                                   <Col span={6}>选项: {optionsIndex+1} </Col>
                                   <Col span={18}>
-                                    <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(itemIndex,optionsIndex,event)} />
+                                    <span value={optionItem.answer} onChange={()=>this.handleGetInputChoice(itemIndex,optionsIndex,event)} />
                                   </Col>
                                 </Row>
                               </Col>
@@ -993,22 +993,46 @@ class Detail extends PureComponent {
                         </div>
                       ) : (
                         <div key={item.id}>
-                          <div className={styles.examTitle}>
-                            <h2 style={{ float: 'left', marginRight: 11 }}>
-                              {item.id}.({item.score}分)
-                            </h2>
-                            <div style={{ float: 'right' }}>
-                              <a onClick={() => this.handleEdit(item)} style={{ marginRight: 5 }}>
-                                编辑
-                              </a>
-                            </div>
-                          </div>
-                          {item.subTopics.map(subItem => {
+
+                        {item.subTopics.map(subItem => {
                             return (
                               <div key={subItem.topicNo}>
-                                <h2>
-                                  {subItem.id} .{subItem.title}
-                                </h2>
+                                <div className={styles.examTitle}>
+                                  <div 
+                                  
+                                  style={{ float: 'left', marginRight: 11 }}>
+                                    {item.topicNo }.
+                                    ({item.score}分)
+
+                                    <div className={styles.richText} dangerouslySetInnerHTML={{__html:subItem.title||''}}>
+
+                                    </div>
+
+                                  </div>
+                                    <a
+                                      onClick={() => this.handleEdit(item)}
+                                      style={{ marginRight: 5, float: 'right' }}
+                                    >
+                                      编辑
+                                    </a>
+                                </div>
+                                <div className={styles.flex}>
+                                  {subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
+                                    return (
+                                      <Fragment key={optionIndex}>
+
+                                      {/* {currentEditIndex+1} ({optionIndex}) */}
+                                      {item.topicNo}({optionIndex+1})
+                                      <div className={styles.flexItem}> 
+                                      <span className={styles.spanAnswer}>
+                                      {optionItem.answer}
+                                      </span>
+                                      </div>
+                                    </Fragment>
+                                    )
+                                  })}
+                                  </div>
+
                               </div>
                             );
                           })}

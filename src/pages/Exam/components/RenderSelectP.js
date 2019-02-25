@@ -18,6 +18,9 @@ import {
   } from 'antd';
   import E from 'wangeditor';
 import styles from '../List.less';
+import _ from 'lodash'
+const staticPrefix = 'http://media.jze100.com/hear';
+
 
 
 
@@ -39,8 +42,13 @@ class RenderSelectP extends PureComponent {
         editor.customConfig.onchange = html => {
           // this.setState({
           //   editorContent: html
+
           // })
-          this.props.dispatchEditContent(html)
+          const {dispatchEditContent,subTopicsListTemp,currentEditIndex} = this.props;
+          dispatchEditContent(html)
+
+          subTopicsListTemp[currentEditIndex].title = html;
+
         }
         editor.customConfig.menus = [
           'image',  // 插入图片
@@ -68,7 +76,7 @@ class RenderSelectP extends PureComponent {
                const path = staticPrefix +result.data.path;
               //  var btnId = editor.imgMenuId;
                editor.cmd.do('insertHtml', '<img src="' + path + '" style="max-width:100%;"/>')
-    
+            
               // this.setState({
               //   ctxImg:path
               // })
@@ -135,30 +143,58 @@ class RenderSelectP extends PureComponent {
       )
     }
     
+    handleGetInputAnswer= (index,optionIndex,event)=>{
+        // debugger
+        // console.log(e,'e')
+        // console.log(event.target.value,'e')
+        // console.log(index)
+        const {subTopicsListTemp} = this.props;
+        const cloneSubTopicsListTemp = _.cloneDeep(subTopicsListTemp);
+        
+        debugger
+        cloneSubTopicsListTemp[index].options[optionIndex].answer = event.target.value;
+        this.props.dispatchSubTopicsListTemp (
+          cloneSubTopicsListTemp
+        )
+      }
+
+    //   onChangeRadio = (index,event) => {
+    //     console.log(event.target.value,'e')
+    //     console.log(index)
     
-    // cancelEditOrEmpty = () => {
-    //   const { showEdit}= this.state;
-    //   if(showEdit) {
-    //     // 取消编辑
-    //     this.parent.props.form.resetFields();
+    //     const {subTopicsListTemp} = this.state;
+    
+    //     const examTmp = _.cloneDeep(subTopicsListTemp);
+    
+    //     // this.state.radioValueList[index] = event.target.value;
+    //     // const v = this.refs.radioGroup.props.topicno;
+    //     const copyData =  _.cloneDeep(this.state.radioValueList)
+    //     // const copyData = this.state.radioValueList.slice(0);
+    
+    
+    //     copyData[index] = Number(event.target.value);
+    
+    
+    
     //     this.setState({
-    //       showEdit:false,
-    //       subTopicsListTemp:[],
-    //       uploadAudioDuration:null,
-    //       uploadAudioName:null,
-    //       currentEditType:1,
+    //       radioValueList:copyData
     //     })
-    //     return
-    //   } 
-    //   // 清空重新录入
-    //   this.showEmptyModal();
+        
+    //     const currentItem = mapRadioToOptions(copyData,examTmp);
     
-    // };
+    //     this.setState({
+    //       subTopicsListTemp: currentItem,
+    //     });
+    // // debugger
+    
+    
+    //   };
+    
     
     
       render(){
-      const {subTopicsListTemp,showEdit,currentEditIndex,dispatchEditContent} = this.props;
-      debugger
+      const {editorContent,subTopicsListTemp,showEdit,currentEditIndex,dispatchEditContent} = this.props;
+    //   debugger
     
         return (
           <Fragment>
@@ -170,7 +206,7 @@ class RenderSelectP extends PureComponent {
                       <Row>
                         <Col span={4}>题目:</Col>
       
-                        <Col span={18}>
+                        <Col span={18} className={styles.richZindex}>
                           {/* <Input value={subItem.title} onChange={()=>this.handleGetInputValue(subIndex,event)} /> */}
                           {/* <Input.TextArea
                              value={subItem.title}
@@ -178,7 +214,7 @@ class RenderSelectP extends PureComponent {
                              placeholder={'专项说明文本（0/180）'}
                              rows={8}
                            /> */}
-                           <div ref="editorElem" style={{textAlign: 'left'}}>
+                           <div ref="editorElem" dangerouslySetInnerHTML={{__html:editorContent}} style={{textAlign: 'left'}}>
                            </div>  
                            {/* {this.renderEditor()}} */}
                            
@@ -200,9 +236,11 @@ class RenderSelectP extends PureComponent {
                            <Fragment key={optionIndex}>
       
                             {/* {currentEditIndex+1} ({optionIndex}) */}
-                            {currentEditIndex+1}
+                            {currentEditIndex+1}({optionIndex+1})
                             <div className={styles.flexItem}> 
-                           <Input  placeholder={optionItem.answer}></Input>
+                           <Input 
+                            onChange={()=>this.handleGetInputAnswer(subIndex,optionIndex,event)}                        
+                            value={optionItem.answer}></Input>
                             </div>
                           </Fragment>
                           )

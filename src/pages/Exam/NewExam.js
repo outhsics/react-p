@@ -209,7 +209,7 @@ class NewExam extends PureComponent {
       ctxImg:'',
       count:0,
       editorContent: '',
-      currentEditIndex:'',
+      currentEditIndex:0,
       radioValueList:[],
       uploadAudioName: null,
       uploadAudioDuration: null,
@@ -637,17 +637,23 @@ onAddSubTopicsSubmit = e => {
     //   }
     // })
     // debugger
+    let editorContent = '';
 
     const radioValueList = [];
-    for (let k in item.subTopics) {
-      for (let kk in item.subTopics[k].options) {
-        if (
-          item.subTopics[k].options[kk].isCorrect &&
-          item.subTopics[k].options[kk].isCorrect === 1
-        ) {
-          radioValueList.push( Number(kk)+1);
+    if(item.type ===1 ) {
+      for (let k in item.subTopics) {
+        for (let kk in item.subTopics[k].options) {
+          if (
+            item.subTopics[k].options[kk].isCorrect &&
+            item.subTopics[k].options[kk].isCorrect === 1
+          ) {
+            radioValueList.push( Number(kk)+1);
+          }
         }
       }
+    }
+    if(item.type ===2) {
+      editorContent = item.subTopics[0].title
     }
     this.props.form.setFieldsValue({
       topicNum:item.subTopics.length,
@@ -658,6 +664,7 @@ onAddSubTopicsSubmit = e => {
 
     this.setState({
       // editItem: item,
+      editorContent,
       showEdit: true,
       currentEditType: item.type,
       radioValueList,
@@ -798,9 +805,15 @@ onAddSubTopicsSubmit = e => {
       currentEditType,
       paperDetailHeader,
       topicsListTemp,currentEditIndex,radioValueList,subTopicsListTemp,paperDetail } = this.state;
+      let currentItem =[];
 
+      if(currentEditType ===2) {
+        currentItem = subTopicsListTemp;
+        
+      } else {
+         currentItem = mapRadioToOptions(radioValueList,subTopicsListTemp);
+      }
 
-    const currentItem = mapRadioToOptions(radioValueList,subTopicsListTemp);
     const data = _.cloneDeep(topicsListTemp);
 
 
@@ -1167,127 +1180,7 @@ onAddSubTopicsSubmit = e => {
     );
   };
 
-  voidRenderSelectP = () => {
-    const {subTopicsListTemp,showEdit,currentEditIndex} = this.state;
-    const _this=this;
-    // setTimeout(()=>{
 
-    //   const elem = this.refs.editorElem
-    //   const editor = elem && new E(elem)
-      
-    //   editor.customConfig.onchange = html => {
-    //     _this.setState({
-    //       editorContent: html
-    //     })
-    //   }
-    //   editor.customConfig.menus = [
-    //     'image',  // 插入图片
-    // ]
-    //   editor.create()
-
-    // },100)
-
-
-
-   // const editItem  = v;
-   // subTopicsListTemp
-   return (
-     <Fragment>
-       <div className={styles.item1}>
-         {subTopicsListTemp.length &&
-           subTopicsListTemp.map((subItem,subIndex) => {
-             return (
-               <Fragment key={subIndex}>
-                 <Row>
-                   <Col span={4}>题目:</Col>
-
-                   <Col span={18}>
-                     {/* <Input value={subItem.title} onChange={()=>this.handleGetInputValue(subIndex,event)} /> */}
-                     {/* <Input.TextArea
-                        value={subItem.title}
-                        onChange={()=>this.handleGetInputValue(index,event)}                        
-                        placeholder={'专项说明文本（0/180）'}
-                        rows={8}
-                      /> */}
-                      <div ref="editorElem" style={{textAlign: 'left'}}>
-                      </div>  
-                      {/* {this.renderEditor()}} */}
-                      
-                      {/* <button onClick={this.clickHandle.bind(this)}>获取内容</button> */}
-                   </Col>
-                 </Row>
-                 <Row>
-                   <Col span={24}>
-                     
-                   </Col>
-                 </Row>
-
-                 <Row>
-                   <Col span={4}>答案:</Col>
-                   <Col span={18}>
-                   <div className={styles.flex}>
-                   {subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
-                     return (
-                      <Fragment key={optionIndex}>
-
-                       {/* {currentEditIndex+1} ({optionIndex}) */}
-                       {currentEditIndex+1}
-                       <div className={styles.flexItem}> 
-                      <Input  placeholder={optionItem.answer}></Input>
-                       </div>
-                     </Fragment>
-                     )
-                   })}
-                   </div>
-
-                   </Col>
-
-
-                 </Row>
-                 {/* <Row>
-                   <Col span={3}>答案:</Col>
-                   <Col span={13}>
-                     <InputNumber defaultValue={subItem.answer} min={1} max={10} />
-                   </Col>
-                 </Row> */}
-                 <Row className={styles.rightFooter}>
-                   <Col span={3}>解析:</Col>
-
-                   <Col span={13}>
-                     <Input.TextArea
-                       value={subItem.parse}
-                       onChange={()=>this.handleGetInputText(subIndex,event)}                        
-                       placeholder={'专项说明文本（0/180）'}
-                       rows={8}
-                     />
-                   </Col>
-                   {subIndex+1 === subTopicsListTemp.length && (
-                     <Col span={7} className={styles.opt}>
-                       <Row>
-                         <Button onClick={this.cancelEditOrEmpty} style={{ width: '100%' }}>
-                           {/*  */}
-                     { showEdit ? '取消编辑':'清空重新录入'}
-                         </Button>
-                       </Row>
-                       <Row>
-                         <Button
-                           onClick={() => this.saveChangeOrTopic()}
-                           type="primary"
-                           style={{ width: '100%' }}
-                         >
-                     { showEdit ? '保存修改':'确认试题'}
-                         </Button>
-                       </Row>
-                     </Col>
-                   )}
-                 </Row>
-               </Fragment>
-             );
-           })}
-       </div>
-     </Fragment>
-   );
- };
 
  dispatchEditContent = (html)=>{
    this.setState({
@@ -1302,53 +1195,57 @@ onAddSubTopicsSubmit = e => {
  }
   getSpaceTopic = (item,itemIndex)=>{
     return (
-      <div>
-      {item.subTopics.map((subItem,subItemIndex) => {
-        return (
-          <div key={subItemIndex}>
-            <div className={styles.examTitle}>
+      <div key={itemIndex}>
 
-              <h2 style={{ float: 'left', marginRight: 11 }}>
-              
-                {/* {itemIndex === subItemIndex ? ItemIndex : ''}  */}
+      {item.subTopics.map((subItem,subIndex)=> {
+          return (
+            <div key={subIndex}>
+              <div className={styles.examTitle}>
+                <div 
+                
+                style={{ float: 'left', marginRight: 11 }}>
+                  {itemIndex+1 }.
+                  ({item.score}分)
 
-                {itemIndex+1}.{subItem.title}({item.score}分)
-              </h2>
+                  <div className={styles.richText} dangerouslySetInnerHTML={{__html:subItem.title||''}}>
 
-              {subItemIndex === 0 && (
-                <div style={{float:'right'}}>
-             
-                <a
-                  onClick={() => this.handleEdit(item,itemIndex)}
-                  style={{ marginRight: 5}}
-                >
-                  编辑
-                </a>
-                <a
-                  onClick={() => this.showConfirmDelete(itemIndex)}
-                  // style={{ marginRight: 5, float: 'right' }}
-                >
-                  删除
-                </a>
-             
+                  </div>
+
                 </div>
-              )}
+                  <a
+                    onClick={() => this.handleEdit(item)}
+                    style={{ marginRight: 5 }}
+                  >
+                    编辑
+                  </a>
+                  <a
+                    onClick={() => this.showConfirmDelete(itemIndex)}
+                    // style={{ marginRight: 5, float: 'right' }}
+                  >
+                    删除
+                  </a>
+              </div>
+              <div className={styles.flex}>
+                {subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
+                  return (
+                    <Fragment key={optionIndex}>
+
+                    {/* {currentEditIndex+1} ({optionIndex}) */}
+                    {itemIndex+1}({optionIndex+1})
+                    <div className={styles.flexItem}> 
+                    <span className={styles.spanAnswer}>
+                    {optionItem.answer}
+                    </span>
+                    </div>
+                  </Fragment>
+                  )
+                })}
+                </div>
 
             </div>
-
-            {subItem.options.map((subOption,subOptionIndex) => {
-              return (
-                <ul key={subOptionIndex} style={{padding:0, lineHeight: '31px' }}>
-                  <li> {optionTransfer[subOptionIndex]}.&nbsp;
-                  { subOption.answer}
-                  </li>
-                </ul>
-              );
-            })}
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
     )
   }
 
@@ -1368,6 +1265,7 @@ onAddSubTopicsSubmit = e => {
       title,
       subTopicsListTemp,
       topicsListTemp,
+      editorContent,
       currentEditIndex
     } = this.state;
 
@@ -1650,6 +1548,7 @@ onAddSubTopicsSubmit = e => {
                 { currentEditType ===2 && subTopicsListTemp.length>0 &&  <RenderSelectP
                 showEdit={showEdit}
                 cancelEditOrEmpty={this.cancelEditOrEmpty}
+                editorContent={editorContent}
                 saveChangeOrTopic={this.saveChangeOrTopic}
                 dispatchSubTopicsListTemp={this.dispatchSubTopicsListTemp}
                 dispatchEditContent={this.dispatchEditContent}

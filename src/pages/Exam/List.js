@@ -204,7 +204,7 @@ class ExamList extends Component {
 
   callback = id => {
     if (!id) return;
-debugger
+// debugger
     this.setState({
       currentSpecial: id,
     });
