@@ -64,10 +64,14 @@ class Detail extends PureComponent {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      editorContent:'',
       subTopicsListTemp:[],
       uploadAudioName: null,
       uploadAudioDuration: null,
-      editItem: null,
+      editItem: {
+        score:0,
+        audioDuration:0
+      },
       currentEditType: 1,
       showEdit: false,
       paperDetail:{},
@@ -357,15 +361,18 @@ class Detail extends PureComponent {
 
     copyData[index] = Number(event.target.value);
 
-    const currentItem = mapRadioToOptions(copyData,examTmp,true);
+    const currentItem = mapRadioToOptions(copyData,examTmp.subTopics);
 
+    // debugger
 
     this.setState({
       radioValueList:copyData,
-      editItem: currentItem,
+      editItem: {
+        ...editItem,
+        subTopics:currentItem
+      }
     })
 
-// debugger
 
 
   };
@@ -440,6 +447,7 @@ class Detail extends PureComponent {
     const totalScore = v.topics.reduce(function(accumalator,cur){
       return accumalator+Number(cur.score)
     },0)
+    // debugger
     return totalScore;
 
   };
@@ -462,14 +470,20 @@ class Detail extends PureComponent {
 
     const { dispatch, location } = this.props;
 
-    const currentItem = mapRadioToOptions(radioValueList,editItem,true);
-    
-    paperDetail.topics[editItem.topicNo - 1] = currentItem;
-
     editItem.audio = this.state.uploadAudioName;
     editItem.audioDuration = Number(this.state.uploadAudioDuration);
 
+    const currentItem = mapRadioToOptions(radioValueList,editItem.subTopics);
+
+    const mcurrentItem = {
+      ...editItem,
+      subTopics:currentItem
+    }
+    
+    paperDetail.topics[editItem.topicNo - 1] = mcurrentItem;
+
     let formData = this.props.form.getFieldsValue();
+    // debugger
     const totalScore = this.calcScore(paperDetail);
     const totalDuration = this.calcDuration(paperDetail);
 
@@ -500,8 +514,11 @@ class Detail extends PureComponent {
         }
 
       }
+    // debugger;
 
     }
+
+    // debugger;
 
 
 
@@ -511,14 +528,14 @@ class Detail extends PureComponent {
     // isCorrect
 
     // TODO
-    debugger;
-    return
+    // return
 
     console.log(saveData,'saveData')
     // return;
     dispatch({
       type: 'examlist/updatePaper',
       payload: saveData,
+      callback:this.cbSuccessUdatePaper
     });
 
     dispatch({
@@ -529,6 +546,14 @@ class Detail extends PureComponent {
     // location.reaload();
 
   };
+
+  cbSuccessUdatePaper = ()=>{
+    message.success(`试卷更新成功`);
+    this.setState({
+      showEdit:false
+    })
+
+  }
 
   handleChange = evt => {
     this.setState({
@@ -1119,7 +1144,18 @@ class Detail extends PureComponent {
 
                   {/* {showEdit && editItem.type === 1 ? <SelectQs subItem={subItem} addOption={this.addOption} editItem={editItem} radioValueList={this.state.radioValueList} saveChange={this.saveChange}/> : ''} */}
 
-                  { editItem && editItem.type === 1 ? this.renderSelectQs() : ''}
+                  { showEdit && editItem && editItem.type === 1 ? this.renderSelectQs() : ''}
+
+                  {/* { editItem.type ===2 && editItem.subTopics.length>0 &&  <RenderSelectP
+                showEdit={showEdit}
+                cancelEditOrEmpty={this.cancelEditOrEmpty}
+                editorContent={editorContent}
+                saveChangeOrTopic={this.saveChange}
+                dispatchSubTopicsListTemp={this.dispatchSubTopicsListTemp}
+                dispatchEditContent={this.dispatchEditContent}
+                currentEditIndex={currentEditIndex}
+                 subTopicsListTemp={subTopicsListTemp}/>} */}
+
 
                   {/* {showEdit && editItem.type === 2 ? this.renderSelectP() : ''} */}
 
