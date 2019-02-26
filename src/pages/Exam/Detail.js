@@ -419,20 +419,25 @@ class Detail extends PureComponent {
 
 
 // debugger
-    for (let k in item.subTopics) {
-      for (let kk in item.subTopics[k].options) {
-        if (
-          item.subTopics[k].options[kk].isCorrect &&
-          item.subTopics[k].options[kk].isCorrect === 1
-        ) {
-          radioValueList.push(item.subTopics[k].options[kk].topicNo);
+  if(item.type ===1){
+
+      for (let k in item.subTopics) {
+        for (let kk in item.subTopics[k].options) {
+          if (
+            item.subTopics[k].options[kk].isCorrect &&
+            item.subTopics[k].options[kk].isCorrect === 1
+          ) {
+            radioValueList.push(item.subTopics[k].options[kk].topicNo);
+          }
         }
       }
     }
+
     let editorContentData= '';
     if(item.type ===2){
       editorContentData  = item.subTopics[0].title;
     }
+    // debugger
 
     this.setState({
       editItem: item,
