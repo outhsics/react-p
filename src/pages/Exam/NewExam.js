@@ -818,6 +818,25 @@ onAddSubTopicsSubmit = e => {
     const data = _.cloneDeep(topicsListTemp);
 
 
+
+
+    for (let index = 0; index < currentItem.length; index++) {
+      // const element = array[index];
+      if(currentItem[index].parse == '' || currentItem[index].title ==''){
+        message.error(`题目和解析为必填`);
+        return false;
+      }
+    
+      for (let index2 = 0; index2 < currentItem[index].options.length; index2++) {
+        if(currentItem[index].options[index2].image === '' && currentItem[index].options[index2].answer === '') {
+          message.error(`缺少选项信息`);
+          return false;
+        }
+
+      }
+    }
+    
+
     data[currentEditIndex] = {
       type:currentEditType,
       subTopics:currentItem,
@@ -866,16 +885,46 @@ onAddSubTopicsSubmit = e => {
       topicsListTemp,
       paperDetailHeader
     } = this.state;
+    
+    // subTopicsListTemp.forEach(item=>{
+    //   // item.
+    //   if(item.parse == '' || item.title ==''){
+    //     message.error(`请输入完整信息`);
+    //     return false;
+    //   }
+    //   item.options.forEach(oitem=>{
+    //     if(oitem.answer === '') {
+    //       message.error(`请输入完整信息`);
+    //       return false;
+    //     }
 
+    //   })
+
+    // });
+
+
+    for (let index = 0; index < subTopicsListTemp.length; index++) {
+      // const element = array[index];
+      if(subTopicsListTemp[index].parse == '' || subTopicsListTemp[index].title ==''){
+        message.error(`题目和解析为必填`);
+        return false;
+      }
+    
+      for (let index2 = 0; index2 < subTopicsListTemp[index].options.length; index2++) {
+        if(subTopicsListTemp[index].options[index2].image === '' && subTopicsListTemp[index].options[index2].answer === '') {
+          message.error(`缺少选项信息`);
+          return false;
+        }
+
+      }
+    }
+    
+    // debugger
+    // return;
     const sub = [];
     const obj = subTopicsListTemp;
 
-      const formData = this.props.form.getFieldsValue();
-      // const copyData = _.cloneDeep(topicsListTemp);
-
-      // currentEditType
-
-      
+    const formData = this.props.form.getFieldsValue();
 
     if(currentEditType === 2) {
       const obj = [{

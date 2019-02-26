@@ -502,6 +502,25 @@ dispatchEditContent = (html)=>{
 
     const currentItem = mapRadioToOptions(radioValueList,editItem.subTopics);
 
+
+
+    for (let index = 0; index < currentItem.length; index++) {
+      // const element = array[index];
+      if(currentItem[index].parse == '' || currentItem[index].title ==''){
+        message.error(`题目和解析为必填`);
+        return false;
+      }
+    
+      for (let index2 = 0; index2 < currentItem[index].options.length; index2++) {
+        if(currentItem[index].options[index2].image === '' && currentItem[index].options[index2].answer === '') {
+          message.error(`缺少选项信息`);
+          return false;
+        }
+
+      }
+    }
+    
+
     const mcurrentItem = {
       ...editItem,
       subTopics:currentItem
@@ -901,10 +920,10 @@ dispatchEditContent = (html)=>{
                                     {item.subTopics.length>1 ?`${item.topicNo} (${subItem.topicNo})`:item.topicNo}.{subItem.title}({item.score}分)
 
                                   </h2>
-                                  {item.topicNo === 1 && (
+                                  {((item.subTopics.length===1) || ( item.subTopics.length>1 &&  subItem.topicNo=== 1)) && (
                                     <a
                                       onClick={() => this.handleEdit(item,itemIndex)}
-                                      style={{ marginRight: 5, float: 'right' }}
+                                      style={{float: 'right' }}
                                     >
                                       编辑
                                     </a>
@@ -916,7 +935,7 @@ dispatchEditContent = (html)=>{
                                   return (
                                     <ul  key={subOption.topicNo} style={{padding:0, lineHeight: '31px' }}>
                                       <li> { optionTransfer[subOption.topicNo-1]}.&nbsp;
-                                      {subOption.image && !subOption.image.includes('http') && subOption.answer}
+                                      {subOption.image && !subOption.image.includes('http') || subOption.answer}
                                       {subOption.image && subOption.image.includes('http') && (
                                         <img style={{width:75,height:'auto'}} src={subOption.image} />
                                       )}</li>
