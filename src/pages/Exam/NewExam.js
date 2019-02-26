@@ -764,7 +764,7 @@ onAddSubTopicsSubmit = e => {
           试卷总分:{paperDetailHeader.totalScore}
         </li>
         <li>
-        该试卷音频总长:{paperDetailHeader.totalDuration ? `${((paperDetailHeader.totalDuration/60).toFixed(0))}mins` : '暂无'}
+        该试卷音频总长:{paperDetailHeader.totalDuration ? `${((paperDetailHeader.totalDuration/60).toFixed(2))}mins` : '暂无'}
         </li>
       </ul>
     </div>;
@@ -805,11 +805,16 @@ onAddSubTopicsSubmit = e => {
       uploadAudioDuration,
       currentEditType,
       paperDetailHeader,
-      topicsListTemp,currentEditIndex,radioValueList,subTopicsListTemp,paperDetail } = this.state;
+      topicsListTemp,currentEditIndex,radioValueList,subTopicsListTemp,paperDetail,editorContent } = this.state;
       let currentItem =[];
 
       if(currentEditType ===2) {
-        currentItem = subTopicsListTemp;
+        // subTopicsListTemp[0].title = 
+        const tmpObj = {
+          ...subTopicsListTemp,
+          title:editorContent
+        }
+        currentItem.push(tmpObj);
         
       } else {
          currentItem = mapRadioToOptions(radioValueList,subTopicsListTemp);
@@ -907,6 +912,7 @@ onAddSubTopicsSubmit = e => {
       // const element = array[index];
       if(subTopicsListTemp[index].parse == '' || subTopicsListTemp[index].title ==''){
         message.error(`题目和解析为必填`);
+        debugger
         return false;
       }
     
@@ -1233,11 +1239,26 @@ onAddSubTopicsSubmit = e => {
 
 
 
- dispatchEditContent = (html)=>{
-   this.setState({
-     editorContent:html
-   })
- }
+//  dispatchEditContent = (html)=>{
+//    this.setState({
+//      editorContent:html
+//    })
+//  }
+
+
+
+dispatchEditContent = (html)=>{
+  const {subTopicsListTemp} = this.state;
+  const data = _.cloneDeep(subTopicsListTemp);
+  data[0].title = html;
+  this.setState({
+    editorContent:html
+  })
+  // debugger
+  this.setState({
+    subTopicsListTemp:data
+  })
+}
 
  dispatchSubTopicsListTemp = (cloneSubTopicsListTemp)=>{
    this.setState({
@@ -1277,7 +1298,7 @@ onAddSubTopicsSubmit = e => {
                   </a>
               </div>
               <div className={styles.flex}>
-                {subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
+                {subItem.options &&  subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
                   return (
                     <Fragment key={optionIndex}>
 
@@ -1427,7 +1448,7 @@ onAddSubTopicsSubmit = e => {
                   <span style={{ marginRight: 20 }}>
                     试卷总分： {paperDetailHeader.totalScore || '暂无'}
                   </span>
-                  该试卷音频总长:{paperDetailHeader.totalDuration ? `${((paperDetailHeader.totalDuration/60).toFixed(0))}mins` : '暂无'}
+                  该试卷音频总长:{paperDetailHeader.totalDuration ? `${((paperDetailHeader.totalDuration/60).toFixed(2))}mins` : '暂无'}
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <Button  style={{ width: 120 }} 
                     disabled={!topicsListTemp.length}
@@ -1539,7 +1560,7 @@ onAddSubTopicsSubmit = e => {
                       <Col span={6}>
                         <span>
                         该音频时长:
-                            {uploadAudioDuration ? `${((uploadAudioDuration/60).toFixed(0))}mins` : ''}
+                            {uploadAudioDuration ? `${((uploadAudioDuration/60).toFixed(2))}mins` : ''}
                           </span>
                       </Col>
                       <Col span={6}>

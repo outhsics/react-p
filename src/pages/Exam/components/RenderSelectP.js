@@ -33,9 +33,13 @@ class RenderSelectP extends PureComponent {
     
     //  }
     
+    state = {
+      renderHtml:''
+    }
     
     renderEditors=()=>{
       const elem = this.refs.editorElem
+      const _this = this;
       // debugger
       // if(elem!== undefined){
         const editor = elem && new E(elem)
@@ -44,10 +48,7 @@ class RenderSelectP extends PureComponent {
           //   editorContent: html
 
           // })
-          const {dispatchEditContent,subTopicsListTemp,currentEditIndex} = this.props;
-          dispatchEditContent(html)
-
-          subTopicsListTemp[currentEditIndex].title = html;
+        
 
         }
         editor.customConfig.menus = [
@@ -75,7 +76,16 @@ class RenderSelectP extends PureComponent {
               // console.log(result)
                const path = staticPrefix +result.data.path;
               //  var btnId = editor.imgMenuId;
-               editor.cmd.do('insertHtml', '<img src="' + path + '" style="max-width:100%;"/>')
+              //  editor.cmd.do('insertHtml', '<img src="' + path + '" style="max-width:100%;"/>')
+              //  _this.setState({
+              //   renderHtml:'<img src="' + path + '" style="max-width:100%;"/>'
+              //  })
+
+               const {dispatchEditContent,subTopicsListTemp,currentEditIndex} = _this.props;
+               debugger
+               dispatchEditContent('<img src="' + path + '" style="max-width:100%;"/>')
+     
+              //  subTopicsListTemp[currentEditIndex].title = html;
             
               // this.setState({
               //   ctxImg:path
@@ -195,6 +205,7 @@ class RenderSelectP extends PureComponent {
     
       render(){
       const {editorContent,subTopicsListTemp,showEdit,currentEditIndex,dispatchEditContent} = this.props;
+      // const {renderHtml} =this.state;
     //   debugger
     
         return (
@@ -215,7 +226,10 @@ class RenderSelectP extends PureComponent {
                              placeholder={'专项说明文本（0/180）'}
                              rows={8}
                            /> */}
-                           <div ref="editorElem" dangerouslySetInnerHTML={{__html:editorContent}} style={{textAlign: 'left'}}>
+                           <div ref="editorElem" style={{textAlign: 'left'}}>
+                           <div dangerouslySetInnerHTML={{__html:editorContent}} >
+
+                           </div>
                            </div>  
                            {/* {this.renderEditor()}} */}
                            
@@ -232,7 +246,7 @@ class RenderSelectP extends PureComponent {
                         <Col span={4}>答案:</Col>
                         <Col span={18}>
                         <div className={styles.flex}>
-                        {subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
+                        {subItem.options && subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
                           return (
                            <Fragment key={optionIndex}>
       

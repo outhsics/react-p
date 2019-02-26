@@ -69,8 +69,8 @@ class Detail extends PureComponent {
       currentEditIndex:'',
       editorContent:'',
       subTopicsListTemp:[],
-      uploadAudioName: null,
-      uploadAudioDuration: null,
+      uploadAudioName: '',
+      uploadAudioDuration: 0,
       editItem: {
         score:0,
         audioDuration:0
@@ -180,6 +180,7 @@ class Detail extends PureComponent {
   
   cbSetPageDetail = (v)=>{
     const {  dispatch } = this.props;
+    debugger
 
     this.setState({
       paperDetail:v,
@@ -410,6 +411,8 @@ class Detail extends PureComponent {
     });
   };
 
+
+
   handleEdit = (item,itemIndex) => {
 
     
@@ -431,6 +434,7 @@ class Detail extends PureComponent {
     if(item.type ===2){
       editorContentData  = item.subTopics[0].title;
     }
+
     this.setState({
       editItem: item,
       showEdit: true,
@@ -486,21 +490,33 @@ class Detail extends PureComponent {
 
 
 dispatchEditContent = (html)=>{
+  const {editItem} = this.state;
+  const data = _.cloneDeep(editItem);
+  data.subTopics[0].title = html;
+
   this.setState({
-    editorContent:html
+    editorContent:html,
+    editItem:data
   })
+  // debugger
+  // this.setState({
+  // })
 }
 
   saveChange = (v) => {
     const { radioValueList,paperDetail } = this.state;
-    const {editItem} = this.state;
+    const {editItem,editorContent} = this.state;
+    const cloneEditItem = _.cloneDeep(editItem);
 
     const { dispatch, location } = this.props;
 
-    editItem.audio = this.state.uploadAudioName;
-    editItem.audioDuration = Number(this.state.uploadAudioDuration);
+    cloneEditItem.audio = this.state.uploadAudioName;
+    cloneEditItem.audioDuration = Number(this.state.uploadAudioDuration);
+    let currentItem;
+    if(editItem.type ===1){
+      currentItem = mapRadioToOptions(radioValueList,cloneEditItem.subTopics);
+    }
 
-    const currentItem = mapRadioToOptions(radioValueList,editItem.subTopics);
 
 
 
@@ -519,14 +535,25 @@ dispatchEditContent = (html)=>{
 
       }
     }
-    
+    if(cloneEditItem.type ===2){
+      const tmpdata = _.cloneDeep(currentItem);
+      tmpdata[0].title=editorContent;
+      currentItem = [{
+        ...currentItem,
+        subTopics:tmpdata
+      }]
+
+    }
+    debugger
 
     const mcurrentItem = {
-      ...editItem,
+      ...cloneEditItem,
       subTopics:currentItem
     }
     
-    paperDetail.topics[editItem.topicNo - 1] = mcurrentItem;
+
+   
+    paperDetail.topics[cloneEditItem.topicNo - 1] = mcurrentItem;
 
     let formData = this.props.form.getFieldsValue();
     // debugger
@@ -884,7 +911,7 @@ dispatchEditContent = (html)=>{
                   <span style={{ marginRight: 20 }}>
                     试卷总分： {paperDetail.totalScore || '暂无'}
                   </span>
-        该试卷音频总长:{paperDetail.totalDuration ? `${((paperDetail.totalDuration/60).toFixed(0))}mins` : '暂无'}
+        该试卷音频总长:{paperDetail.totalDuration ? `${((paperDetail.totalDuration/60).toFixed(2))}mins` : '暂无'}
 
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               {/* <Button htmlType="submit" style={{ width: 120 }} type="primary">
@@ -972,7 +999,7 @@ dispatchEditContent = (html)=>{
                                     </a>
                                 </div>
                                 <div className={styles.flex}>
-                                  {subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
+                                  {subItem.options && subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
                                     return (
                                       <Fragment key={optionIndex}>
 
@@ -1024,7 +1051,7 @@ dispatchEditContent = (html)=>{
                         <span>
                           该音频时长:
 
-                          {uploadAudioDuration ? `${((uploadAudioDuration/60).toFixed(0))}mins` :  (editItem && editItem.audioDuration) || ''}
+                          {uploadAudioDuration ? `${((uploadAudioDuration/60).toFixed(2))}mins` :  (editItem && editItem.audioDuration) || ''}
                         </span>
                       </Col>
                       <Col span={3}>

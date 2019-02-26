@@ -53,7 +53,7 @@ class ExamList extends Component {
     {
       title: '试卷音频总长度(min)',
       dataIndex: 'totalDuration',
-      render: val => <span>{(val / 60).toFixed(1)}</span>,
+      render: val => <span>{(val / 60).toFixed(2)}</span>,
     },
     {
       title: '操作',

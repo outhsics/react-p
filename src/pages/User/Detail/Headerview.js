@@ -55,7 +55,7 @@ class HeaderView extends Component {
               <div className={styles.study}>
                 <h2>
                   {/* 学习时长： {userExt.duration} 分钟 */}
-                  学习时长： {(userExt.duration / 60).toFixed(1)}分钟
+                  学习时长： {(userExt.duration / 60).toFixed(2)}分钟
                 </h2>
                 <div className={styles.overUser}>
                   {userExt.surpass > 0 ? `超过 ${userExt.surpass* 100}% 用户` : ''}
