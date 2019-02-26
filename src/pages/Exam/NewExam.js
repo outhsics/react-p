@@ -74,12 +74,12 @@ class NewExam extends PureComponent {
   //     //    console.log(data.data,'data.data')
   //   // }
   // }
-  onChangeUpload2 = (index,index2)=>{
-    console.log(index,'12')
-    console.log(index2)
+  // onChangeUpload2 = (index,index2)=>{
+  //   console.log(index,'12')
+  //   console.log(index2)
 
 
-  }
+  // }
 
   onChangeUpload= (info)=>{
   // onChangeUpload = (event )=> {
@@ -601,7 +601,8 @@ onAddSubTopicsSubmit = e => {
         dataList.splice(itemIndex,1);
 
         const totalScore = dataList.reduce(function(accumalator,cur){
-          return accumalator+Number(cur.score)
+          // return accumalator+Number(cur.score)
+            return accumalator+Number(cur.score*cur.subTopics.length)
         },0)
         const totalDuration = dataList.reduce(function(accumalator,cur){
           return accumalator+Number(cur.audioDuration)
@@ -853,7 +854,8 @@ onAddSubTopicsSubmit = e => {
 
 
     const totalScore = data.reduce(function(accumalator,cur){
-      return accumalator+Number(cur.score)
+      // return accumalator+Number(cur.score)
+      return accumalator+Number(cur.score*cur.subTopics.length)
     },0)
     const totalDuration = data.reduce(function(accumalator,cur){
       return accumalator+Number(cur.audioDuration)
@@ -910,9 +912,10 @@ onAddSubTopicsSubmit = e => {
 
     for (let index = 0; index < subTopicsListTemp.length; index++) {
       // const element = array[index];
-      if(subTopicsListTemp[index].parse == '' || subTopicsListTemp[index].title ==''){
+      // if(subTopicsListTemp[index].parse == '' || subTopicsListTemp[index].title ==''){
+      if(subTopicsListTemp[index].title ==''){
         message.error(`题目和解析为必填`);
-        debugger
+        // debugger
         return false;
       }
     
@@ -1198,6 +1201,7 @@ onAddSubTopicsSubmit = e => {
                       <InputNumber defaultValue={subItem.answer} min={1} max={10} />
                     </Col>
                   </Row> */}
+                    {subIndex+1 === subTopicsListTemp.length && (
                   <Row className={styles.rightFooter}>
                     <Col span={3}>解析:</Col>
 
@@ -1209,7 +1213,6 @@ onAddSubTopicsSubmit = e => {
                         rows={8}
                       />
                     </Col>
-                    {subIndex+1 === subTopicsListTemp.length && (
                       <Col span={7} className={styles.opt}>
                         <Row>
                           <Button onClick={this.cancelEditOrEmpty} style={{ width: '100%' }}>
@@ -1227,8 +1230,8 @@ onAddSubTopicsSubmit = e => {
                           </Button>
                         </Row>
                       </Col>
-                    )}
                   </Row>
+                    )}
                 </Fragment>
               );
             })}
@@ -1305,9 +1308,7 @@ dispatchEditContent = (html)=>{
                     {/* {currentEditIndex+1} ({optionIndex}) */}
                     {itemIndex+1}({optionIndex+1})
                     <div className={styles.flexItem}> 
-                    <span className={styles.spanAnswer}>
-                    {optionItem.answer}
-                    </span>
+                    <input  className={styles.spanAnswer}/>
                     </div>
                   </Fragment>
                   )
@@ -1483,7 +1484,7 @@ dispatchEditContent = (html)=>{
                                   
                                     {/* {itemIndex === subItemIndex ? ItemIndex : ''}  */}
 
-                                    {item.subTopics.length>1 ?`${itemIndex+1} (${subItemIndex})`:itemIndex+1}.{subItem.title}({item.score}分)
+                                    {item.subTopics.length>1 ?`${itemIndex+1} (${subItemIndex+1})`:itemIndex+1}.{subItem.title}({item.score}分)
                                   </h2>
 
                                   {subItemIndex === 0 && (

@@ -180,7 +180,6 @@ class Detail extends PureComponent {
   
   cbSetPageDetail = (v)=>{
     const {  dispatch } = this.props;
-    debugger
 
     this.setState({
       paperDetail:v,
@@ -457,7 +456,7 @@ class Detail extends PureComponent {
 
 
     const totalScore = v.topics.reduce(function(accumalator,cur){
-      return accumalator+Number(cur.score)
+      return accumalator+Number(cur.score*cur.subTopics.length)
     },0)
     // debugger
     return totalScore;
@@ -522,7 +521,8 @@ dispatchEditContent = (html)=>{
 
     for (let index = 0; index < currentItem.length; index++) {
       // const element = array[index];
-      if(currentItem[index].parse == '' || currentItem[index].title ==''){
+      // if(currentItem[index].parse == '' || currentItem[index].title ==''){
+      if(currentItem[index].title ==''){
         message.error(`题目和解析为必填`);
         return false;
       }
@@ -544,7 +544,7 @@ dispatchEditContent = (html)=>{
       }]
 
     }
-    debugger
+    // debugger
 
     const mcurrentItem = {
       ...cloneEditItem,
@@ -740,6 +740,8 @@ dispatchEditContent = (html)=>{
                       <InputNumber defaultValue={subItem.answer} min={1} max={10} />
                     </Col>
                   </Row> */}
+                  {subItem.topicNo === editItem.subTopics.length && (
+
                   <Row className={styles.rightFooter}>
                     <Col span={3}>解析:</Col>
 
@@ -751,7 +753,6 @@ dispatchEditContent = (html)=>{
                         rows={8}
                       />
                     </Col>
-                    {subItem.topicNo === editItem.subTopics.length && (
                       <Col span={7} className={styles.opt}>
                         <Row>
                           <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
@@ -768,8 +769,8 @@ dispatchEditContent = (html)=>{
                           </Button>
                         </Row>
                       </Col>
-                    )}
                   </Row>
+                    )}
                 </Fragment>
               );
             })}
@@ -1002,13 +1003,9 @@ dispatchEditContent = (html)=>{
                                   {subItem.options && subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
                                     return (
                                       <Fragment key={optionIndex}>
-
-                                      {/* {currentEditIndex+1} ({optionIndex}) */}
                                       {item.topicNo}({optionIndex+1})
                                       <div className={styles.flexItem}> 
-                                      <span className={styles.spanAnswer}>
-                                      {optionItem.answer}
-                                      </span>
+                                      <input   className={styles.spanAnswer}/>
                                       </div>
                                     </Fragment>
                                     )
