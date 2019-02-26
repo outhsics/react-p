@@ -511,24 +511,25 @@ dispatchEditContent = (html)=>{
 
     cloneEditItem.audio = this.state.uploadAudioName;
     cloneEditItem.audioDuration = Number(this.state.uploadAudioDuration);
-    let currentItem;
+    //  currentItem subList
+    // let currentItem= cloneEditItem.subTopics;
     if(editItem.type ===1){
-      currentItem = mapRadioToOptions(radioValueList,cloneEditItem.subTopics);
+      cloneEditItem.subTopics = mapRadioToOptions(radioValueList,cloneEditItem.subTopics);
     }
 
 
 
 
-    for (let index = 0; index < currentItem.length; index++) {
+    for (let index = 0; index < cloneEditItem.subTopics.length; index++) {
       // const element = array[index];
       // if(currentItem[index].parse == '' || currentItem[index].title ==''){
-      if(currentItem[index].title ==''){
+      if(cloneEditItem.subTopics[index].title ==''){
         message.error(`题目和解析为必填`);
         return false;
       }
     
-      for (let index2 = 0; index2 < currentItem[index].options.length; index2++) {
-        if(currentItem[index].options[index2].image === '' && currentItem[index].options[index2].answer === '') {
+      for (let index2 = 0; index2 < cloneEditItem.subTopics[index].options.length; index2++) {
+        if(cloneEditItem.subTopics[index].options[index2].image === '' && cloneEditItem.subTopics[index].options[index2].answer === '') {
           message.error(`缺少选项信息`);
           return false;
         }
@@ -536,24 +537,24 @@ dispatchEditContent = (html)=>{
       }
     }
     if(cloneEditItem.type ===2){
-      const tmpdata = _.cloneDeep(currentItem);
-      tmpdata[0].title=editorContent;
-      currentItem = [{
-        ...currentItem,
-        subTopics:tmpdata
-      }]
+      // const tmpdata = _.cloneDeep(currentItem);
+      cloneEditItem.subTopics[0].title=editorContent;
+      // currentItem = [{
+      //   ...currentItem,
+      //   subTopics:tmpdata
+      // }]
 
     }
     // debugger
 
-    const mcurrentItem = {
-      ...cloneEditItem,
-      subTopics:currentItem
-    }
+    // const mcurrentItem = {
+    //   ...cloneEditItem,
+    //   subTopics:currentItem
+    // }
     
 
    
-    paperDetail.topics[cloneEditItem.topicNo - 1] = mcurrentItem;
+    paperDetail.topics[cloneEditItem.topicNo - 1] = cloneEditItem;
 
     let formData = this.props.form.getFieldsValue();
     // debugger

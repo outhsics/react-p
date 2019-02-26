@@ -82,7 +82,7 @@ class RenderSelectP extends PureComponent {
               //  })
 
                const {dispatchEditContent,subTopicsListTemp,currentEditIndex} = _this.props;
-               debugger
+              //  debugger
                dispatchEditContent('<img src="' + path + '" style="max-width:100%;"/>')
      
               //  subTopicsListTemp[currentEditIndex].title = html;
