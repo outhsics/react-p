@@ -55,7 +55,6 @@ class ExamList extends Component {
       dataIndex: 'totalDuration',
       render: val => <span>{(val / 60).toFixed(1)}</span>,
     },
-
     {
       title: '操作',
       render: (text, record) => (

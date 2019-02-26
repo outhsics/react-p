@@ -17,13 +17,14 @@ import {
   message,
 } from 'antd';
 
-import _ from 'lodash'
+import _ from 'lodash';
 
 
 class EditTopic extends Component {
     render(){
         const {editItem} = this.props;
         return (
+          <Fragment>
             <h2>编辑题目{editItem && editItem.topicNo}</h2>
             <div className={styles.examRight}>
                 <Row>
@@ -64,13 +65,6 @@ class EditTopic extends Component {
 
                   <Row>
                     <Col span={14}>
-                      {/* <Form.Item
-                        label=" 该音频下的题目数:"
-                        labelCol={{ span: 11 }}
-                        wrapperCol={{ span: 11 }}
-                      > */}
-                      {/* {getFieldDecorator('paperNum', { initialValue: editItem && editItem.subNum })( */}
-
                         <Row>
                           <Col span={14}>
                           该音频下的题目数:
@@ -98,16 +92,14 @@ class EditTopic extends Component {
                   </Row>
                 </div>
 
-                {/* {showEdit && editItem.type === 1 ? <SelectQs subItem={subItem} addOption={this.addOption} editItem={editItem} radioValueList={this.state.radioValueList} saveChange={this.saveChange}/> : ''} */}
                 {showEdit && editItem.type === 1 ? this.renderSelectQs(editItem) : ''}
                 {showEdit && editItem.type === 2 ? this.renderSelectP() : ''}
 
-                {/* {currentEditType === 1 && !showEdit ? this.renderNewSelectQs() : ''} */}
-                {/* {currentEditType === 2 && !showEdit ? this.renderNewSelectP() : ''} */}
               
             </div>
+            </Fragment>
         )
     }
 }
 
-export default EditTopic
+export default EditTopic;
