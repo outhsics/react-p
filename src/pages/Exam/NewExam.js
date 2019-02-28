@@ -152,14 +152,21 @@ class NewExam extends PureComponent {
         // debugger
         message.success(`${info.file.name} file uploaded successfully`);
         if (info.file.response.code === 1) {
+          // const {currentEditIndex,uploadList} = _this.state;
+          // const arr = _.cloneDeep(uploadList);
+
+          // arr[currentEditIndex] = {
+          //   uploadAudioDuration:info.file.response.data.duration,
+          //   uploadAudioPath: info.file.response.data.path,
+          //   uploadAudioName: info.file.name,
+
+          // }
+
           _this.setState({
-            uploadAudioDuration: info.file.response.data.duration,
-          });
-          _this.setState({
-            uploadAudioName: info.file.name,
-          });
-          console.log(_this.state.uploadAudioDuration, '2');
-          // debugger;
+            uploadAudioDuration:info.file.response.data.duration,
+            uploadAudioName:info.file.response.data.path,
+          }
+          );
           }
         } else if (info.file.status === 'error') {
           message.error(`${info.file.name} file upload failed.`);
@@ -235,8 +242,16 @@ class NewExam extends PureComponent {
       editorContent: '',
       currentEditIndex:0,
       radioValueList:[],
-      uploadAudioName: null,
-      uploadAudioDuration: null,
+      isUploading:false,
+      uploadAudioDuration:'',
+      uploadAudioName:'',
+      // uploadList:[
+      //   {
+      //     uploadAudioName: '',
+      //     uploadAudioDuration: 0,
+      //     uploadAudioPath:'',
+      //   }
+      // ],
       editItem: null,
       currentEditType: 1,
       showEdit: false,
@@ -1579,7 +1594,13 @@ dispatchEditContent = (html)=>{
                     <Row>
                       <Col span={10}>
                         <span>
+
                           上传音频: {uploadAudioName || ''}
+                                       
+                          {/* {isUploading  && uploadList[currentEditIndex].uploadAudioName} */}
+
+{/* {!isUploading && editItem && editItem.audio } */}
+
                           </span>
                       </Col>
                       <Col span={6}>

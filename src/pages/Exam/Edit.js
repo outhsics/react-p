@@ -69,11 +69,17 @@ class Edit extends PureComponent {
     super(props, context);
     this.state = {
       saveData:{},
-      currentEditIndex:'',
+      currentEditIndex:null,
       editorContent:'',
       subTopicsListTemp:[],
-      uploadAudioName: '',
-      uploadAudioDuration: 0,
+      isUploading:false,
+      uploadList:[
+        {
+          uploadAudioName: '',
+          uploadAudioDuration: 0,
+          uploadAudioPath:'',
+        }
+      ],
       editItem: {
         score:0,
         audioDuration:0
@@ -142,13 +148,25 @@ class Edit extends PureComponent {
         // debugger
         message.success(`${info.file.name} file uploaded successfully`);
         if (info.file.response.code === 1) {
-          _this.setState({
-            uploadAudioDuration: info.file.response.data.duration,
-          });
-          _this.setState({
+          const {currentEditIndex,uploadList} = _this.state;
+          const arr = _.cloneDeep(uploadList);
+          arr[currentEditIndex] = {
+            uploadAudioDuration:info.file.response.data.duration,
+            uploadAudioPath: info.file.response.data.path,
             uploadAudioName: info.file.name,
-          });
-          console.log(_this.state.uploadAudioDuration, '2');
+
+          }
+
+          _this.setState({
+            uploadList:arr,
+            isUploading:true
+          }
+          );
+          // debugger
+          // _this.setState({
+          //   uploadAudioName: info.file.name,
+          // });
+          // console.log(_this.state.uploadAudioDuration, '2');
           // debugger;
           }
         } else if (info.file.status === 'error') {
@@ -180,12 +198,7 @@ class Edit extends PureComponent {
     // debugger
     message.success(`${info.file.name} file uploaded successfully`);
     if (info.file.response.code === 1) {
-      // _this.setState({
-      //   uploadAudioDuration: info.file.response.data.duration,
-      // });
-      // _this.setState({
-      //   uploadAudioName: info.file.name,
-      // });
+    
       copySub[subItemIndex].options[optionIndex].image = staticPrefix+info.file.response.data.path;
       this.setState({
         editItem:{
@@ -539,6 +552,7 @@ class Edit extends PureComponent {
       currentEditIndex: itemIndex,
       editorContent:editorContentData,
       radioValueList,
+      isUploading:false
     });
     // debugger
 
@@ -602,13 +616,13 @@ dispatchEditContent = (html)=>{
 
   saveChange = (v) => {
     const { radioValueList,paperDetail } = this.state;
-    const {editItem,editorContent} = this.state;
+    const {editItem,editorContent,currentEditIndex,uploadList} = this.state;
     const cloneEditItem = _.cloneDeep(editItem);
 
     const { dispatch, location } = this.props;
-
-    cloneEditItem.audio = this.state.uploadAudioName;
-    cloneEditItem.audioDuration = Number(this.state.uploadAudioDuration);
+    cloneEditItem.audio = this.state.uploadList[currentEditIndex].uploadAudioPath;
+    cloneEditItem.audioDuration = Number(this.state.uploadList[currentEditIndex].uploadAudioDuration);
+    debugger
     //  currentItem subList
     // let currentItem= cloneEditItem.subTopics;
     if(editItem.type ===1){
@@ -709,11 +723,12 @@ dispatchEditContent = (html)=>{
     // isCorrect
 
     // TODO
-    // return
-
+    
     this.setState({
       saveData
     })
+    // return
+    debugger
     message.success(`保存成功`);
 
     // console.log(saveData,'saveData')
@@ -905,13 +920,13 @@ dispatchEditContent = (html)=>{
       editItem,
       currentEditType,
       showEdit,
-      uploadAudioName,
-      uploadAudioDuration,
+      uploadList,
       paperDetail,
       currentEditIndex,
       editorContent,
       subTopicsListTemp,
       newExam,
+      isUploading,
       title
     } = this.state;
     // const { paperDetail } = examlist;
@@ -1170,13 +1185,19 @@ dispatchEditContent = (html)=>{
                     <Row>
                       <Col span={8}>
                         <span style={{width:10,textOverflow:'ellipsis'}}>
-                          上传音频: {uploadAudioName || (editItem && editItem.audio) || ''}
+                          上传音频:
+                          
+                           {isUploading  && uploadList[currentEditIndex].uploadAudioName}
+
+                           {!isUploading && editItem && editItem.audio }
+
                         </span>
                       </Col>
                       <Col span={8}>
                         <span>
                           该音频时长:
-                          {(uploadAudioDuration>0 && formatDuration(uploadAudioDuration)) || formatDuration(editItem.audioDuration) }
+                          { isUploading &&  uploadList[currentEditIndex].uploadAudioDuration>0 && formatDuration(uploadList[currentEditIndex].uploadAudioDuration)}
+                          {!isUploading && editItem && formatDuration(editItem.audioDuration)}
                         </span>
                       </Col>
                       <Col span={3}>
