@@ -23,6 +23,8 @@ import moment from 'moment';
 import _ from 'lodash'
 import mapRadioToOptions from '@/utils/mapRadioToOptions';
 import RenderSelectP from './components/RenderSelectP'
+import {formatDuration} from '@/utils/utils';
+
 
 
 import styles from './List.less';
@@ -1583,8 +1585,7 @@ dispatchEditContent = (html)=>{
                       <Col span={6}>
                         <span>
                         该音频时长:
-                            {uploadAudioDuration>60 ? `${((uploadAudioDuration/60).toFixed(2))}分钟` : ''}
-                            {uploadAudioDuration<60 ?`${uploadAudioDuration}s` : ''}
+                        {uploadAudioDuration>0 && formatDuration(uploadAudioDuration) }
                           </span>
                       </Col>
                       <Col span={6}>

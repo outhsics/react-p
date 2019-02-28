@@ -181,3 +181,9 @@ export function formatWan(val) {
 export function isAntdPro() {
   return window.location.hostname === 'preview.pro.ant.design';
 }
+
+export function formatDuration(duration) {
+  if(!duration) return '';
+  if (duration >= 60) return  `${((duration/60).toFixed(2))}分钟`;
+  if (duration <60) return  `${duration}秒钟`;
+}

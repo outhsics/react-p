@@ -20,6 +20,8 @@ import { connect } from 'dva';
 import NavLink from 'umi/navlink';
 import update, { extend } from 'immutability-helper';
 import RenderSelectP from './components/RenderSelectP'
+import {formatDuration} from '@/utils/utils';
+
 
 
 import moment from 'moment';
@@ -659,6 +661,15 @@ dispatchEditContent = (html)=>{
 
     formData = Object.assign(formData, { totalScore }, { totalDuration });
 
+    this.setState({
+      paperDetail:{
+        ...paperDetail,
+        totalScore,
+        totalDuration
+      }
+
+    })
+
     const saveData = Object.assign(paperDetail, formData);
 
     if(saveData.createTime) delete saveData.createTime
@@ -1165,9 +1176,7 @@ dispatchEditContent = (html)=>{
                       <Col span={8}>
                         <span>
                           该音频时长:
-
-                          {uploadAudioDuration && uploadAudioDuration >60 ? `${((uploadAudioDuration/60).toFixed(2))}分钟` :  (editItem && editItem.audioDuration) || ''}
-                          {uploadAudioDuration && uploadAudioDuration <60   ? `${uploadAudioDuration}s` :  (editItem && editItem.audioDuration) || ''}
+                          {(uploadAudioDuration>0 && formatDuration(uploadAudioDuration)) || formatDuration(editItem.audioDuration) }
                         </span>
                       </Col>
                       <Col span={3}>

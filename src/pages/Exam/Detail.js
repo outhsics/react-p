@@ -18,13 +18,13 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import NavLink from 'umi/navlink';
-import update, { extend } from 'immutability-helper';
-import RenderSelectP from './components/RenderSelectP'
+import RenderEditSelectP from './components/RenderEditSelectP'
 
 
 import moment from 'moment';
 import _ from 'lodash'
 import mapRadioToOptions from '@/utils/mapRadioToOptions';
+import {formatDuration} from '@/utils/utils';
 
 
 import styles from './List.less';
@@ -998,14 +998,6 @@ dispatchEditContent = (html)=>{
                                     </div>
 
                                   </div>
-                                   {
-                                     paperDetail.state ===2 && ( <a
-                                      onClick={() => this.handleEdit(item,itemIndex)}
-                                      style={{ marginRight: 5, float: 'right' }}
-                                    >
-                                      编辑
-                                    </a>)
-                                   }
                                 </div>
                                 <div className={styles.flex}>
                                   {subItem.options && subItem.options.length &&  subItem.options.map((optionItem,optionIndex) => {
@@ -1055,9 +1047,7 @@ dispatchEditContent = (html)=>{
                       <Col span={8}>
                         <span>
                           该音频时长:
-
-                          {uploadAudioDuration && uploadAudioDuration >60 ? `${((uploadAudioDuration/60).toFixed(2))}分钟` :  (editItem && editItem.audioDuration) || ''}
-                          {uploadAudioDuration && uploadAudioDuration <60   ? `${uploadAudioDuration}s` :  (editItem && editItem.audioDuration) || ''}
+                          {(uploadAudioDuration>0 && formatDuration(uploadAudioDuration)) || formatDuration(editItem.audioDuration) }
                         </span>
                       </Col>
                       <Col span={3}>
@@ -1109,7 +1099,7 @@ dispatchEditContent = (html)=>{
 
                   { showEdit  && editItem.type === 1 ? this.renderSelectQs() : ''}
 
-                   {showEdit &&  editItem.type ===2 && editItem.subTopics.length>0 &&  <RenderSelectP
+                   {showEdit &&  editItem.type ===2 && editItem.subTopics.length>0 &&  <RenderEditSelectP
                 showEdit={showEdit}
                 cancelEditOrEmpty={this.cancelEdit}
                 editorContent={editorContent}

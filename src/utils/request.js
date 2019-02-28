@@ -68,9 +68,10 @@ import { notification } from 'antd';
 const service = axios.create({
   // baseURL: 'https://some-domain.com/api/',
   timeout: 10000,
-  // headers: {
+  headers: {
   //   'X-Custom-Header': 'foobar'
-  // }
+  'Cache-Control': 'no-cache',
+  }
 });
 
 // respone interceptor
