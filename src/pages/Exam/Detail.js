@@ -136,7 +136,7 @@ class Detail extends PureComponent {
       
       if (info.file.status === 'done') {
         // debugger
-        message.success(`${info.file.name} file uploaded successfully`);
+        message.success(`${info.file.name} 音频上传成功!`,5);
         if (info.file.response.code === 1) {
           _this.setState({
             uploadAudioDuration: info.file.response.data.duration,
@@ -174,7 +174,7 @@ class Detail extends PureComponent {
   
   if (info.file.status === 'done') {
     // debugger
-    message.success(`${info.file.name} file uploaded successfully`);
+    message.success(`${info.file.name} 图片上传成功!`,5);
     if (info.file.response.code === 1) {
       // _this.setState({
       //   uploadAudioDuration: info.file.response.data.duration,
@@ -718,12 +718,7 @@ dispatchEditContent = (html)=>{
                                   <Col span={4}>or</Col>
                                   <Col span={15}>
                                     <div>
-                                      {/* <Upload {...this.uploadProps}>
-                                      <Button disabled={optionItem.answer}>
-                                          <Icon type="upload" /> 上传图片
-                                        </Button>
-                                      </Upload>
-                                       */}
+                                   
                                       <Upload
                                       // data={{subIndex,optionIndex}}
                                       onChange={(info)=>this.onChangeUploadImgProps(info,subItem.topicNo-1,optionItem.topicNo-1)}

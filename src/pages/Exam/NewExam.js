@@ -65,59 +65,7 @@ const formItemLayout2 = {
 @Form.create()
 class NewExam extends PureComponent {
 
-  // onChangeUpload = (event)=>{
-  //     // console.log(fileList, 'fileList');
-  //     // console.log(itemIndex, 'itemIndex');
-  //     // console.log(optionIndex, 'optionIndex');
-  //     console.log(event,'eeee')
-  //     // debugger
-  //     // // const data = JSON.parse(event.target.response);
-  //     // if(data.code === 1) {
-  //     //    console.log(data.data,'data.data')
-  //   // }
-  // }
-  // onChangeUpload2 = (index,index2)=>{
-  //   console.log(index,'12')
-  //   console.log(index2)
-
-
-  // }
-
-  onChangeUpload= (info)=>{
-  // onChangeUpload = (event )=> {
-      // console.log(event.ProgressEvent, 'fileList');
-
-      // console.log(event.total, 'fileList');
-      console.log(info, 'fileList');
-
-      // if (info.fileList.length > 1) {
-      //   info.fileList.shift();
-      // }
-
-      // this.setState({
-      //   uploadAudioName: info.file.name,
-      // });
-      // const _this = this;
-
-      // if (info.file.status !== 'uploading') {
-      //   console.log(info.file, 'info.file');
-      //   console.log(info.fileList, ' info.fileList');
-      // }
-
-      // if (info.file.status === 'done') {
-      //   message.success(`${info.file.name} file uploaded successfully`);
-      //   if (info.file.response.code === 1) {
-      //     _this.setState({
-      //       uploadAudioDuration: info.file.response.data.duration,
-      //     });
-      //     console.log(_this.state.uploadAudioDuration, '2');
-      //     // debugger;
-      //   }
-      // } else if (info.file.status === 'error') {
-      //   message.error(`${info.file.name} file upload failed.`);
-      // }
-    };
-
+ 
   uploadFileProps = {
     name: 'file',
     action: 'https://api.jze100.com/hear/admin/file/upload',
@@ -150,7 +98,7 @@ class NewExam extends PureComponent {
       
       if (info.file.status === 'done') {
         // debugger
-        message.success(`${info.file.name} file uploaded successfully`);
+        message.success(`${info.file.name} 音频上传成功!`,5);
         if (info.file.response.code === 1) {
           // const {currentEditIndex,uploadList} = _this.state;
           // const arr = _.cloneDeep(uploadList);
@@ -192,7 +140,7 @@ class NewExam extends PureComponent {
   
   if (info.file.status === 'done') {
     // debugger
-    message.success(`${info.file.name} file uploaded successfully`);
+    message.success(`${info.file.name} 图片上传成功!`,5);
     if (info.file.response.code === 1) {
       // _this.setState({
       //   uploadAudioDuration: info.file.response.data.duration,
