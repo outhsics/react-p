@@ -4,6 +4,8 @@ import { connect } from 'dva';
 import styles from './HeaderView.less';
 import moment from 'moment';
 import withRouter from 'umi/withRouter';
+import {formatDuration} from '@/utils/utils';
+
 
 // import { getTimeDistance } from '@/utils/utils';
 
@@ -54,7 +56,8 @@ class HeaderView extends Component {
             <div className={styles.right}>
               <div className={styles.study}>
                 <h2>
-                  学习时长:{userExt.duration>60 ? `${((userExt.duration/60).toFixed(2))}分钟` : ''}{userExt.duration<60 ?`${userExt.duration}秒钟` : ''}
+                  学习时长:
+                  {userExt.duration>0 && formatDuration(userExt.duration) }
                 </h2>
                 <div className={styles.overUser}>
                   {userExt.surpass > 0 ? `超过 ${userExt.surpass* 100}% 用户` : ''}
