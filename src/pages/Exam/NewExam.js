@@ -124,6 +124,17 @@ class NewExam extends PureComponent {
     },
     showUploadList: false,
     accept:".mp3",
+    beforeUpload:(file)=>{
+      // const isJPG = file.type === 'image/jpeg';
+      // if (!isJPG) {
+      //   message.error('You can only upload JPG file!');
+      // }
+      const isLt5M = file.size / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        message.error('音频不能大于5MB!');
+      }
+      return isLt5M;
+    },
     onChange:(info)=>{
         const _this = this;
         if (info.fileList.length > 1) {
@@ -201,6 +212,17 @@ class NewExam extends PureComponent {
     },
     showUploadList: false,
     accept:".jpg, .jpeg, .png",
+    beforeUpload:(file)=>{
+      // const isJPG = file.type === 'image/jpeg';
+      // if (!isJPG) {
+      //   message.error('You can only upload JPG file!');
+      // }
+      const isLt1M = file.size / 1024 / 1024 < 1;
+      if (!isLt1M) {
+        message.error('图片不能大于1MB!');
+      }
+      return isLt1M;
+    },
   };
 
   constructor(props, context) {
@@ -765,7 +787,7 @@ onAddSubTopicsSubmit = e => {
           试卷总分:{paperDetailHeader.totalScore}
         </li>
         <li>
-        该试卷音频总长:{paperDetailHeader.totalDuration ? `${((paperDetailHeader.totalDuration/60).toFixed(2))}mins` : '暂无'}
+        该试卷音频总长:{paperDetailHeader.totalDuration ? `${((paperDetailHeader.totalDuration/60).toFixed(2))}分钟` : '暂无'}
         </li>
       </ul>
     </div>;
@@ -1449,7 +1471,7 @@ dispatchEditContent = (html)=>{
                   <span style={{ marginRight: 20 }}>
                     试卷总分： {paperDetailHeader.totalScore || '暂无'}
                   </span>
-                  该试卷音频总长:{paperDetailHeader.totalDuration ? `${((paperDetailHeader.totalDuration/60).toFixed(2))}mins` : '暂无'}
+                  该试卷音频总长:{paperDetailHeader.totalDuration ? `${((paperDetailHeader.totalDuration/60).toFixed(2))}分钟` : '暂无'}
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <Button  style={{ width: 120 }} 
                     disabled={!topicsListTemp.length}
@@ -1561,7 +1583,8 @@ dispatchEditContent = (html)=>{
                       <Col span={6}>
                         <span>
                         该音频时长:
-                            {uploadAudioDuration ? `${((uploadAudioDuration/60).toFixed(2))}mins` : ''}
+                            {uploadAudioDuration>60 ? `${((uploadAudioDuration/60).toFixed(2))}分钟` : ''}
+                            {uploadAudioDuration<60 ?`${uploadAudioDuration}s` : ''}
                           </span>
                       </Col>
                       <Col span={6}>

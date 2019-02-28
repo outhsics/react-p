@@ -343,7 +343,9 @@ class UserList extends Component {
     {
       title: '学习时长',
       dataIndex: 'duration',
-      render: val => <span>{val}mins</span>,
+      render: val => <Fragment>   
+      {val>60 ? `${((val/60).toFixed(2))}分钟` : ''}{val<60 ?`${val}秒钟` : ''}
+       </Fragment>,
     },
     {
       title: '操作',

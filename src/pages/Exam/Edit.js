@@ -62,10 +62,11 @@ const formItemLayout2 = {
   operate,
 }))
 @Form.create()
-class Detail extends PureComponent {
+class Edit extends PureComponent {
   constructor(props, context) {
     super(props, context);
     this.state = {
+      saveData:{},
       currentEditIndex:'',
       editorContent:'',
       subTopicsListTemp:[],
@@ -433,6 +434,74 @@ class Detail extends PureComponent {
   };
 
 
+  onSubmitPaper = ()=>{
+
+    const { dispatch,location,operate } = this.props;
+    const { saveData } = this.state;
+    const { specialList } = operate;
+
+    if(!saveData.title || !saveData.level || !saveData.specialId ) {
+          message.error('请输入试卷信息');
+          return
+      }
+    // paperDetailHeader.totalScore = topicsListTemp.map(item=>{item.score})
+    const _this = this;
+    let title = '提交试卷';
+    let content = <div className={styles.modalList}>
+
+      {/* <span> 默认提交后，试卷状态为启用</span> */}
+      <ul>
+        <li>
+          试卷名称: {saveData.title}
+        </li>
+        <li>
+        专项: {specialList.map(item => {
+        return (
+            <Fragment key={item.id}>  {item.id  === saveData.specialId ? item.title: null}</Fragment>
+          );
+        })}
+        </li>
+        <li>
+          难度: {saveData.level}
+        </li>
+        <li>
+          题目数: {saveData.topics.length}
+        </li>
+        <li>
+          试卷总分:{saveData.totalScore}
+        </li>
+        <li>
+        该试卷音频总长:{saveData.totalDuration ? `${((saveData.totalDuration/60).toFixed(2))}分钟` : '暂无'}
+        </li>
+      </ul>
+    </div>;
+  
+    confirm({
+      title,
+      content,
+      onOk() {
+        // _this.dispatchCreatePaper();
+        
+
+
+    dispatch({
+      type: 'examlist/updatePaper',
+      payload: saveData,
+      callback:_this.cbSuccessUdatePaper
+    });
+
+    dispatch({
+      type: 'examlist/fetchPaperDetail',
+      payload: location.query.id,
+    });
+
+      },
+      onCancel() {},
+    });
+  
+  }
+
+
 
   handleEdit = (item,itemIndex) => {
 
@@ -631,18 +700,24 @@ dispatchEditContent = (html)=>{
     // TODO
     // return
 
-    console.log(saveData,'saveData')
-    // return;
-    dispatch({
-      type: 'examlist/updatePaper',
-      payload: saveData,
-      callback:this.cbSuccessUdatePaper
-    });
+    this.setState({
+      saveData
+    })
+    message.success(`保存成功`);
 
-    dispatch({
-      type: 'examlist/fetchPaperDetail',
-      payload: location.query.id,
-    });
+    // console.log(saveData,'saveData')
+    // return;
+
+    // dispatch({
+    //   type: 'examlist/updatePaper',
+    //   payload: saveData,
+    //   callback:this.cbSuccessUdatePaper
+    // });
+
+    // dispatch({
+    //   type: 'examlist/fetchPaperDetail',
+    //   payload: location.query.id,
+    // });
 
     // location.reaload();
 
@@ -729,7 +804,7 @@ dispatchEditContent = (html)=>{
                                       // data={{subIndex,optionIndex}}
                                       onChange={(info)=>this.onChangeUploadImgProps(info,subItem.topicNo-1,optionItem.topicNo-1)}
                                       {...this.uploadImgProps}>
-                                      <Button disabled={optionItem.answer} disabled>
+                                      <Button disabled={optionItem.answer}>
                                           <Icon type="upload" /> 上传图片
                                         </Button>
                                       </Upload>
@@ -755,8 +830,7 @@ dispatchEditContent = (html)=>{
                         onClick={() => this.addOption(subItem.topicNo,editItem)}
                         // topicno={}
                         // ref="addOption"
-                        // disabled={paperDetail.state===1}
-                        disabled
+                        disabled={paperDetail.state===1}
                         style={{ width: '100%' }}
                         icon={'plus'}
                       >
@@ -775,7 +849,7 @@ dispatchEditContent = (html)=>{
                   <Row className={styles.rightFooter}>
                     <Col span={3}>解析:</Col>
 
-                    <Col span={20}>
+                    <Col span={13}>
                       <Input.TextArea
                         value={subItem.parse}
                         onChange={()=>this.handleGetInputText(index,event)}                        
@@ -783,6 +857,22 @@ dispatchEditContent = (html)=>{
                         rows={8}
                       />
                     </Col>
+                      { paperDetail.state ===2 && <Col span={7} className={styles.opt}>
+                        <Row>
+                          <Button onClick={() => this.cancelEdit()} style={{ width: '100%' }}>
+                            取消编辑
+                          </Button>
+                        </Row>
+                        <Row>
+                          <Button
+                            onClick={() => this.saveChange(editItem)}
+                            type="primary"
+                            style={{ width: '100%' }}
+                          >
+                            保存修改
+                          </Button>
+                        </Row>
+                      </Col>}
                   </Row>
                     )}
                 </Fragment>
@@ -922,17 +1012,29 @@ dispatchEditContent = (html)=>{
 
               </Col>
               <Col span={12}>
-                <Form.Item>
+                {/* <Form.Item> */}
                   <span style={{ marginRight: 20 }}>
                     试卷总分： {paperDetail.totalScore || '暂无'}
                   </span>
         该试卷音频总长:{paperDetail.totalDuration ? `${((paperDetail.totalDuration/60).toFixed(2))}分钟` : '暂无'}
 
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              {/* <Button htmlType="submit" style={{ width: 120 }} type="primary">
+
+              <Button 
+                  onClick={this.onSubmitPaper}
+              style={{ width: 120 }} type="primary">
               提交试卷
+                    </Button>
+
+                    {/* <Button  style={{ width: 120 }} 
+                    disabled={!topicsListTemp.length}
+                    onClick={this.onSubmitPaper}
+                    type="primary">
+                    提交试卷
                     </Button> */}
-                </Form.Item>
+
+                {/* </Form.Item> */}
+                
 
               </Col>
             </Row>
@@ -962,6 +1064,14 @@ dispatchEditContent = (html)=>{
                                     {item.subTopics.length>1 ?`${item.topicNo} (${subItem.topicNo})`:item.topicNo}.{subItem.title}({item.score}分)
 
                                   </h2>
+                                  {paperDetail.state ===2 && (((item.subTopics.length===1) || ( item.subTopics.length>1 &&  subItem.topicNo=== 1)) && (
+                                    <a
+                                      onClick={() => this.handleEdit(item,itemIndex)}
+                                      style={{float: 'right' }}
+                                    >
+                                      编辑
+                                    </a>
+                                  ))}
                                 </div>
 
 
@@ -1062,7 +1172,7 @@ dispatchEditContent = (html)=>{
                       </Col>
                       <Col span={3}>
                         <Upload {...this.uploadFileProps}>
-                          <Button style={{ marginLeft: 60 }} disabled>
+                          <Button style={{ marginLeft: 60 }}>
                             <Icon type="upload" /> 重新上传
                           </Button>
                         </Upload>
@@ -1109,7 +1219,7 @@ dispatchEditContent = (html)=>{
 
                   { showEdit  && editItem.type === 1 ? this.renderSelectQs() : ''}
 
-                   {showEdit &&  editItem.type ===2 && editItem.subTopics.length>0 &&  <RenderSelectP
+                   {showEdit && editItem.type ===2 && editItem.subTopics.length>0 &&  <RenderSelectP
                 showEdit={showEdit}
                 cancelEditOrEmpty={this.cancelEdit}
                 editorContent={editorContent}
@@ -1138,4 +1248,4 @@ dispatchEditContent = (html)=>{
 
 
 
-export default Detail;
+export default Edit;

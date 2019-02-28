@@ -40,6 +40,7 @@ class RenderSelectP extends PureComponent {
     renderEditors=()=>{
       const elem = this.refs.editorElem
       const _this = this;
+      const img = _this.props.state ===1 ? '':'image'
       // debugger
       // if(elem!== undefined){
         const editor = elem && new E(elem)
@@ -52,7 +53,7 @@ class RenderSelectP extends PureComponent {
 
         }
         editor.customConfig.menus = [
-          'image',  // 插入图片
+          img,  // 插入图片
         ];
         editor.customConfig.uploadImgMaxSize = 5 * 1024 * 1024;
         editor.customConfig.uploadImgMaxLength = 1
@@ -204,7 +205,7 @@ class RenderSelectP extends PureComponent {
     
     
       render(){
-      const {editorContent,subTopicsListTemp,showEdit,currentEditIndex,dispatchEditContent} = this.props;
+      const {editorContent,subTopicsListTemp,showEdit,currentEditIndex,dispatchEditContent,state} = this.props;
       // const {renderHtml} =this.state;
     //   debugger
     
@@ -284,7 +285,7 @@ class RenderSelectP extends PureComponent {
                             rows={8}
                           />
                         </Col>
-                        {subIndex+1 === subTopicsListTemp.length && (
+                        {state ===2 && (subIndex+1 === subTopicsListTemp.length && (
                           <Col span={7} className={styles.opt}>
                             <Row>
                               <Button onClick={this.props.cancelEditOrEmpty} style={{ width: '100%' }}>
@@ -302,7 +303,7 @@ class RenderSelectP extends PureComponent {
                               </Button>
                             </Row>
                           </Col>
-                        )}
+                        ))}
                       </Row>
                     </Fragment>
                   );

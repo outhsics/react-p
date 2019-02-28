@@ -60,6 +60,11 @@ export default [
             hideInMenu: true,
             component: './Exam/Detail',
           },
+          {
+            path: '/exam/edit',
+            hideInMenu: true,
+            component: './Exam/Edit',
+          },
 
 
         ],

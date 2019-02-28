@@ -76,7 +76,10 @@ class ExamList extends Component {
           )}
 
           {/* <Link to={`'/exam/detail?id='${record.id}`}>查看详情</Link> */}
+          {record.state !== 1 &&<Fragment> <a onClick={() => this.handleToEdit(record.id)}>编辑</a>&nbsp;&nbsp;
           <a onClick={() => this.handleToDetail(record.id)}>查看详情</a>
+          </Fragment>}
+          {record.state !== 2 &&<a onClick={() => this.handleToDetail(record.id)}>查看详情</a>}
         </Fragment>
       ),
     },
@@ -142,6 +145,16 @@ class ExamList extends Component {
 
     router.push({
       pathname: '/exam/detail',
+      query: {
+        id,
+      },
+    });
+  };
+  handleToEdit= id => {
+    const { location, dispatch } = this.props;
+
+    router.push({
+      pathname: '/exam/edit',
       query: {
         id,
       },
