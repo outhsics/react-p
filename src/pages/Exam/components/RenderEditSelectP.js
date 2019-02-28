@@ -19,7 +19,6 @@ import {
   import E from 'wangeditor';
 import styles from '../List.less';
 import _ from 'lodash'
-const staticPrefix = 'http://media.jze100.com/hear';
 
 
 
@@ -75,7 +74,7 @@ class RenderEditSelectP extends PureComponent {
               // console.log(xhr)
               // console.log(editor)
               // console.log(result)
-               const path = staticPrefix +result.data.path;
+               const path = result.data.path;
               //  var btnId = editor.imgMenuId;
               //  editor.cmd.do('insertHtml', '<img src="' + path + '" style="max-width:100%;"/>')
               //  _this.setState({

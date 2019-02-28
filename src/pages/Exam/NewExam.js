@@ -34,7 +34,7 @@ const confirm = Modal.confirm;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-const staticPrefix = 'http://media.jze100.com/hear';
+
 
 const optionTransfer = [
   'A',
@@ -200,7 +200,7 @@ class NewExam extends PureComponent {
       // _this.setState({
       //   uploadAudioName: info.file.name,
       // });
-      copySub[subItemIndex].options[optionIndex].image = staticPrefix+info.file.response.data.path;
+      copySub[subItemIndex].options[optionIndex].image = info.file.response.data.path;
       this.setState({
         subTopicsListTemp:copySub
       })
@@ -1091,7 +1091,7 @@ onAddSubTopicsSubmit = e => {
             // console.log(xhr)
             // console.log(editor)
             // console.log(result)
-             const path = staticPrefix +result.data.path;
+             const path = result.data.path;
             //  var btnId = editor.imgMenuId;
              editor.cmd.do('insertHtml', '<img src="' + path + '" style="max-width:100%;"/>')
 

@@ -36,7 +36,6 @@ const confirm = Modal.confirm;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
-const staticPrefix = 'http://media.jze100.com/hear';
 
 const optionTransfer = [
   'A',
@@ -199,7 +198,8 @@ class Edit extends PureComponent {
     message.success(`${info.file.name} file uploaded successfully`);
     if (info.file.response.code === 1) {
     
-      copySub[subItemIndex].options[optionIndex].image = staticPrefix+info.file.response.data.path;
+      copySub[subItemIndex].options[optionIndex].image = info.file.response.data.path;
+      // debugger
       this.setState({
         editItem:{
           ...editItem,
