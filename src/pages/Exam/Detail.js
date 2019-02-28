@@ -689,7 +689,7 @@ dispatchEditContent = (html)=>{
                     <Col span={6}>题目（{subItem.topicNo}）:</Col>
 
                     <Col span={18}>
-                      <Input value={subItem.title} onChange={()=>this.handleGetInputValue(subItem.topicNo,event)} />
+                      <Input disabled value={subItem.title} onChange={()=>this.handleGetInputValue(subItem.topicNo,event)} />
                     </Col>
                   </Row>
                   <Row>
@@ -708,7 +708,7 @@ dispatchEditContent = (html)=>{
                                 <Row>
                                   <Col span={6}>选项: {optionTransfer[optionItem.topicNo-1]}</Col>
                                   <Col span={18}>
-                                    <Input value={optionItem.answer} onChange={()=>this.handleGetInputChoice(index,index2,event)} />
+                                    <Input  disabled value={optionItem.answer} onChange={()=>this.handleGetInputChoice(index,index2,event)} />
                                   </Col>
                                 </Row>
                               </Col>
@@ -742,7 +742,7 @@ dispatchEditContent = (html)=>{
                     </Col>
                   </Row>
 
-                  <Row>
+                  {/* <Row>
                     <Col span={24}>
                       <Button
                         type="primary"
@@ -757,7 +757,7 @@ dispatchEditContent = (html)=>{
                         新增选项
                       </Button>
                     </Col>
-                  </Row>
+                  </Row> */}
                   {/* <Row>
                     <Col span={3}>答案:</Col>
                     <Col span={13}>
@@ -771,6 +771,7 @@ dispatchEditContent = (html)=>{
 
                     <Col span={20}>
                       <Input.TextArea
+                      disabled
                         value={subItem.parse}
                         onChange={()=>this.handleGetInputText(index,event)}                        
                         placeholder={'专项说明文本（0/180）'}
@@ -849,6 +850,7 @@ dispatchEditContent = (html)=>{
                     <Input
                 value={paperDetail.title}
                 onChange={()=>this.handleGetTitle(event)}
+                disabled
                       placeholder="因果题型训练6/18"/>
 
                      </Col>
@@ -881,6 +883,7 @@ dispatchEditContent = (html)=>{
                      <Col span={5}>
 
                     <InputNumber
+                    disabled
                      onChange={()=>this.handleGetLevel(event)} 
                      min={1} max={10} step={0.1} value={paperDetail.level} />
                      </Col>
@@ -903,7 +906,7 @@ dispatchEditContent = (html)=>{
                     value={ paperDetail.specialId}>
                       {specialList.map(item => {
                         return (
-                          <RadioButton key={item.id} value={item.id}>
+                          <RadioButton  disabled key={item.id} value={item.id}>
                             {item.title}
                             {/* {paperDetail.specialId === item.id ? paperDetail.specialId : null} */}
                           </RadioButton>
@@ -1067,7 +1070,7 @@ dispatchEditContent = (html)=>{
                             该音频下的题目数:
                             </Col>
                             <Col span={3}>
-                                <InputNumber min={0} max={100} value={ editItem && editItem.subNum} 
+                                <InputNumber min={0} max={100} value={ editItem && editItem.subNum} disabled
                                 onChange={()=>this.handleTopicSubNum(event)}
                                  />
                             </Col>
@@ -1081,7 +1084,7 @@ dispatchEditContent = (html)=>{
                             每题分数:
                             </Col>
                             <Col span={3}>
-                              <InputNumber min={0} max={100} value={editItem && editItem.score} 
+                              <InputNumber disabled min={0} max={100} value={editItem && editItem.score} 
                               onChange={()=>this.handleTopicScore(event)} ></InputNumber>
                             </Col>
                           </Row>

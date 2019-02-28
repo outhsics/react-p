@@ -265,7 +265,7 @@ class OperateTool extends Component {
                     })(
                       <Input.TextArea
                         placeholder={'专项说明文本（0/180）'}
-                        autosize={{ minRows: 6, maxRows: 6 }}
+                        autosize={{ minRows: 8, maxRows: 6 }}
                         max={180}
                       />
                     )}
@@ -295,9 +295,10 @@ class OperateTool extends Component {
 
                     <Form.Item>{getFieldDecorator('id', {})(<Input hidden />)}</Form.Item>
                   </Row>
-                  <Row style={{ paddingRight: '45px', textAlign: 'right' }}>
+                  <Row style={{ paddingLeft: '50px' }}>
                     <Button
-                      style={{ width: 120 }}
+                      // style={{ minWidth: 120 }}
+                      className={styles.cancelButton}
                       onClick={this.handleReset}
                       style={{ marginRight: '30px' }}
                     >
