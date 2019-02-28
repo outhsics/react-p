@@ -622,7 +622,7 @@ dispatchEditContent = (html)=>{
     const { dispatch, location } = this.props;
     cloneEditItem.audio = this.state.uploadList[currentEditIndex].uploadAudioPath;
     cloneEditItem.audioDuration = Number(this.state.uploadList[currentEditIndex].uploadAudioDuration);
-    debugger
+    // debugger
     //  currentItem subList
     // let currentItem= cloneEditItem.subTopics;
     if(editItem.type ===1){
@@ -728,7 +728,7 @@ dispatchEditContent = (html)=>{
       saveData
     })
     // return
-    debugger
+    // debugger
     message.success(`保存成功`);
 
     // console.log(saveData,'saveData')
