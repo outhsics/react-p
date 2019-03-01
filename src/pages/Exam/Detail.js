@@ -1101,16 +1101,12 @@ dispatchEditContent = (html)=>{
                 cancelEditOrEmpty={this.cancelEdit}
                 editorContent={editorContent}
                 state = {paperDetail.state}
-                saveChangeOrTopic={this.saveChange}
+                saveChange={this.saveChange}
                 dispatchSubTopicsListTemp={this.dispatchSubTopicsListTemp}
                 dispatchEditContent={this.dispatchEditContent}
                 currentEditIndex={currentEditIndex}
                  subTopicsListTemp={editItem.subTopics}/>}
 
-
-                  {/* {showEdit && editItem.type === 2 ? this.renderSelectP() : ''} */}
-
-                  {/* { newExam &&  renderSelectNewQs(subTopicsListTemp)} */}
                 
               </div>
             </Col>
