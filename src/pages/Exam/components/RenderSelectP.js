@@ -286,11 +286,11 @@ class RenderSelectP extends PureComponent {
                           />
                         </Col>
 
-                        {/* {state ===2 && (subIndex+1 === subTopicsListTemp.length && ( */}
+                        {/* {state ===2 && (subIndex+1 === subTopicsListTemp.length && (
                           <Col span={7} className={styles.opt}>
                             <Row>
                               <Button onClick={cancelEditOrEmpty} style={{ width: '100%' }}>
-                                {/*  */}
+
                           { showEdit ? '取消编辑':'清空重新录入'}
                               </Button>
                             </Row>
@@ -304,7 +304,7 @@ class RenderSelectP extends PureComponent {
                               </Button>
                             </Row>
                           </Col>
-                        {/* ))} */}
+                        ))} */}
                       </Row>
                     </Fragment>
                   );

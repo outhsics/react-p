@@ -277,7 +277,7 @@ class NewExam extends PureComponent {
       }
     })
   }
-// 确认新增题目
+// 确认 新增题目
 onAddSubTopicsSubmit = e => {
 
     // const { dispatch } = this.props;
@@ -295,6 +295,8 @@ onAddSubTopicsSubmit = e => {
     this.props.form.validateFields({ force: true }, (err, values) => {
       const options =[];
       const data = [];
+// debugger
+
       if (!err && values && values.topicNum>0) {
 
         for(let i =0;i <values.topicNum;i++) {
@@ -309,12 +311,13 @@ onAddSubTopicsSubmit = e => {
         options
       })
 
-// debugger
         this.setState({
-          subTopicsListTemp:data
+          subTopicsListTemp:data,
+          editItem:null
         })
       }
     })
+
 
 }
 
@@ -458,7 +461,10 @@ onAddSubTopicsSubmit = e => {
 
     this.setState({
       currentEditType: Number(event.target.value),
-      subTopicsListTemp:[]
+      subTopicsListTemp:[],
+      editItem:null,
+      uploadAudioDuration:'',
+      uploadAudioName:''
     })
     // debugger
   }
@@ -624,7 +630,7 @@ onAddSubTopicsSubmit = e => {
 
     //   }
     // })
-    // debugger
+    debugger
     let editorContent = '';
 
     const radioValueList = [];
@@ -778,6 +784,11 @@ onAddSubTopicsSubmit = e => {
 
 
   saveChangeOrTopic =()=>{
+
+    this.setState({
+      uploadAudioName:'',
+      uploadAudioDuration:''
+    })
      const {showEdit} = this.state;
      if(showEdit){
        //  保存修改
@@ -1182,13 +1193,7 @@ onAddSubTopicsSubmit = e => {
                       </Button>
                     </Col>
                   </Row>
-                  {/* <Row>
-                    <Col span={3}>答案:</Col>
-                    <Col span={13}>
-                      <InputNumber defaultValue={subItem.answer} min={1} max={10} />
-                    </Col>
-                  </Row> */}
-                    {/* {subIndex+1 === subTopicsListTemp.length && (
+                  {subIndex+1 === subTopicsListTemp.length && (
                   <Row className={styles.rightFooter}>
                     <Col span={3}>解析:</Col>
 
@@ -1204,7 +1209,7 @@ onAddSubTopicsSubmit = e => {
                         <Row>
                           <Button onClick={this.cancelEditOrEmpty} style={{ width: '100%' }}>
                             {/*  */}
-                      {/* { showEdit ? '取消编辑':'清空重新录入'}
+                      { showEdit ? '取消编辑':'清空重新录入'}
                           </Button>
                         </Row>
                         <Row>
@@ -1217,8 +1222,8 @@ onAddSubTopicsSubmit = e => {
                           </Button>
                         </Row>
                       </Col>
-                  </Row> */}
-                    {/* )} } */}
+                  </Row>
+                    )}
                 </Fragment>
               );
             })}
@@ -1543,7 +1548,7 @@ dispatchEditContent = (html)=>{
                       <Col span={10}>
                         <span>
 
-                          上传音频: {uploadAudioName || ''}
+                          上传音频: {editItem && editItem.audio  || uploadAudioName || ''}
                                        
                           {/* {isUploading  && uploadList[currentEditIndex].uploadAudioName} */}
 
@@ -1554,7 +1559,9 @@ dispatchEditContent = (html)=>{
                       <Col span={6}>
                         <span>
                         该音频时长:
-                        {uploadAudioDuration>0 && formatDuration(uploadAudioDuration) }
+                        {editItem && editItem.audioDuration  || (uploadAudioDuration>0 && formatDuration(uploadAudioDuration)) || ''}
+                        {/* audioDuration */}
+
                           </span>
                       </Col>
                       <Col span={6}>
@@ -1600,10 +1607,11 @@ dispatchEditContent = (html)=>{
                     </Col>
                       <Col span={6}>
 
-                         {!subTopicsListTemp.length && <Button htmlType="submit" style={{ width: 120 }} type="primary"> 
+                         {<Button disabled={uploadAudioDuration =='' || uploadAudioName =='' || subTopicsListTemp.length!=0} htmlType="submit" style={{ width: 120,marginLeft:5 }} type="primary"> 
 
                           确认
                         </Button>
+
                          }
                     </Col>
                     </Row>
