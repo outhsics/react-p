@@ -1188,7 +1188,7 @@ onAddSubTopicsSubmit = e => {
                       <InputNumber defaultValue={subItem.answer} min={1} max={10} />
                     </Col>
                   </Row> */}
-                    {subIndex+1 === subTopicsListTemp.length && (
+                    {/* {subIndex+1 === subTopicsListTemp.length && (
                   <Row className={styles.rightFooter}>
                     <Col span={3}>解析:</Col>
 
@@ -1204,7 +1204,7 @@ onAddSubTopicsSubmit = e => {
                         <Row>
                           <Button onClick={this.cancelEditOrEmpty} style={{ width: '100%' }}>
                             {/*  */}
-                      { showEdit ? '取消编辑':'清空重新录入'}
+                      {/* { showEdit ? '取消编辑':'清空重新录入'}
                           </Button>
                         </Row>
                         <Row>
@@ -1217,8 +1217,8 @@ onAddSubTopicsSubmit = e => {
                           </Button>
                         </Row>
                       </Col>
-                  </Row>
-                    )}
+                  </Row> */}
+                    {/* )} } */}
                 </Fragment>
               );
             })}

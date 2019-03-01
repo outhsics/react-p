@@ -199,7 +199,7 @@ class Edit extends PureComponent {
     if (info.file.response.code === 1) {
     
       copySub[subItemIndex].options[optionIndex].image = info.file.response.data.path;
-      // debugger
+      debugger
       this.setState({
         editItem:{
           ...editItem,
