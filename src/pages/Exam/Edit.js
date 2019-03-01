@@ -445,7 +445,13 @@ class Edit extends PureComponent {
   cancelEdit = () => {
     this.setState({
       showEdit: false,
+      // uploadAudioDuration:null,
+      // uploadAudioName:null,
+      currentEditType:1,
+      editItem:null,
+      isUploading:false
     });
+
   };
 
 
