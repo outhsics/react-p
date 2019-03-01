@@ -50,12 +50,12 @@ class UserLayout extends React.PureComponent {
         <div className={styles.content}>
           <div className={styles.top}>
             <div className={styles.header}>
-              <Link to="/">
+              {/* <Link to="/"> */}
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
-              </Link>
+                <span className={styles.title}>听力宝</span>
+              {/* </Link> */}
             </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+            <div className={styles.desc}>听力宝后台登录入口</div>
           </div>
           {children}
         </div>
