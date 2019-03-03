@@ -1106,8 +1106,7 @@ dispatchEditContent = (html)=>{
                                   return (
                                     <ul  key={subOption.topicNo} style={{padding:0, lineHeight: '31px' }}>
                                       <li> { optionTransfer[subOption.topicNo-1]}.&nbsp;
-                                      {subOption.image && !subOption.image.includes('http') || subOption.answer}
-                                      {subOption.image && subOption.image.includes('http') && (
+                                      {subOption.answer || subOption.image && subOption.image.includes('http') && (
                                         <img style={{width:75,height:'auto'}} src={subOption.image} />
                                       )}</li>
                                     </ul>

@@ -1504,8 +1504,8 @@ dispatchEditContent = (html)=>{
                                   return (
                                     <ul key={subOptionIndex} style={{padding:0, lineHeight: '31px' }}>
                                       <li> {optionTransfer[subOptionIndex]}.&nbsp;
-                                      {!subOption.image.includes('http') && subOption.answer}
-                                      {subOption.image && subOption.image.includes('http') && (
+                                      {/* {!subOption.image.includes('http') && } */}
+                                      {subOption.answer || subOption.image && subOption.image.includes('http') && (
                                         <img style={{width:75,height:'auto'}} src={subOption.image} />
                                       )}</li>
                                     </ul>
