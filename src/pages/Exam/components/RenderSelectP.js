@@ -205,7 +205,7 @@ class RenderSelectP extends PureComponent {
     
     
       render(){
-      const {cancelEditOrEmpty,saveChange,editorContent,subTopicsListTemp,showEdit,currentEditIndex,dispatchEditContent,state} = this.props;
+      const {cancelEditOrEmpty,saveChangeOrTopic,editorContent,subTopicsListTemp,showEdit,currentEditIndex,dispatchEditContent,state} = this.props;
       // const {renderHtml} =this.state;
     //   debugger
     
@@ -286,17 +286,17 @@ class RenderSelectP extends PureComponent {
                           />
                         </Col>
 
-                        {/* {state ===2 && (subIndex+1 === subTopicsListTemp.length && (
+                        {/* {state ===2  && ( */}
                           <Col span={7} className={styles.opt}>
                             <Row>
-                              <Button onClick={cancelEditOrEmpty} style={{ width: '100%' }}>
+                              <Button onClick={()=>cancelEditOrEmpty()} style={{ width: '100%' }}>
 
                           { showEdit ? '取消编辑':'清空重新录入'}
                               </Button>
                             </Row>
                             <Row>
                               <Button
-                                onClick={() => saveChange()}
+                                onClick={()=>saveChangeOrTopic()}
                                 type="primary"
                                 style={{ width: '100%' }}
                               >
@@ -304,7 +304,7 @@ class RenderSelectP extends PureComponent {
                               </Button>
                             </Row>
                           </Col>
-                        ))} */}
+                        {/* ))} */}
                       </Row>
                     </Fragment>
                   );
