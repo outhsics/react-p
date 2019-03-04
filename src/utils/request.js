@@ -93,12 +93,12 @@ service.interceptors.response.use(
       window.location.href = '/admin/login'
     }
 
-    console.log(response)
+    // console.log(response)
     // debugger
     return response;
   },
   error => {
-    console.log('err' + error); // for debug
+    // console.log('err' + error); // for debug
     // Message({
     //   message: error.message,
     //   type: 'error',
