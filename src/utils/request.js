@@ -70,13 +70,33 @@ const service = axios.create({
   timeout: 10000,
   headers: {
   //   'X-Custom-Header': 'foobar'
+  "S-Token":localStorage['XTOKEN'],
   'Cache-Control': 'no-cache',
   }
 });
 
 // respone interceptor
 service.interceptors.response.use(
-  response => response,
+
+  response => {
+      // debugger
+
+    if(response.config.url.includes('admin/sysUser/login')) {
+      const token = response.data.data;
+      if(token && token !=='null') {
+        localStorage['XTOKEN'] = token;
+      }
+      window.location.href = '/'
+    }
+
+    if(!localStorage['XTOKEN']) {
+      window.location.href = '/admin/login'
+    }
+
+    console.log(response)
+    // debugger
+    return response;
+  },
   error => {
     console.log('err' + error); // for debug
     // Message({
