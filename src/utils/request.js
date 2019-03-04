@@ -70,7 +70,7 @@ const service = axios.create({
   timeout: 10000,
   headers: {
   //   'X-Custom-Header': 'foobar'
-  "S-Token":localStorage['XTOKEN'],
+  "S-Token":atob(localStorage['XTOKEN'] || ''),
   'Cache-Control': 'no-cache',
   }
 });
@@ -84,7 +84,7 @@ service.interceptors.response.use(
     if(response.config.url.includes('admin/sysUser/login')) {
       const token = response.data.data;
       if(token && token !=='null') {
-        localStorage['XTOKEN'] = token;
+        localStorage['XTOKEN'] = btoa(token);
       }
       window.location.href = '/'
     }
