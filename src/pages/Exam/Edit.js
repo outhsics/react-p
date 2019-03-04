@@ -1254,7 +1254,7 @@ dispatchEditContent = (html)=>{
                 cancelEditOrEmpty={this.cancelEdit}
                 editorContent={editorContent}
                 state = {paperDetail.state}
-                saveChange={this.saveChange}
+                saveChangeOrTopic={this.saveChange}
                 dispatchSubTopicsListTemp={this.dispatchSubTopicsListTemp}
                 dispatchEditContent={this.dispatchEditContent}
                 currentEditIndex={currentEditIndex}
