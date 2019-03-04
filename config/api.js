@@ -57,5 +57,8 @@ const api = {
     createSpecial: `${apiPrefix.tlb}/admin/special/create`,
     deleteSpecial: `${apiPrefix.tlb}/admin/special/delete`,
   },
+  admin:{
+    login: `${apiPrefix.tlb}/admin/sysUser/login`,
+  }
 };
 export { api };
