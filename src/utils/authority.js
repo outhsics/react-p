@@ -13,6 +13,7 @@ export function getAuthority(str) {
   if (typeof authority === 'string') {
     return [authority];
   }
+  // debugger
   return authority || ['admin'];
 }
 

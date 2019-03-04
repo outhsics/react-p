@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { formatMessage, FormattedMessage } from 'umi/locale';
 import Link from 'umi/link';
-import { Checkbox, Alert, Icon } from 'antd';
+import { Checkbox,Input,Button, Alert, Icon ,Form} from 'antd';
 import Login from '@/components/Login';
 import styles from './Login.less';
 
@@ -13,17 +13,37 @@ const { Tab, UserName, Password, Mobile, Captcha, Submit } = Login;
   submitting: loading.effects['login/login'],
 }))
 class LoginPage extends Component {
+
+  componentDidMount(){
+    // console.log(this.loginForm,'loginForm')
+    // console.log('loginForm')
+    // debugger
+  }
  
-  handleSubmit = (err, values) => {
-    if (!err) {
-      const { dispatch } = this.props;
-      dispatch({
-        type: 'login/login',
-        payload: {
-          ...values,
-        },
-      });
-    }
+  handleSubmit = (e) => {
+    const _this = this;
+    e.preventDefault();
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (!err) {
+        const { dispatch } = _this.props;
+          dispatch({
+            type: 'login/login',
+            payload: values,
+          });
+      }
+    });
+
+    // console.log(values,'values');
+    // // debugger
+    // if (!err) {
+    //   const { dispatch } = this.props;
+    //   dispatch({
+    //     type: 'login/login',
+    //     payload: {
+    //       ...values,
+    //     },
+    //   });
+    // }
   };
 
 
@@ -32,45 +52,75 @@ class LoginPage extends Component {
   );
 
   render() {
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 12 },
+        sm: { span: 4 },
+      },
+      wrapperCol: {
+        xs: { span: 12 },
+        sm: { span: 8 },
+      },
+    };
+    const tailFormItemLayout = {
+      wrapperCol: {
+        xs: {
+          span: 12,
+          offset: 0,
+        },
+        sm: {
+          span: 8,
+          offset: 4,
+        },
+      },
+    };
     const { login, submitting } = this.props;
+    const { getFieldDecorator } = this.props.form;
     return (
-      <div className={styles.main}>
-        <Login
-          onSubmit={this.handleSubmit}
-          ref={form => {
-            this.loginForm = form;
-          }}
-        >
-            <UserName
-              name="userName"
-              placeholder={'账户'}
-              rules={[
-                {
-                  required: true,
-                  message: '请输入账户名',
-                },
-              ]}
-            />
-            <Password
-              name="password"
-              placeholder={'密码'}
-              rules={[
-                {
-                  required: true,
-                  message: '请输入密码',
-                },
-              ]}
-              onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
-            />
-        
-          <Submit loading={submitting}>
-          登录
-          </Submit>
-        
-        </Login>
-      </div>
+<div  className={styles.form}>
+      <Form onSubmit={this.handleSubmit} >
+      <Form.Item
+      className={styles.formItem}
+        {...formItemLayout}
+        label="账户名"
+      >
+        {getFieldDecorator('userName', {
+          rules: [{
+            required: true, message: '请输入账户名',
+          }],
+        })(
+          <Input    placeholder={'账户'}/>
+        )}
+      </Form.Item>
+
+      <Form.Item
+      className={styles.formItem}
+
+        {...formItemLayout}
+        label="密码"
+      >
+        {getFieldDecorator('password', {
+          rules: [{
+            required: true, message: '请输入密码',
+          }],
+        })(
+          <Input    placeholder={'密码'}/>
+        )}
+      </Form.Item>
+      <Form.Item
+      className={styles.formItem}
+      
+       {...tailFormItemLayout}>
+          <Button type="primary" htmlType="submit">登录</Button>
+        </Form.Item>
+      </Form>
+
+
+</div>
+      
     );
   }
 }
 
-export default LoginPage;
+const WrappedLoginPage = Form.create({ name: 'login' })(LoginPage);
+export default WrappedLoginPage;

@@ -202,11 +202,34 @@ export async function updateFakeList(params) {
   });
 }
 
+// const { password, userName, type } = req.body;
+// if (password === 'ant.design' && userName === 'admin') {
+//   res.send({
+//     status: 'ok',
+//     type,
+//     currentAuthority: 'admin',
+//   });
+//   return;
+// }
+
+
 export async function fakeAccountLogin(params) {
   return request('/api/login/account', {
     method: 'POST',
     body: params,
   });
+}
+
+
+export async function adminLogin(params) {
+  // debugger
+  return request({
+    url: `${apiConfig.admin.login}`,
+    method: 'POST',
+    data: params,
+    // responseType: 'json',
+  });
+
 }
 
 export async function fakeRegister(params) {

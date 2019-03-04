@@ -5,7 +5,7 @@ export default [
   component: '../layouts/UserLayout',
   routes: [
     { path: '/admin', redirect: '/admin/Login' },
-    { path: '/admin/login', component: './admin/Login' },
+    { path: '/admin/login', component: '../pages/Admin/Login' },
     // { path: '/user/register', component: './User/Register' },
     // { path: '/user/register-result', component: './User/RegisterResult' },
   ],
@@ -15,6 +15,8 @@ export default [
     path: '/',
     // redirect: './welcome',
     component: '../layouts/BasicLayout',
+    Routes: ['src/pages/Authorized'],
+    authority: ['admin'],
     routes: [
       { path: '/', redirect: '/user/list' },
 

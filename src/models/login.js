@@ -1,9 +1,12 @@
 import { routerRedux } from 'dva/router';
 import { stringify } from 'qs';
-import { fakeAccountLogin, getFakeCaptcha } from '@/services/api';
+import { adminLogin, getFakeCaptcha } from '@/services/api';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
 import { reloadAuthorized } from '@/utils/Authorized';
+import { message } from 'antd';
+import request from '@/utils/request';
+
 
 export default {
   namespace: 'login',
@@ -14,13 +17,31 @@ export default {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      });
+      const response = yield call(adminLogin, payload);
+      if(response.data.code ===1){
+        // debugger
+        yield put({
+          type: 'changeLoginStatus',
+          payload: response,
+        });
+        request.defaults.headers.common['S-Token'] = response.data.data;
+
+
+        // res.send({
+        //   status: 'ok',
+        //   type,
+        //   currentAuthority: 'admin',
+        // });
+      }else {
+        // yield put({
+        //   type: 'changeLoginStatus',
+        //   payload: response,
+        // });
+        message.error('登录错误')
+      }
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.data.code === 1) {
+        // debugger
         reloadAuthorized();
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
@@ -56,7 +77,7 @@ export default {
       reloadAuthorized();
       yield put(
         routerRedux.push({
-          pathname: '/user/login',
+          pathname: '/admin/login',
           search: stringify({
             redirect: window.location.href,
           }),
@@ -67,11 +88,11 @@ export default {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+      setAuthority('admin');
       return {
         ...state,
-        status: payload.status,
-        type: payload.type,
+        status: 'ok',
+        // type: payload.type,
       };
     },
   },
