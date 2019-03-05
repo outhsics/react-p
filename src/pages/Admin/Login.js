@@ -89,7 +89,7 @@ class LoginPage extends Component {
             required: true, message: '请输入账户名',
           }],
         })(
-          <Input prefix={<span><Icon type="user" className={styles.prefixIcon} /></span>}     placeholder={'账户:admin'}/>
+          <Input prefix={<span><Icon type="user" className={styles.prefixIcon} /></span>}     placeholder={'账户'}/>
         )}
       </Form.Item>
 
@@ -105,7 +105,7 @@ class LoginPage extends Component {
           }],
         })(
           <Input 
-            prefix={<span><Icon type="lock" className={styles.prefixIcon} /></span>}  placeholder={'密码:123'}/>
+            prefix={<span><Icon type="lock" className={styles.prefixIcon} /></span>}  placeholder={'密码'}/>
         )}
       </Form.Item>
       <Form.Item
