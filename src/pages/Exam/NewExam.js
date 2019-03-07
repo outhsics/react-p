@@ -664,6 +664,7 @@ onAddSubTopicsSubmit = e => {
       currentEditType: item.type,
       radioValueList,
       subTopicsListTemp:item.subTopics,
+      // currentItem:item.subTopics,
       uploadAudioName:item.audio,
       uploadAudioDuration:item.audioDuration,
       currentEditIndex:itemIndex
@@ -831,14 +832,17 @@ onAddSubTopicsSubmit = e => {
         return false;
       }
     
-      debugger
-       return
-      for (let index2 = 0; index2 < currentItem[index].options.length; index2++) {
-        if(currentItem[index].options[index2].image === '' && currentItem[index].options[index2].answer === '') {
-          message.error(`缺少选项信息`);
-          return false;
-        }
+      // debugger
+      //  return
+      if(currentItem[index].options&& currentItem[index].options.length) {
 
+        for (let index2 = 0; index2 < currentItem[index].options.length; index2++) {
+          if(currentItem[index].options[index2].image === '' && currentItem[index].options[index2].answer === '') {
+            message.error(`缺少选项信息`);
+            return false;
+          }
+  
+        }
       }
     }
     
