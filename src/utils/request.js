@@ -91,6 +91,7 @@ service.interceptors.response.use(
 
     if(!localStorage['XTOKEN']) {
       window.location.href = '/admin/login'
+      return
     }
 
     // console.log(response)
