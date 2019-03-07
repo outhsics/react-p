@@ -37,7 +37,11 @@ class ExamList extends Component {
       title: '完成人次/进行中',
       dataIndex: 'finish',
       render: (text, record) => (
-        <span>{` ${record.completeAmount} / ${record.createAmount} `}</span>
+        <span>
+
+        {` ${record.completeAmount? record.completeAmount:''} / ${record.createAmount? record.createAmount:''} `}
+        
+        </span>
       ),
     },
     {
@@ -101,6 +105,7 @@ class ExamList extends Component {
         pageSize: 10,
         specialId: this.state.currentSpecial,
       },
+      cbPageTotal: this.cbPageTotal,
     });
   };
 
@@ -116,6 +121,7 @@ class ExamList extends Component {
         pageSize: 10,
         specialId: this.state.currentSpecial,
       },
+      cbPageTotal: this.cbPageTotal,
     });
   };
   showDeleteConfirm = record => {
@@ -188,6 +194,7 @@ class ExamList extends Component {
             pageSize: 10,
             specialId: _this.state.currentSpecial,
           },
+          cbPageTotal: _this.cbPageTotal,
         });
       },
       onCancel() {},
@@ -208,6 +215,7 @@ class ExamList extends Component {
         pageSize: 10,
         specialId: tabType,
       },
+      cbPageTotal: this.cbPageTotal,
     });
   };
 
