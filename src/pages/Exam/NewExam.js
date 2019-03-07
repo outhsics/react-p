@@ -831,6 +831,8 @@ onAddSubTopicsSubmit = e => {
         return false;
       }
     
+      debugger
+       return
       for (let index2 = 0; index2 < currentItem[index].options.length; index2++) {
         if(currentItem[index].options[index2].image === '' && currentItem[index].options[index2].answer === '') {
           message.error(`缺少选项信息`);
@@ -1643,7 +1645,4 @@ dispatchEditContent = (html)=>{
 }
 
 export default NewExam;
-
-
-// export default RenderSelectP;
 
