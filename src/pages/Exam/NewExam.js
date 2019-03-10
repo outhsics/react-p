@@ -311,9 +311,12 @@ onAddSubTopicsSubmit = e => {
         options
       })
 
+      // debugger
+
         this.setState({
           subTopicsListTemp:data,
-          editItem:null
+          editItem:null,
+          editorContent:'',
         })
       }
     })
@@ -630,7 +633,6 @@ onAddSubTopicsSubmit = e => {
 
     //   }
     // })
-    debugger
     let editorContent = '';
 
     const radioValueList = [];
@@ -655,7 +657,7 @@ onAddSubTopicsSubmit = e => {
       topicScore:item.score
     })
 
-// debugger
+debugger
 
     this.setState({
       // editItem: item,
@@ -810,11 +812,13 @@ onAddSubTopicsSubmit = e => {
 
       if(currentEditType ===2) {
         // subTopicsListTemp[0].title = 
-        const tmpObj = {
-          ...subTopicsListTemp,
+        let cloneSub = _.cloneDeep(subTopicsListTemp[0])
+        cloneSub = {
+          ...subTopicsListTemp[0],
           title:editorContent
         }
-        currentItem.push(tmpObj);
+        const tmpObj =cloneSub
+        currentItem.push(tmpObj)
         
       } else {
          currentItem = mapRadioToOptions(radioValueList,subTopicsListTemp);
@@ -866,6 +870,7 @@ onAddSubTopicsSubmit = e => {
       return accumalator+Number(cur.audioDuration)
     },0)
     
+    debugger
 
     this.props.form.resetFields();
 

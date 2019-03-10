@@ -67,18 +67,20 @@ class Edit extends PureComponent {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      saveData:{},
+      saveData:null,
       currentEditIndex:null,
       editorContent:'',
       subTopicsListTemp:[],
       isUploading:false,
-      uploadList:[
-        {
-          uploadAudioName: '',
-          uploadAudioDuration: 0,
-          uploadAudioPath:'',
-        }
-      ],
+      // uploadList:[
+      //   {
+      //     uploadAudioName: '',
+      //     uploadAudioDuration: 0,
+      //     uploadAudioPath:'',
+      //   }
+      // ],
+      uploadAudioName:'',
+      uploadAudioDuration:'',
       editItem: {
         score:0,
         audioDuration:0
@@ -147,17 +149,18 @@ class Edit extends PureComponent {
         // debugger
         message.success(`${info.file.name} 音频上传成功!`,5);
         if (info.file.response.code === 1) {
-          const {currentEditIndex,uploadList} = _this.state;
-          const arr = _.cloneDeep(uploadList);
-          arr[currentEditIndex] = {
-            uploadAudioDuration:info.file.response.data.duration,
-            uploadAudioPath: info.file.response.data.path,
-            uploadAudioName: info.file.name,
+          // const {currentEditIndex,uploadList} = _this.state;
+          // const arr = _.cloneDeep(uploadList);
+          // arr[currentEditIndex] = {
+          //   uploadAudioDuration:info.file.response.data.duration,
+          //   uploadAudioPath: info.file.response.data.path,
+          //   uploadAudioName: info.file.name,
 
-          }
+          // }
 
           _this.setState({
-            uploadList:arr,
+            uploadAudioName: info.file.response.data.path,
+          uploadAudioDuration:info.file.response.data.duration,
             isUploading:true
           }
           );
@@ -458,10 +461,9 @@ class Edit extends PureComponent {
   onSubmitPaper = ()=>{
 
     const { dispatch,location,operate } = this.props;
-    const { saveData } = this.state;
-    const { specialList } = operate;
-
-    if(!saveData.title || !saveData.level || !saveData.specialId ) {
+    const { paperDetail,saveData } = this.state;
+    const { specialList} = operate;
+    if(!(!!paperDetail.title && !!paperDetail.level && !!paperDetail.specialId) ) {
           message.error('请输入试卷信息');
           return
       }
@@ -473,29 +475,30 @@ class Edit extends PureComponent {
       {/* <span> 默认提交后，试卷状态为启用</span> */}
       <ul>
         <li>
-          试卷名称: {saveData.title}
+          试卷名称: {paperDetail.title}
         </li>
         <li>
-        专项: {specialList.map(item => {
+        专项: {specialList && specialList.length && specialList.map(item => {
         return (
-            <Fragment key={item.id}>  {item.id  === saveData.specialId ? item.title: null}</Fragment>
+            <Fragment key={item.id}>  {item.id  === paperDetail.specialId ? item.title: null}</Fragment>
           );
         })}
         </li>
         <li>
-          难度: {saveData.level}
+          难度: {paperDetail.level}
         </li>
         <li>
-          题目数: {saveData.topics.length}
+          题目数: {paperDetail.topics && paperDetail.topics.length}
         </li>
         <li>
-          试卷总分:{saveData.totalScore}
+          试卷总分:{paperDetail.totalScore}
         </li>
         <li>
-        该试卷音频总长:{saveData.totalDuration ? `${((saveData.totalDuration/60).toFixed(2))}分钟` : '暂无'}
+        该试卷音频总长:{paperDetail.totalDuration ? `${((paperDetail.totalDuration/60).toFixed(2))}分钟` : '暂无'}
         </li>
       </ul>
     </div>;
+// debugger
   
     confirm({
       title,
@@ -507,7 +510,7 @@ class Edit extends PureComponent {
 
     dispatch({
       type: 'examlist/updatePaper',
-      payload: saveData,
+      payload: saveData || paperDetail,
       callback:_this.cbSuccessUdatePaper
     });
 
@@ -549,7 +552,7 @@ class Edit extends PureComponent {
     if(item.type ===2){
       editorContentData  = item.subTopics[0].title;
     }
-    // debugger
+    debugger
 
     this.setState({
       editItem: item,
@@ -558,7 +561,9 @@ class Edit extends PureComponent {
       currentEditIndex: itemIndex,
       editorContent:editorContentData,
       radioValueList,
-      isUploading:false
+      isUploading:false,
+      uploadAudioDuration:item.audioDuration,
+      uploadAudioName:item.audio
     });
     // debugger
 
@@ -622,12 +627,12 @@ dispatchEditContent = (html)=>{
 
   saveChange = (v) => {
     const { radioValueList,paperDetail } = this.state;
-    const {editItem,editorContent,currentEditIndex,uploadList} = this.state;
+    const {editItem,editorContent,currentEditIndex,uploadAudioDuration,uploadAudioName} = this.state;
     const cloneEditItem = _.cloneDeep(editItem);
 
     const { dispatch, location } = this.props;
-    cloneEditItem.audio = this.state.uploadList[currentEditIndex].uploadAudioPath;
-    cloneEditItem.audioDuration = Number(this.state.uploadList[currentEditIndex].uploadAudioDuration);
+    cloneEditItem.audio = this.state.uploadAudioName;
+    cloneEditItem.audioDuration = Number(this.state.uploadAudioDuration);
     // debugger
     //  currentItem subList
     // let currentItem= cloneEditItem.subTopics;
@@ -663,7 +668,6 @@ dispatchEditContent = (html)=>{
       // }]
 
     }
-    // debugger
 
     // const mcurrentItem = {
     //   ...cloneEditItem,
@@ -729,6 +733,7 @@ dispatchEditContent = (html)=>{
     // isCorrect
 
     // TODO
+    debugger
     
     this.setState({
       saveData
@@ -1187,7 +1192,7 @@ dispatchEditContent = (html)=>{
                         <span style={{width:10,textOverflow:'ellipsis'}}>
                           上传音频:
                           
-                           {isUploading  && uploadList[currentEditIndex].uploadAudioName}
+                           {isUploading  && uploadAudioName}
 
                            {!isUploading && editItem && editItem.audio }
 
@@ -1196,7 +1201,7 @@ dispatchEditContent = (html)=>{
                       <Col span={8}>
                         <span>
                           该音频时长:
-                          { isUploading &&  uploadList[currentEditIndex].uploadAudioDuration>0 && formatDuration(uploadList[currentEditIndex].uploadAudioDuration)}
+                          { isUploading &&  uploadAudioDuration>0 && formatDuration(uploadAudioDuration)}
                           {!isUploading && editItem && formatDuration(editItem.audioDuration)}
                         </span>
                       </Col>

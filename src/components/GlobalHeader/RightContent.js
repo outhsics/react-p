@@ -1,13 +1,18 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage, formatMessage } from 'umi/locale';
-import { Spin, Tag, Menu, Icon, Avatar } from 'antd';
+import { Spin, Tag, Menu, Icon, Avatar,Button } from 'antd';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import { NoticeIcon } from 'ant-design-pro';
 import HeaderSearch from '../HeaderSearch';
 import HeaderDropdown from '../HeaderDropdown';
+import { connect } from 'dva';
+
 import styles from './index.less';
 
+@connect(({ login }) => ({
+  login
+}))
 export default class GlobalHeaderRight extends PureComponent {
   getNoticeData() {
     const { notices = [] } = this.props;
@@ -52,6 +57,11 @@ export default class GlobalHeaderRight extends PureComponent {
     });
     return unreadMsg;
   };
+  handleLogout = ()=>{
+    this.props.dispatch({
+      type:'/login/logout'
+    })
+  }
 
   changeReadState = clickedItem => {
     const { id } = clickedItem;
@@ -142,7 +152,7 @@ export default class GlobalHeaderRight extends PureComponent {
             emptyImage="https://gw.alipayobjects.com/zos/rmsportal/HsIsxMZiWKrNUavQUXqx.svg" */}
         {/* /> */}
         {/* </NoticeIcon> */}
-        {currentUser.name ? (
+        {/* {currentUser.name ? (
           <span className={`${styles.action} ${styles.account}`}>
             <Avatar
               size="small"
@@ -153,8 +163,19 @@ export default class GlobalHeaderRight extends PureComponent {
             <span className={styles.name}>{currentUser.name}</span>
           </span>
 
-        ) : null
-        }
+        ) : null */}
+        {/* } */}
+
+        {/* <Dropdown trigger={['click']}>
+    <a className="ant-dropdown-link" href="#">
+      Click me <Icon type="down" />
+    </a>
+  </Dropdown>, */}
+  {/* <Button type="primary" onClick={this.handleLogout}>
+  退出登录
+
+  </Button> */}
+
       </div>
     );
   }

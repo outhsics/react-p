@@ -253,7 +253,7 @@ class ExamList extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props.examlist.paperTotal, 'this.props.examlist.paperTotal');
+    // console.log(this.props.examlist.paperTotal, 'this.props.examlist.paperTotal');
 
     const { dispatch, operate } = this.props;
     dispatch({

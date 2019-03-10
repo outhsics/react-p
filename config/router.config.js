@@ -15,8 +15,8 @@ export default [
     path: '/',
     // redirect: './welcome',
     component: '../layouts/BasicLayout',
-    Routes: ['src/pages/Authorized'],
-    authority: ['admin'],
+    // Routes: ['src/pages/Authorized'],
+    // authority: ['admin'],
     routes: [
       { path: '/', redirect: '/user/list' },
 

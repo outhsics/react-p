@@ -63,7 +63,7 @@
 // export default request;
 
 import axios from 'axios';
-import { notification } from 'antd';
+import { notification,message } from 'antd';
 
 const service = axios.create({
   // baseURL: 'https://some-domain.com/api/',
@@ -86,12 +86,19 @@ service.interceptors.response.use(
       if(token && token !=='null') {
         localStorage['XTOKEN'] = btoa(token);
       }
-      window.location.href = '/'
+      // window.location.href = '/'
+      return response;
     }
 
     if(!localStorage['XTOKEN']) {
+      // alert(2)
+      // notification.error({
+      //   message: response.data.msg
+      // });
       window.location.href = '/admin/login'
-      return
+      // return false;
+
+      // return response;
     }
 
     // console.log(response)

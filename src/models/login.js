@@ -18,13 +18,17 @@ export default {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(adminLogin, payload);
-      if(response.data.code ===1){
+      // if(response.data.code ===1){
+        // window.location = ''
+        // routerRedux.
         // debugger
-        yield put({
-          type: 'changeLoginStatus',
-          payload: response,
-        });
-        request.defaults.headers.common['S-Token'] = response.data.data;
+        // yield put({
+        //   type: 'changeLoginStatus',
+        //   payload: response,
+        // });
+        // message.info('登录成功')
+
+        // request.defaults.headers.common['S-Token'] = response.data.data;
 
 
         // res.send({
@@ -32,34 +36,54 @@ export default {
         //   type,
         //   currentAuthority: 'admin',
         // });
-      }else {
+      // }else {
+      // debugger
+
         // yield put({
         //   type: 'changeLoginStatus',
         //   payload: response,
         // });
-        message.error('登录错误')
-      }
+        // return message.error('登录错误')
+        // return
+      // }
       // Login successfully
       if (response.data.code === 1) {
-        // debugger
-        reloadAuthorized();
-        const urlParams = new URL(window.location.href);
-        const params = getPageQuery();
-        let { redirect } = params;
-        if (redirect) {
-          const redirectUrlParams = new URL(redirect);
-          if (redirectUrlParams.origin === urlParams.origin) {
-            redirect = redirect.substr(urlParams.origin.length);
-            if (redirect.match(/^\/.*#/)) {
-              redirect = redirect.substr(redirect.indexOf('#') + 1);
-            }
-          } else {
-            window.location.href = redirect;
-            return;
-          }
-        }
-        yield put(routerRedux.replace(redirect || '/'));
+        // yield put(routerRedux.replace( '/'));
+        // routerRedux.push({
+          yield put(
+            routerRedux.push({
+              pathname: '/',
+              // search: stringify({
+              //   redirect: window.location.href,
+              // }),
+            })
+          );
+        
+      }else {
+        message.info('登录失败')
+
       }
+
+        // reloadAuthorized();
+        // const urlParams = new URL(window.location.href);
+        // const params = getPageQuery();
+        // let { redirect } = params;
+
+        // if (redirect) {
+
+        //   const redirectUrlParams = new URL(redirect);
+        //   if (redirectUrlParams.origin === urlParams.origin) {
+        //     redirect = redirect.substr(urlParams.origin.length);
+        //     if (redirect.match(/^\/.*#/)) {
+        //       redirect = redirect.substr(redirect.indexOf('#') + 1);
+        //     }
+        //   } else {
+        //     window.location.href = redirect;
+        //     return;
+        //   }
+        // }
+
+      // }
     },
 
     *getCaptcha({ payload }, { call }) {
@@ -67,6 +91,7 @@ export default {
     },
 
     *logout(_, { put }) {
+      debugger
       yield put({
         type: 'changeLoginStatus',
         payload: {
