@@ -18,7 +18,6 @@ import {
 } from 'antd';
 import { connect } from 'dva';
 import NavLink from 'umi/navlink';
-import RenderEditSelectP from './components/RenderEditSelectP'
 
 
 import moment from 'moment';
