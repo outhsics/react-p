@@ -59,6 +59,10 @@ const api = {
   },
   admin:{
     login: `${apiPrefix.tlb}/admin/sysUser/login`,
+  },
+  report:{
+    base:`${apiPrefix.tlb}/admin/report/base`,
+    paper:`${apiPrefix.tlb}/admin/report/paper`,
   }
 };
 export { api };
