@@ -153,21 +153,9 @@ class NewExam extends PureComponent {
   }
 
   onChangeUploadImgParseProps =(info,subItemIndex)=>{
-
-    // const {subTopicsListTemp} = this.state;
-    // const examTmp = _.cloneDeep(subTopicsListTemp);
-// 
-    // examTmp[index].parse = event.target.value;
-    // this.setState({
-    //   subTopicsListTemp:examTmp
-    // })
-
     const { subTopicsListTemp } = this.state;
     const copySub = _.cloneDeep(subTopicsListTemp);
    
-    // console.log(info)
-    // debugger
-
     const _this = this;
     if (info.fileList.length > 1) {
       info.fileList.shift();
@@ -199,26 +187,6 @@ class NewExam extends PureComponent {
       authorization: 'authorization-text',
     },
     showUploadList: false,
-    accept:".jpg, .jpeg, .png",
-    beforeUpload:(file)=>{
-      // const isJPG = file.type === 'image/jpeg';
-      // if (!isJPG) {
-      //   message.error('You can only upload JPG file!');
-      // }
-      const isLt1M = file.size / 1024 / 1024 < 1;
-      if (!isLt1M) {
-        message.error('图片不能大于1MB!');
-      }
-      return isLt1M;
-    },
-  };
-  uploadImgParseProps = {
-    name: 'file',
-    action: 'https://api.jze100.com/hear/admin/file/upload',
-    headers: {
-      authorization: 'authorization-text',
-    },
-    showUploadList: true,
     accept:".jpg, .jpeg, .png",
     beforeUpload:(file)=>{
       // const isJPG = file.type === 'image/jpeg';
@@ -901,7 +869,7 @@ debugger
       }
     }
     
-
+// debugger
     data[currentEditIndex] = {
       type:currentEditType,
       subTopics:currentItem,
@@ -1267,9 +1235,8 @@ debugger
                         rows={8}
                       /> */}
                       <Upload
-                        // data={{subIndex,optionIndex}}
                         onChange={(info)=>this.onChangeUploadImgParseProps(info,subIndex)}
-                        {...this.uploadImgParseProps}>
+                        {...this.uploadImgProps}>
                         <Button >
                             <Icon type="upload" /> 上传图片
                           </Button>

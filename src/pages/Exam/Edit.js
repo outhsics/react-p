@@ -178,6 +178,42 @@ class Edit extends PureComponent {
   }
 
 
+  onChangeUploadImgParseProps =(info,subItemIndex)=>{
+    // const {editItem} = this.state;
+    // const examTmp = _.cloneDeep(editItem);
+
+    // examTmp.subTopics[index].parse = event.target.value;
+    // this.setState({
+    //   editItem:examTmp
+    // })
+
+    const { editItem } = this.state;
+    const examTmp = _.cloneDeep(editItem);
+   
+    const _this = this;
+    if (info.fileList.length > 1) {
+      info.fileList.shift();
+    }
+
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, 'info.file');
+    console.log(info.fileList, ' info.fileList');
+  }
+  
+  if (info.file.status === 'done') {
+
+    message.success(`${info.file.name} 图片上传成功!`,5);
+    if (info.file.response.code === 1) {
+      examTmp.subTopics[subItemIndex].parse = info.file.response.data.path;
+      this.setState({
+        editItem:examTmp
+      })
+      }
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  }
+
   onChangeUploadImgProps =(info,subItemIndex,optionIndex)=>{
     
     const { editItem } = this.state;
@@ -294,19 +330,16 @@ class Edit extends PureComponent {
 
   }
 
-  handleGetInputText= (index,event)=>{
-    // console.log(e,'e')
-    // console.log(event.target.value,'e')
-    // console.log(index)
-    // debugger
-    const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+  // handleGetInputText= (index,event)=>{
+  
+  //   const {editItem} = this.state;
+  //   const examTmp = _.cloneDeep(editItem);
 
-    examTmp.subTopics[index].parse = event.target.value;
-    this.setState({
-      editItem:examTmp
-    })
-  }
+  //   examTmp.subTopics[index].parse = event.target.value;
+  //   this.setState({
+  //     editItem:examTmp
+  //   })
+  // }
 
   handleGetInputValue= (index,event)=>{
     // console.log(e,'e')
@@ -882,12 +915,19 @@ dispatchEditContent = (html)=>{
                     <Col span={3}>解析:</Col>
 
                     <Col span={13}>
-                      <Input.TextArea
+                      {/* <Input.TextArea
                         value={subItem.parse}
                         onChange={()=>this.handleGetInputText(index,event)}                        
                         placeholder={'专项说明文本（0/180）'}
                         rows={8}
-                      />
+                      /> */}
+                      <Upload
+                        onChange={(info)=>this.onChangeUploadImgParseProps(info,subItem.topicNo-1)}
+                        {...this.uploadImgProps}>
+                        <Button >
+                            <Icon type="upload" /> 上传图片
+                          </Button>
+                        </Upload>
                     </Col>
                       { paperDetail.state ===2 && <Col span={7} className={styles.opt}>
                         <Row>
@@ -907,6 +947,12 @@ dispatchEditContent = (html)=>{
                       </Col>}
                   </Row>
                     )}
+                    <Row>
+                    {subItem.parse 
+                    &&
+                      <img style={{width:200,height:200}} src={subItem.parse} alt=""/>
+                    }
+                    </Row>
                 </Fragment>
               );
             })}
@@ -933,7 +979,9 @@ dispatchEditContent = (html)=>{
       subTopicsListTemp,
       newExam,
       isUploading,
-      title
+      title,
+      uploadAudioName,
+      uploadAudioDuration
     } = this.state;
     // const { paperDetail } = examlist;
     const { specialList } = operate;
