@@ -153,6 +153,12 @@ export async function fakeChartData() {
   // return request('https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/api/fake_chart_data');
 }
 
+export async function fakeReportData() {
+  
+}
+
+
+
 export async function queryTags() {
   return request('/api/tags');
 }
