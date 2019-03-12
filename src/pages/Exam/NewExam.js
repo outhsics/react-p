@@ -139,28 +139,59 @@ class NewExam extends PureComponent {
   }
   
   if (info.file.status === 'done') {
-    // debugger
+
     message.success(`${info.file.name} 图片上传成功!`,5);
     if (info.file.response.code === 1) {
-      // _this.setState({
-      //   uploadAudioDuration: info.file.response.data.duration,
-      // });
-      // _this.setState({
-      //   uploadAudioName: info.file.name,
-      // });
       copySub[subItemIndex].options[optionIndex].image = info.file.response.data.path;
       this.setState({
         subTopicsListTemp:copySub
       })
-    // debugger
-
-      // console.log(_this.state.uploadAudioDuration, '2');
-      // debugger;
       }
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
     }
   }
+
+  onChangeUploadImgParseProps =(info,subItemIndex)=>{
+
+    // const {subTopicsListTemp} = this.state;
+    // const examTmp = _.cloneDeep(subTopicsListTemp);
+// 
+    // examTmp[index].parse = event.target.value;
+    // this.setState({
+    //   subTopicsListTemp:examTmp
+    // })
+
+    const { subTopicsListTemp } = this.state;
+    const copySub = _.cloneDeep(subTopicsListTemp);
+   
+    // console.log(info)
+    // debugger
+
+    const _this = this;
+    if (info.fileList.length > 1) {
+      info.fileList.shift();
+    }
+
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, 'info.file');
+    console.log(info.fileList, ' info.fileList');
+  }
+  
+  if (info.file.status === 'done') {
+
+    message.success(`${info.file.name} 图片上传成功!`,5);
+    if (info.file.response.code === 1) {
+      copySub[subItemIndex].parse = info.file.response.data.path;
+      this.setState({
+        subTopicsListTemp:copySub
+      })
+      }
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  }
+
   uploadImgProps = {
     name: 'file',
     action: 'https://api.jze100.com/hear/admin/file/upload',
@@ -181,7 +212,26 @@ class NewExam extends PureComponent {
       return isLt1M;
     },
   };
-
+  uploadImgParseProps = {
+    name: 'file',
+    action: 'https://api.jze100.com/hear/admin/file/upload',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    showUploadList: true,
+    accept:".jpg, .jpeg, .png",
+    beforeUpload:(file)=>{
+      // const isJPG = file.type === 'image/jpeg';
+      // if (!isJPG) {
+      //   message.error('You can only upload JPG file!');
+      // }
+      const isLt1M = file.size / 1024 / 1024 < 1;
+      if (!isLt1M) {
+        message.error('图片不能大于1MB!');
+      }
+      return isLt1M;
+    },
+  };
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -1210,12 +1260,20 @@ debugger
                     <Col span={3}>解析:</Col>
 
                     <Col span={13}>
-                      <Input.TextArea
+                      {/* <Input.TextArea
                         value={subItem.parse}
                         onChange={()=>this.handleGetInputText(subIndex,event)}                        
                         placeholder={'专项说明文本（0/180）'}
                         rows={8}
-                      />
+                      /> */}
+                      <Upload
+                        // data={{subIndex,optionIndex}}
+                        onChange={(info)=>this.onChangeUploadImgParseProps(info,subIndex)}
+                        {...this.uploadImgParseProps}>
+                        <Button >
+                            <Icon type="upload" /> 上传图片
+                          </Button>
+                        </Upload>
                     </Col>
                       <Col span={7} className={styles.opt}>
                         <Row>
@@ -1236,6 +1294,12 @@ debugger
                       </Col>
                   </Row>
                     )}
+                    <Row>
+                    {subTopicsListTemp[subIndex].parse 
+                    &&
+                      <img style={{width:200,height:200}} src={subTopicsListTemp[subIndex].parse} alt=""/>
+                    }
+                    </Row>
                 </Fragment>
               );
             })}
