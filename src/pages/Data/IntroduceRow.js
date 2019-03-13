@@ -18,10 +18,11 @@ const topColResponsiveProps = {
 
 const IntroduceRow = memo(({ loading, visitData }) => (
   <Row gutter={24}>
+  {console.log(visitData,'visitData')}
     <Col {...topColResponsiveProps}>
       <ChartCard
         bordered={false}
-        title={'福建中考英语听力宝'}
+        title={'福建中考英语听力1宝'}
         action={
           <Tooltip
             title={<FormattedMessage id="app.analysis.introduce" defaultMessage="Introduce" />}

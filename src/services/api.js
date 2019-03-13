@@ -153,11 +153,6 @@ export async function fakeChartData() {
   // return request('https://www.easy-mock.com/mock/5c409b38fe5f685c94744457/example/api/fake_chart_data');
 }
 
-export async function fakeReportData() {
-  
-}
-
-
 
 export async function queryTags() {
   return request('/api/tags');
@@ -264,6 +259,28 @@ export async function queryPaperList(params) {
     },
   });
 }
+
+export async function getReportPaper(params) {
+  return request({
+    url: `${apiConfig.report.paper}`,
+    method: 'get',
+    params: {
+      specialId: params.specialId,
+      dateType: params.dateType,
+      startDate: params.startDate,
+      endDate: params.endDate,
+    },
+  });
+}
+
+export async function getReportBase() {
+  return request({
+    url: `${apiConfig.report.base}`,
+    method: 'get'
+  });
+}
+
+
 export async function queryPaperDetail(params) {
   return request({
     url: `${apiConfig.paper.queryPaperDetail}`,

@@ -71,7 +71,7 @@ const service = axios.create({
   headers: {
   //   'X-Custom-Header': 'foobar'
   "S-Token":atob(localStorage['XTOKEN'] || ''),
-  'Cache-Control': 'no-cache',
+  // 'Cache-Control': 'no-cache',
   }
 });
 

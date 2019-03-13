@@ -1,4 +1,4 @@
-import { fakeReportData } from '@/services/api';
+import {  getReportBase, getReportPaper } from '@/services/api';
 
 export default {
   namespace: 'report',
@@ -6,31 +6,28 @@ export default {
   state: {
     visitData: [],
     visitData2: [],
-    salesData: [],
-    searchData: [],
-    offlineData: [],
-    offlineChartData: [],
-    salesTypeData: [],
-    salesTypeDataOnline: [],
     salesTypeDataOffline: [],
-    radarData: [],
     loading: false,
   },
 
   effects: {
     *fetch(_, { call, put }) {
-      const response = yield call(fakeChartData);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+      const response = yield call(getReportBase);
+      debugger
+      if(response.data.code===1){
+        yield put({
+          type: 'save',
+          payload: response.data
+        });
+      }
     },
-    *fetchSalesData(_, { call, put }) {
-      const response = yield call(fakeChartData);
+    *fetchPaperData(_, { call, put }) {
+      const response = yield call(getReportPaper);
+      debugger
       yield put({
         type: 'save',
         payload: {
-          salesData: response.salesData,
+          paperData: response.salesData,
         },
       });
     },
@@ -47,14 +44,7 @@ export default {
       return {
         visitData: [],
         visitData2: [],
-        salesData: [],
-        searchData: [],
-        offlineData: [],
-        offlineChartData: [],
-        salesTypeData: [],
-        salesTypeDataOnline: [],
         salesTypeDataOffline: [],
-        radarData: [],
       };
     },
   },
