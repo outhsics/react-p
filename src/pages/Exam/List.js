@@ -172,7 +172,6 @@ class ExamList extends Component {
     let content = flag ? '启用后，小程序端可以看到该试卷并答题' : '禁用后，小程序端看不到该试卷';
 
     const { dispatch, operate } = this.props;
-    const { currentPageNum } = this.state;
     const { specialList } = operate;
     const _this = this;
 
@@ -180,26 +179,33 @@ class ExamList extends Component {
       title,
       content,
       onOk() {
+        // new Promise(re)
         dispatch({
           type: 'examlist/updatePaperState',
           payload: {
             id: record.id,
             state: flag ? 1 : 2,
           },
+          callback:CBupdatePaperState
         });
-        dispatch({
-          type: 'examlist/fetchPaperList',
-          payload: {
-            pageNum: currentPageNum,
-            pageSize: 10,
-            specialId: _this.state.currentSpecial,
-          },
-          cbPageTotal: _this.cbPageTotal,
-        });
+       
       },
       onCancel() {},
     });
   };
+  CBupdatePaperState = ()=>{
+    const { currentPageNum,currentSpecial } = this.state;
+
+    dispatch({
+      type: 'examlist/fetchPaperList',
+      payload: {
+        pageNum: currentPageNum,
+        pageSize: 10,
+        specialId: currentSpecial,
+      },
+      cbPageTotal: this.cbPageTotal,
+    });
+  }
 
   onTabChange = tabType => {
     const { currentPageNum } = this.state;
