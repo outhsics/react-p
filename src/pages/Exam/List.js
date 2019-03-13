@@ -186,7 +186,7 @@ class ExamList extends Component {
             id: record.id,
             state: flag ? 1 : 2,
           },
-          callback:this.CBupdatePaperState
+          callback:_this.CBupdatePaperState
         });
        
       },
@@ -195,6 +195,7 @@ class ExamList extends Component {
   };
   CBupdatePaperState = ()=>{
     const { currentPageNum,currentSpecial } = this.state;
+    const { dispatch } = this.props;
 
     dispatch({
       type: 'examlist/fetchPaperList',
