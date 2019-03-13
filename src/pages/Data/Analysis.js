@@ -13,9 +13,9 @@ const SalesCard = React.lazy(() => import('./SalesCard'));
 
 
 
-@connect(({ chart, loading }) => ({
-  chart,
-  loading: loading.effects['chart/fetch'],
+@connect(({ report, loading }) => ({
+  report,
+  loading: loading.effects['report/fetch'],
 }))
 class Analysis extends Component {
   state = {
@@ -67,7 +67,7 @@ class Analysis extends Component {
     const { dispatch } = this.props;
     this.reqRef = requestAnimationFrame(() => {
       dispatch({
-        type: 'chart/fetch',
+        type: 'report/fetch',
       });
     });
   }
@@ -75,7 +75,7 @@ class Analysis extends Component {
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'chart/clear',
+      type: 'report/clear',
     });
     cancelAnimationFrame(this.reqRef);
     clearTimeout(this.timeoutId);
@@ -114,19 +114,11 @@ class Analysis extends Component {
   render() {
     const { rangePickerValue, salesType, currentTabKey } = this.state;
 
-    const { chart, loading } = this.props;
+    const { report, loading } = this.props;
 
     const {
       visitData,
-      visitData2,
-      salesData,
-      searchData,
-      offlineData,
-      offlineChartData,
-      salesTypeData,
-      salesTypeDataOnline,
-      salesTypeDataOffline,
-    } = chart;
+    } = report;
 
     return (
       <div className="container">
@@ -134,14 +126,14 @@ class Analysis extends Component {
           <IntroduceRow loading={loading} visitData={visitData} />
         </Suspense>
         <Suspense fallback={null}>
-          <SalesCard
+          {/* <SalesCard
             rangePickerValue={rangePickerValue}
             salesData={salesData}
             isActive={this.isActive}
             handleRangePickerChange={this.handleRangePickerChange}
             loading={loading}
             selectDate={this.selectDate}
-          />
+          /> */}
         </Suspense>
 
 
