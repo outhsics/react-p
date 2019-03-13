@@ -186,7 +186,7 @@ class ExamList extends Component {
             id: record.id,
             state: flag ? 1 : 2,
           },
-          callback:CBupdatePaperState
+          callback:this.CBupdatePaperState
         });
        
       },
