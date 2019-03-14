@@ -92,8 +92,8 @@ class NewExam extends PureComponent {
         }
 
       if (info.file.status !== 'uploading') {
-        console.log(info.file, 'info.file');
-        console.log(info.fileList, ' info.fileList');
+        // console.log(info.file, 'info.file');
+        // console.log(info.fileList, ' info.fileList');
       }
       
       if (info.file.status === 'done') {
@@ -134,8 +134,8 @@ class NewExam extends PureComponent {
     }
 
   if (info.file.status !== 'uploading') {
-    console.log(info.file, 'info.file');
-    console.log(info.fileList, ' info.fileList');
+    // console.log(info.file, 'info.file');
+    // console.log(info.fileList, ' info.fileList');
   }
   
   if (info.file.status === 'done') {
@@ -162,8 +162,8 @@ class NewExam extends PureComponent {
     }
 
   if (info.file.status !== 'uploading') {
-    console.log(info.file, 'info.file');
-    console.log(info.fileList, ' info.fileList');
+    // console.log(info.file, 'info.file');
+    // console.log(info.fileList, ' info.fileList');
   }
   
   if (info.file.status === 'done') {
@@ -491,8 +491,8 @@ onAddSubTopicsSubmit = e => {
   }
 
   onChangeRadio = (index,event) => {
-    console.log(event.target.value,'e')
-    console.log(index)
+    // console.log(event.target.value,'e')
+    // console.log(index)
 
     const {subTopicsListTemp} = this.state;
 
@@ -675,7 +675,6 @@ onAddSubTopicsSubmit = e => {
       topicScore:item.score
     })
 
-// debugger
 
     this.setState({
       // editItem: item,
@@ -689,7 +688,6 @@ onAddSubTopicsSubmit = e => {
       uploadAudioDuration:item.audioDuration,
       currentEditIndex:itemIndex
     });
-    // debugger
 
   };
   deleteExam = () => {};
@@ -845,7 +843,7 @@ onAddSubTopicsSubmit = e => {
     const data = _.cloneDeep(topicsListTemp);
 
 
-    debugger
+    // debugger
 
 
     for (let index = 0; index < currentItem.length; index++) {
@@ -1004,7 +1002,7 @@ onAddSubTopicsSubmit = e => {
       return accumalator+Number(cur.audioDuration)
     },0)
 
-    debugger
+    // debugger
 
     this.props.form.resetFields();
 
