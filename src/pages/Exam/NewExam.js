@@ -671,11 +671,11 @@ onAddSubTopicsSubmit = e => {
       editorContent = item.subTopics[0].title
     }
     this.props.form.setFieldsValue({
-      topicNum:item.subTopics.length,
+      topicNum:item.subNum,
       topicScore:item.score
     })
 
-debugger
+// debugger
 
     this.setState({
       // editItem: item,
@@ -845,6 +845,7 @@ debugger
     const data = _.cloneDeep(topicsListTemp);
 
 
+    debugger
 
 
     for (let index = 0; index < currentItem.length; index++) {
@@ -879,16 +880,22 @@ debugger
       subNum:this.props.form.getFieldsValue().topicNum,
     }
 
-
+    // bug
     const totalScore = data.reduce(function(accumalator,cur){
       // return accumalator+Number(cur.score)
-      return accumalator+Number(cur.score*cur.subTopics.length)
+      return accumalator+Number(cur.score*cur.subNum)
     },0)
     const totalDuration = data.reduce(function(accumalator,cur){
       return accumalator+Number(cur.audioDuration)
     },0)
+
+    // const totalScore = mergeData.reduce(function(accumalator,cur){
+    //   return accumalator+Number(cur.score)*Number(cur.subNum)
+    // },0)
+    // const totalDuration = mergeData.reduce(function(accumalator,cur){
+    //   return accumalator+Number(cur.audioDuration)
+    // },0)
     
-    debugger
 
     this.props.form.resetFields();
 
@@ -972,6 +979,8 @@ debugger
     }
 
       const topicsList = [];
+
+      // tmpSubNum 
       const topicsListObj = {
         type:currentEditType,
         audio:uploadAudioName,
@@ -989,12 +998,13 @@ debugger
         //  paperDetailHeader.totalScore
     // paperDetailHeader.totalDuration
     const totalScore = mergeData.reduce(function(accumalator,cur){
-      return accumalator+Number(cur.score)
+      return accumalator+Number(cur.score)*Number(cur.subNum)
     },0)
     const totalDuration = mergeData.reduce(function(accumalator,cur){
       return accumalator+Number(cur.audioDuration)
     },0)
 
+    debugger
 
     this.props.form.resetFields();
 
@@ -1643,7 +1653,7 @@ dispatchEditContent = (html)=>{
                         {getFieldDecorator('topicScore', {
                           rules: [{ required: true, message: '请输入分数' }],
                           initialValue:0
-                        })(<InputNumber min={1} max={100}  />)}
+                        })(<InputNumber min={0} max={100}  />)}
                       </Form.Item>
 
 
