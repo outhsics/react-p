@@ -585,7 +585,7 @@ class Edit extends PureComponent {
     if(item.type ===2){
       editorContentData  = item.subTopics[0].title;
     }
-    debugger
+
 
     this.setState({
       editItem: item,
@@ -612,7 +612,7 @@ class Edit extends PureComponent {
 
 
     const totalScore = v.topics.reduce(function(accumalator,cur){
-      return accumalator+Number(cur.score*cur.subTopics.length)
+      return accumalator+Number(cur.score*cur.subNum)
     },0)
     // debugger
     return totalScore;
@@ -766,7 +766,7 @@ dispatchEditContent = (html)=>{
     // isCorrect
 
     // TODO
-    debugger
+    // debugger
     
     this.setState({
       saveData
