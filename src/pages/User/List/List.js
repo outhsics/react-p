@@ -20,7 +20,7 @@ import {
 } from 'antd';
 import styles from './List.less';
 
-import { supportsGoWithoutReloadUsingHash } from 'history/DOMUtils';
+// import { supportsGoWithoutReloadUsingHash } from 'history/DOMUtils';
 const { RangePicker } = DatePicker;
 
 const TabPane = Tabs.TabPane;
@@ -158,6 +158,7 @@ class UserList extends Component {
     let content = flag ? '启用后用户可重新使用小程序' : '停用后用户不可使用小程序';
 
     const { dispatch } = this.props;
+    const _this =this;
 
     confirm({
       title,
@@ -169,18 +170,28 @@ class UserList extends Component {
             id: record.id,
             state: flag ? 1 : 2,
           },
+          cbUpdateUser:_this.cbUpdateUser
+          
         });
-        dispatch({
-          type: 'userlist/fetch',
-          payload: {
-            pageNum: this.state.currentPageNum,
-            pageSize: 10,
-          },
-        });
+    
       },
       onCancel() {},
     });
   };
+  
+  cbUpdateUser = ()=>{
+    // cbUpdateUser
+    // debugger
+     const {dispatch}= this.props;
+    dispatch({
+      type: 'userlist/fetch',
+      payload: {
+        pageNum: this.state.currentPageNum,
+        pageSize: 10,
+      },
+      callback: this.cbUserData
+    });
+  }
 
   handleToDetail = (id, nickname) => {
     const { location, dispatch } = this.props;
@@ -236,7 +247,7 @@ class UserList extends Component {
       userList = userList.filter(item=>item.createTime >=qcts && item.createTime <= qcte);
     }
     if(qds && qde) {
-debugger
+// debugger
 
       userList = userList.filter(item=>item.duration >=qds*60 && item.duration <= qde*60);
     }
