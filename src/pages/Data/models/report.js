@@ -4,26 +4,30 @@ export default {
   namespace: 'report',
 
   state: {
-    visitData: [],
-    visitData2: [],
-    salesTypeDataOffline: [],
-    loading: false,
+    // visitData: [],
+    // visitData2: [],
+    // salesTypeDataOffline: [],
+    // loading: false,
+    specialStats:'',
+    userStats:''
   },
 
   effects: {
     *fetch(_, { call, put }) {
       const response = yield call(getReportBase);
-      debugger
       if(response.data.code===1){
         yield put({
           type: 'save',
-          payload: response.data
+          payload: {
+            specialStats:response.data.data.specialStats,
+            userStats:response.data.data.userStats,
+          }
         });
       }
     },
     *fetchPaperData(_, { call, put }) {
       const response = yield call(getReportPaper);
-      debugger
+
       yield put({
         type: 'save',
         payload: {
@@ -35,6 +39,7 @@ export default {
 
   reducers: {
     save(state, { payload }) {
+
       return {
         ...state,
         ...payload,

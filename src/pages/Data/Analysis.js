@@ -13,13 +13,16 @@ const SalesCard = React.lazy(() => import('./SalesCard'));
 
 
 
-@connect(({ report, loading }) => ({
+@connect(({ operate,report,loading,chart}) => ({
   report,
+  operate,
+  chart,
   loading: loading.effects['report/fetch'],
 }))
 class Analysis extends Component {
   state = {
     salesType: 'all',
+    currentSpecial:'',
     currentTabKey: '',
     rangePickerValue: getTimeDistance('year'),
   };
@@ -31,7 +34,10 @@ class Analysis extends Component {
     });
 
     dispatch({
-      type: 'chart/fetchSalesData',
+      type: 'chart/getReportPaper',
+      payload:{
+        rangePickerValue
+      }
     });
   };
 
@@ -43,7 +49,7 @@ class Analysis extends Component {
     });
 
     dispatch({
-      type: 'chart/fetchSalesData',
+      type: 'chart/getReportPaper',
     });
   };
 
@@ -65,20 +71,44 @@ class Analysis extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    this.reqRef = requestAnimationFrame(() => {
-      dispatch({
-        type: 'report/fetch',
-      });
-    });
-  }
-
-  componentWillUnmount() {
-    const { dispatch } = this.props;
+    // this.reqRef = requestAnimationFrame(() => {
+    //   dispatch({ß
+    //     type: 'report/fetch',
+    //   });
+    // });
     dispatch({
-      type: 'report/clear',
+        type: 'report/fetch',
     });
-    cancelAnimationFrame(this.reqRef);
-    clearTimeout(this.timeoutId);
+    dispatch({
+      type: 'chart/getReportPaper',
+      payload:{
+        specialId:24,
+        dateType:1,
+        startDate:0,
+        endDate:0
+      }
+    });
+    dispatch({
+      type: 'operate/fetchSpecialList',
+      callback: this.callback,
+    });
+
+    
+  }
+  callback = id => {
+    if (!id) return;
+// debugger
+    this.setState({
+      currentSpecial: id,
+    })
+  };
+  componentWillUnmount() {
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'report/clear',
+    // });
+    // cancelAnimationFrame(this.reqRef);
+    // clearTimeout(this.timeoutId);
   }
 
   handleChangeSalesType = e => {
@@ -114,16 +144,19 @@ class Analysis extends Component {
   render() {
     const { rangePickerValue, salesType, currentTabKey } = this.state;
 
-    const { report, loading } = this.props;
+    const { report,loading,operate:{specialList} } = this.props;
 
     const {
-      visitData,
+      specialStats,
+      userStats
     } = report;
+
+    // debugger
 
     return (
       <div className="container">
         <Suspense fallback={<PageLoading />}>
-          <IntroduceRow loading={loading} visitData={visitData} />
+          <IntroduceRow loading={loading} specialStats={specialStats} userStats={userStats}/>
         </Suspense>
         <Suspense fallback={null}>
           {/* <SalesCard

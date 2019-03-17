@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "ant-design-pro": "^2.1.1",
-    "antd": "^3.10.9",
+    "antd": "3.14.1",
     "axios": "^0.18.0",
     "classnames": "^2.2.6",
     "dva": "^2.4.0",

@@ -4,14 +4,12 @@ export default {
   namespace: 'userlist',
 
   state: {
-    data: {
-      list: [],
-    },
+    data: {}
   },
 
 
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *fetch({ payload,callback,cbSearch }, { call, put }) {
       const response = yield call(queryUserList, payload);
       // debugger
       if (response.data && response.data.code === 1) {
@@ -19,6 +17,10 @@ export default {
           type: 'save',
           payload: response.data.data,
         });
+        // debugger
+        if (callback) callback(response.data.data);
+        if (cbSearch) cbSearch();
+        // if (cbList) cbList(response.data.data.list);
       }
     },
     *updateUser({ payload, callback }, { call, put }) {

@@ -67,7 +67,7 @@ class Edit extends PureComponent {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      saveData:null,
+      paperDetail:null,
       currentEditIndex:null,
       editorContent:'',
       subTopicsListTemp:[],
@@ -255,9 +255,10 @@ class Edit extends PureComponent {
     }
   }
   
-  cbSetPageDetail = (v)=>{
+  cbSetPaperDetail = (v)=>{
     const {  dispatch } = this.props;
 // debugger
+    v = this.deleteId(v);
     this.setState({
       paperDetail:v,
       title:v.title
@@ -271,7 +272,7 @@ class Edit extends PureComponent {
     dispatch({
       type: 'examlist/fetchPaperDetail',
       payload: location.query.id,
-      callback:this.cbSetPageDetail
+      callback:this.cbSetPaperDetail
     });
 
     dispatch({
@@ -494,7 +495,7 @@ class Edit extends PureComponent {
   onSubmitPaper = ()=>{
 
     const { dispatch,location,operate } = this.props;
-    const { paperDetail,saveData } = this.state;
+    const { paperDetail } = this.state;
     const { specialList} = operate;
     if(!(!!paperDetail.title && !!paperDetail.level && !!paperDetail.specialId) ) {
           message.error('请输入试卷信息');
@@ -543,7 +544,7 @@ class Edit extends PureComponent {
 
     dispatch({
       type: 'examlist/updatePaper',
-      payload: saveData || paperDetail,
+      payload:  paperDetail,
       callback:_this.cbSuccessUdatePaper
     });
 
@@ -695,66 +696,52 @@ dispatchEditContent = (html)=>{
     if(cloneEditItem.type ===2){
       // const tmpdata = _.cloneDeep(currentItem);
       cloneEditItem.subTopics[0].title=editorContent;
-      // currentItem = [{
-      //   ...currentItem,
-      //   subTopics:tmpdata
-      // }]
-
+     
     }
 
-    // const mcurrentItem = {
-    //   ...cloneEditItem,
-    //   subTopics:currentItem
-    // }
-    
 
-   
-    paperDetail.topics[cloneEditItem.topicNo - 1] = cloneEditItem;
+
+    let clonePaper = _.cloneDeep(paperDetail);
+    clonePaper.topics[cloneEditItem.topicNo - 1] = cloneEditItem;
 
     let formData = this.props.form.getFieldsValue();
     // debugger
-    const totalScore = this.calcScore(paperDetail);
-    const totalDuration = this.calcDuration(paperDetail);
+    const totalScore = this.calcScore(clonePaper);
+    const totalDuration = this.calcDuration(clonePaper);
 
     formData = Object.assign(formData, { totalScore }, { totalDuration });
 
-    this.setState({
-      paperDetail:{
-        ...paperDetail,
-        totalScore,
-        totalDuration
-      }
 
-    })
+     clonePaper= Object.assign(clonePaper, formData);
 
-    const saveData = Object.assign(paperDetail, formData);
+     clonePaper = this.deleteId(clonePaper) 
 
-    if(saveData.createTime) delete saveData.createTime
-    if(saveData.updateTime) delete saveData.updateTime
+    // if(clonePaper.createTime) delete clonePaper.createTime
+    // if(clonePaper.updateTime) delete clonePaper.updateTime
 
-    for(let k in saveData.topics) {
-      if(saveData.topics[k].id)  delete saveData.topics[k].id;
-      if(saveData.topics[k].paperId)  delete saveData.topics[k].paperId;
-      // if(saveData.topics[k].topicNo)  delete saveData.topics[k].topicNo;
-      // if(saveData.topics[k].subNum)  delete saveData.topics[k].subNum;
-      for(let kk in saveData.topics[k].subTopics) {
-        if(saveData.topics[k].subTopics[kk].id) delete saveData.topics[k].subTopics[kk].id;
-        // if(saveData.topics[k].subTopics[kk].topicNo) delete saveData.topics[k].subTopics[kk].topicNo;
-        if(saveData.topics[k].subTopics[kk].topicId) delete saveData.topics[k].subTopics[kk].topicId;
+    // for(let k in clonePaper.topics) {
+    //   if(clonePaper.topics[k].id)  delete clonePaper.topics[k].id;
+    //   if(clonePaper.topics[k].paperId)  delete clonePaper.topics[k].paperId;
+    //   // if(clonePaper.topics[k].topicNo)  delete clonePaper.topics[k].topicNo;
+    //   // if(clonePaper.topics[k].subNum)  delete clonePaper.topics[k].subNum;
+    //   for(let kk in clonePaper.topics[k].subTopics) {
+    //     if(clonePaper.topics[k].subTopics[kk].id) delete clonePaper.topics[k].subTopics[kk].id;
+    //     // if(clonePaper.topics[k].subTopics[kk].topicNo) delete clonePaper.topics[k].subTopics[kk].topicNo;
+    //     if(clonePaper.topics[k].subTopics[kk].topicId) delete clonePaper.topics[k].subTopics[kk].topicId;
 
-        for(let kkk in saveData.topics[k].subTopics[kk].options) {
-          if(saveData.topics[k].subTopics[kk].options[kkk].id) delete saveData.topics[k].subTopics[kk].options[kkk].id
-          // debugger
-          if(saveData.topics[k].subTopics[kk].options[kkk].topicSubId) delete saveData.topics[k].subTopics[kk].options[kkk].topicSubId
-          if(saveData.topics[k].subTopics[kk].options[kkk].isCorrect !==1) delete saveData.topics[k].subTopics[kk].options[kkk].isCorrect
-          // if(saveData.topics[k].subTopics[kk].options[kkk].topicNo) delete saveData.topics[k].subTopics[kk].options[kkk].topicNo
+    //     for(let kkk in clonePaper.topics[k].subTopics[kk].options) {
+    //       if(clonePaper.topics[k].subTopics[kk].options[kkk].id) delete clonePaper.topics[k].subTopics[kk].options[kkk].id
+    //       // debugger
+    //       if(clonePaper.topics[k].subTopics[kk].options[kkk].topicSubId) delete clonePaper.topics[k].subTopics[kk].options[kkk].topicSubId
+    //       if(clonePaper.topics[k].subTopics[kk].options[kkk].isCorrect !==1) delete clonePaper.topics[k].subTopics[kk].options[kkk].isCorrect
+    //       // if(paperDetail.topics[k].subTopics[kk].options[kkk].topicNo) delete paperDetail.topics[k].subTopics[kk].options[kkk].topicNo
 
-        }
+    //     }
 
-      }
-    // debugger;
+    //   }
+    // // debugger;
 
-    }
+    // }
 
     // debugger;
 
@@ -768,31 +755,46 @@ dispatchEditContent = (html)=>{
     // TODO
     // debugger
     
+   
     this.setState({
-      saveData
+      paperDetail:{
+        ...clonePaper,
+        totalScore,
+        totalDuration
+      }
+
     })
-    // return
-    // debugger
     message.success(`保存成功`);
 
-    // console.log(saveData,'saveData')
-    // return;
-
-    // dispatch({
-    //   type: 'examlist/updatePaper',
-    //   payload: saveData,
-    //   callback:this.cbSuccessUdatePaper
-    // });
-
-    // dispatch({
-    //   type: 'examlist/fetchPaperDetail',
-    //   payload: location.query.id,
-    // });
-
-    // location.reaload();
-
   };
+  deleteId = (paper) =>{
+    if(paper.createTime) delete paper.createTime
+    if(paper.updateTime) delete paper.updateTime
 
+    for(let k in paper.topics) {
+      if(paper.topics[k].id)  delete paper.topics[k].id;
+      if(paper.topics[k].paperId)  delete paper.topics[k].paperId;
+      // if(paper.topics[k].topicNo)  delete paper.topics[k].topicNo;
+      // if(paper.topics[k].subNum)  delete paper.topics[k].subNum;
+      for(let kk in paper.topics[k].subTopics) {
+        if(paper.topics[k].subTopics[kk].id) delete paper.topics[k].subTopics[kk].id;
+        // if(paper.topics[k].subTopics[kk].topicNo) delete paper.topics[k].subTopics[kk].topicNo;
+        if(paper.topics[k].subTopics[kk].topicId) delete paper.topics[k].subTopics[kk].topicId;
+
+        for(let kkk in paper.topics[k].subTopics[kk].options) {
+          if(paper.topics[k].subTopics[kk].options[kkk].id) delete paper.topics[k].subTopics[kk].options[kkk].id
+          // debugger
+          if(paper.topics[k].subTopics[kk].options[kkk].topicSubId) delete paper.topics[k].subTopics[kk].options[kkk].topicSubId
+          if(paper.topics[k].subTopics[kk].options[kkk].isCorrect !==1) delete paper.topics[k].subTopics[kk].options[kkk].isCorrect
+          // if(paperDetail.topics[k].subTopics[kk].options[kkk].topicNo) delete paperDetail.topics[k].subTopics[kk].options[kkk].topicNo
+
+        }
+
+      }
+
+    }
+    return paper;
+  }
   cbSuccessUdatePaper = ()=>{
     message.success(`试卷更新成功`);
     this.setState({

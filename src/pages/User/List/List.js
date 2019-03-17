@@ -6,7 +6,6 @@ import { connect } from 'dva';
 import {
   Tabs,
   Icon,
-  Form,
   Row,
   Col,
   InputNumber,
@@ -17,17 +16,19 @@ import {
   Table,
   Modal,
   Tag,
+  DatePicker
 } from 'antd';
 import styles from './List.less';
 
 import { supportsGoWithoutReloadUsingHash } from 'history/DOMUtils';
+const { RangePicker } = DatePicker;
 
 const TabPane = Tabs.TabPane;
-const FormItem = Form.Item;
 const ButtonGroup = Button.Group;
 const confirm = Modal.confirm;
 const CheckableTag = Tag.CheckableTag;
 const Option = Select.Option;
+// const RadioGroup = Radio.Group;
 
 const MyIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_696758_riuzzc04t8.js', // 在 iconfont.cn 上生成
@@ -45,11 +46,11 @@ const tagsStudyTime = [
   '350-450',
   '450以上',
 ];
+
+
+
 const tagsNickname = ['有昵称', '无昵称'];
 
-function callback(key) {
-  console.log(key);
-}
 
 function itemRender(current, type, originalElement) {
   if (type === 'prev') {
@@ -65,7 +66,7 @@ function itemRender(current, type, originalElement) {
   userlist,
   loading: loading.models.userlist,
 }))
-@Form.create()
+// @Form.create()
 class UserList extends Component {
   state = {
     // modalVisible: false,
@@ -78,9 +79,79 @@ class UserList extends Component {
     filterStudyTime: '',
     filterNickname: '',
     // selectedRows: [],
-    formValues: {},
-    // stepFormValues: {},
+    list:[],
+    total:null,
+    rangeTime:'',
+    filterData:{
+      qcts:null,
+      qcte:null,
+      qds:null,
+      qde:null,
+    // 排序（10：创建时间-升序，11：创建时间-降序，20：学习时长-升序，21：学习时长-降序）
+  },
+  hasNickName:1
   };
+
+
+   onChangeTime =  (value, dateString) =>{
+
+    console.log('Selected Time: ', value);
+    console.log('Formatted Selected Time: ', dateString);
+    // console.log(dateString[0].getTime(),'1')
+    // this.state.filterData.qcts = value[0].valueOf();
+    // this.state.filterData.qcte = value[1].valueOf();
+  
+    this.setState({
+      filterData:{
+        ...this.state.filterData,
+        qcts:value[0].valueOf(),
+        qcte:value[1].valueOf(),
+      },
+      rangeTime:value
+    })
+    // console.log(value[0].valueOf(),'1')
+    // console.log(this.state.filterData,'state.filterData')
+  }
+  
+   onOk = (value) =>{
+    console.log('onOk: ', value);
+  }
+  
+
+  // handleGetInputValue= (index,event)=>{
+    changeQds = (e)=>{
+      // event.target.value;
+      // this.state.filterData.qde = event.target.value;
+      this.setState({
+        filterData:{
+          ...this.state.filterData,
+          qds:Number(e.target.value)
+        }
+      })
+      // console.log(this.state.filterData.qds,'this.state.filterData')
+      console.log(event,'cc')
+    }
+    changeQde = (e)=>{
+      // this.state.filterData.qde = event.target.value;
+      // console.log(typeof e.target.value)
+      this.setState({
+        filterData:{
+          ...this.state.filterData,
+          qde:Number(e.target.value)
+        }
+      })
+      // console.log(event.data,'this.state.filterData')
+      // console.log(this.state.filterData.qde,'state.filterData.qde')
+    }
+
+    onChangeRadio = (e) => {
+      console.log('radio checked', e.target.value);
+      this.setState({
+        hasNickName: e.target.value
+      });
+    }
+  
+
 
   showConfirm = (flag, record) => {
     let title = flag ? `是否确认启用用户${record.nickname}` : `是否确认停用用户${record.nickname}?`;
@@ -140,37 +211,55 @@ class UserList extends Component {
     console.log(this.state.filterNickname);
   };
 
-  handleSearch = e => {
-    e.preventDefault();
+  handleSearch = () => {
+    const {dispatch} = this.props;
+    const { currentPageNum}= this.state;
 
-    const { dispatch, form } = this.props;
 
-    // form.validateFields((err, fieldsValue) => {
-    //   if (err) return;
-
-    //   const values = {
-    //     ...fieldsValue,
-    //     updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
-    //   };
-
-    //   this.setState({
-    //     formValues: values,
-    //   });
-
-    //   dispatch({
-    //     type: 'rule/fetch',
-    //     payload: values,
-    //   });
-    // });
+    dispatch({
+      type: 'userlist/fetch',
+      payload: {
+        pageNum: currentPageNum,
+        pageSize: 10
+      },
+      callback: this.cbUserData,
+      cbSearch:this.cbSearch
+    })
   };
 
-  handleFormReset = () => {
-    const { form, dispatch } = this.props;
-    form.resetFields();
+  cbSearch = ()=>{
+
+    const { list,filterData:{qcts,qcte,qds,qde}}= this.state;
+    let userList = list;
+    // let res = [];
+    if(qcts && qcte) {
+      userList = userList.filter(item=>item.createTime >=qcts && item.createTime <= qcte);
+    }
+    if(qds && qde) {
+debugger
+
+      userList = userList.filter(item=>item.duration >=qds*60 && item.duration <= qde*60);
+    }
+   
     this.setState({
-      formValues: {},
+      list:userList
+    })
+  }
+
+  
+  handleFormReset = () => {
+    // const { form, dispatch } = this.props;
+    // form.resetFields();
+    this.setState({
+      filterData:{
+        qds:'',
+        qde:''
+      },
+      hasNickName:1,
+      rangeTime:''
     });
   };
+  
 
   toggleForm = () => {
     const { expandForm } = this.state;
@@ -181,15 +270,15 @@ class UserList extends Component {
 
   renderAdvancedForm() {
     const {
-      form: { getFieldDecorator },
+      // form: { getFieldDecorator },
       loading,
     } = this.props;
 
-    const { selectedTags } = this.state;
+    const { selectedTags,rangeTime } = this.state;
     return (
       <Fragment>
         <Row className={styles.filterRow}>
-          <Col span={21}>
+          {/* <Col span={21}>
             <Radio.Group defaultValue="a" buttonStyle="solid" onChange={this.handleFilterChange}>
               <Radio.Button value="a">
                 创建时间
@@ -200,8 +289,8 @@ class UserList extends Component {
                 <MyIcon type="icon-sort" />
               </Radio.Button>
             </Radio.Group>
-          </Col>
-          <Col span={3}>
+          </Col> */}
+          <Col span={3} offset={20}>
             <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
               筛选收起 <Icon type="up" />
             </a>
@@ -211,7 +300,7 @@ class UserList extends Component {
         <Row className={styles.filterRow}>
           <Col span={3}>创建时间:</Col>
           <Col span={18}>
-            {tagsCreateTime.map(tag => (
+            {/* {tagsCreateTime.map(tag => (
               <CheckableTag
                 key={tag}
                 checked={selectedTags.indexOf(tag) > -1}
@@ -219,7 +308,15 @@ class UserList extends Component {
               >
                 {tag}
               </CheckableTag>
-            ))}
+            ))} */}
+            <RangePicker
+                // showTime={{ format: 'HH:mm' }}
+                // format="YYYY-MM-DD HH:mm"
+                value={rangeTime}
+                onChange={this.onChangeTime}
+                separator={'至'}
+                onOk={this.onOk}
+              />
           </Col>
         </Row>
 
@@ -227,35 +324,52 @@ class UserList extends Component {
           <Col span={3}>学习时长:</Col>
 
           <Col span={18}>
-            {tagsStudyTime.map(tag => (
+            {/* {tagsStudyTime.map(tag => (
               <CheckableTag
                 key={tag}
                 checked={selectedTags.indexOf(tag) > -1}
                 onChange={checked => this.handleChange(tag, checked)}
               >
                 {tag}
-              </CheckableTag>
-            ))}
+              </CheckableTag> */}
+            {/* ))} */}
+            <Input className={styles.gray} value={this.state.filterData.qds} onChange={this.changeQds}  suffix="min" style={{width:100}}/>
+            &nbsp;
+            &nbsp;
+            至
+            &nbsp;
+            &nbsp;
+
+            <Input  className={styles.gray} value={this.state.filterData.qde}  onChange={this.changeQde} suffix="min" style={{width:100}}/>
+
+            {/* <Input disabled value={subItem.title} onChange={()=>this.handleGetInputValue(subItem.topicNo,event)} /> */}
+
+
           </Col>
         </Row>
 
-        <Row className={styles.filterRow}>
+        {/* <Row className={styles.filterRow}>
           <Col span={3}>昵称:</Col>
-          <Col span={18}>
-            {tagsNickname.map(tag => (
+          <Col span={18}> */}
+            {/* {tagsNickname.map(tag => (
               <CheckableTag
                 key={tag}
                 checked={selectedTags.indexOf(tag) > -1}
-                onChange={checked => this.handleChange(tag, checked)}
+                onChange={checked => this.handleTagChange(tag, checked)}
               >
                 {tag}
               </CheckableTag>
-            ))}
+            ))} */}
+            {/* <Radio.Group onChange={this.onChangeRadio} value={this.state.hasNickName}>
+                <Radio value={1}>全部</Radio>
+                <Radio value={2}>有昵称</Radio>
+                <Radio value={3}>无昵称</Radio>
+              </Radio.Group>
           </Col>
-        </Row>
+        </Row> */}
 
         <Row className={styles.filterRow}>
-          <Col span={19}>
+          {/* <Col span={19}>
             <Row>
               <Col span={4}>筛选条件:</Col>
               <Col>
@@ -268,10 +382,10 @@ class UserList extends Component {
                   ))}
               </Col>
             </Row>
-          </Col>
-          <Col span={5}>
+          </Col> */}
+          <Col span={5} offset={19}>
             <Button onClick={this.handleFormReset}>复原</Button>
-            <Button style={{ marginLeft: 8 }} type="primary" htmlType="submit">
+            <Button onClick={this.handleSearch} style={{ marginLeft: 8 }} type="primary">
               确认筛选
             </Button>
           </Col>
@@ -282,14 +396,14 @@ class UserList extends Component {
 
   renderSimpleForm() {
     const {
-      form: { getFieldDecorator },
+      // form: { getFieldDecorator },
       filterVal,
       loading,
     } = this.props;
 
     return (
       <Row className={styles.filterRow}>
-        <Col span={21}>
+        {/* <Col span={21}>
           <Radio.Group defaultValue="a" buttonStyle="solid" onChange={this.handleFilterChange}>
             <Radio.Button value="a">
               创建时间
@@ -300,8 +414,8 @@ class UserList extends Component {
               <MyIcon type="icon-sort" />
             </Radio.Button>
           </Radio.Group>
-        </Col>
-        <Col span={3}>
+        </Col> */}
+        <Col span={3} offset={20}>
           <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
             筛选展开 <Icon type="down" />
           </a>
@@ -338,11 +452,13 @@ class UserList extends Component {
       title: '创建时间',
       dataIndex: 'createTime',
       // sorter: true,
+      sorter: (a, b) => a.createTime - b.createTime,
       render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       title: '学习时长',
       dataIndex: 'duration',
+      sorter: (a, b) => a.duration - b.duration,
       render: val => <Fragment>   
       {val>60 ? `${((val/60).toFixed(2))}分钟` : ''}{val<60 ?`${val}秒钟` : ''}
        </Fragment>,
@@ -374,12 +490,23 @@ class UserList extends Component {
       type: 'userlist/fetch',
       payload: {
         pageNum: currentPageNum,
-        pageSize: 10,
+        pageSize: 10
       },
+      callback: this.cbUserData
     });
   }
 
-  handleChange(tag, checked) {
+
+  cbUserData = v=>{
+    // debugger
+    this.setState({
+      list:v.list,
+      total:v.total
+    })
+  }
+
+
+  handleTagChange = (tag, checked) =>{
     const { selectedTags } = this.state;
     const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag);
     console.log('You are interested in: ', nextSelectedTags);
@@ -388,6 +515,16 @@ class UserList extends Component {
 
   onPageChange = v => {
     const { dispatch } = this.props;
+    const { qcts,qcte,qds,qde } = this.state;
+
+    const payload = {
+      pageNum: v.current,
+      pageSize: 10,
+      qcts,
+      qcte,
+      qds,
+      qde
+    }
     this.setState({
       currentPageNum: v.current,
     });
@@ -397,19 +534,17 @@ class UserList extends Component {
         pageNum: v.current,
         pageSize: 10,
       },
+      callback:this.cbUserData
     });
   };
 
   render() {
-    const { userlist } = this.props;
-
-    const {
-      data: { list, total },
-    } = userlist;
+    // const { userlist } = this.props;
+    const { list,total } = this.state;
 
     return (
       <div className={styles.container}>
-        <Tabs className={styles.tabs} defaultActiveKey="1" onChange={callback}>
+        <Tabs className={styles.tabs} defaultActiveKey="1">
           <TabPane tab={<span> 全部用户({total})</span>} key="1">
             <div>{this.renderForm()}</div>
 
@@ -417,7 +552,8 @@ class UserList extends Component {
               <Table
                 pagination={{
                   showQuickJumper: true,
-                  showSizeChanger: true,
+                  // showSizeChanger: true,
+                  total
                 }}
                 onChange={this.onPageChange}
                 rowKey={record => record.id}

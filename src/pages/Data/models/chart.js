@@ -1,4 +1,4 @@
-import { fakeChartData } from '@/services/api';
+import { getReportPaper, fakeChartData } from '@/services/api';
 
 export default {
   namespace: 'chart',
@@ -6,7 +6,7 @@ export default {
   state: {
     visitData: [],
     visitData2: [],
-    salesData: [],
+    paperData: [],
     searchData: [],
     offlineData: [],
     offlineChartData: [],
@@ -18,21 +18,18 @@ export default {
   },
 
   effects: {
-    *fetch(_, { call, put }) {
-      const response = yield call(fakeChartData);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-    },
-    *fetchSalesData(_, { call, put }) {
-      const response = yield call(fakeChartData);
-      yield put({
-        type: 'save',
-        payload: {
-          salesData: response.salesData,
-        },
-      });
+    *getReportPaper({payload}, { call, put }) {
+      const response = yield call(getReportPaper,payload);
+      debugger
+      if(response.data.code ===1){
+        yield put({
+          type: 'save',
+          payload: {
+            paperData: response.data.data,
+          },
+        });
+      }
+   
     },
   },
 
@@ -43,19 +40,19 @@ export default {
         ...payload,
       };
     },
-    clear() {
-      return {
-        visitData: [],
-        visitData2: [],
-        salesData: [],
-        searchData: [],
-        offlineData: [],
-        offlineChartData: [],
-        salesTypeData: [],
-        salesTypeDataOnline: [],
-        salesTypeDataOffline: [],
-        radarData: [],
-      };
-    },
+    // clear() {
+    //   return {
+    //     visitData: [],
+    //     visitData2: [],
+    //     salesData: [],
+    //     searchData: [],
+    //     offlineData: [],
+    //     offlineChartData: [],
+    //     salesTypeData: [],
+    //     salesTypeDataOnline: [],
+    //     salesTypeDataOffline: [],
+    //     radarData: [],
+    //   };
+    // },
   },
 };

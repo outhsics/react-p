@@ -16,115 +16,63 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 };
 
-const IntroduceRow = memo(({ loading, visitData }) => (
+const IntroduceRow = memo(({ loading,specialStats=[],userStats={} }) => (
   <Row gutter={24}>
-  {console.log(visitData,'visitData')}
-    <Col {...topColResponsiveProps}>
+   <Col {...topColResponsiveProps}>
       <ChartCard
         bordered={false}
-        title={'福建中考英语听力1宝'}
+        title={'福建中考英语听力宝'}
         action={
           <Tooltip
-            title={<FormattedMessage id="app.analysis.introduce" defaultMessage="Introduce" />}
+            title={'福建中考英语听力宝'}
           >
             <Icon type="info-circle-o" />
           </Tooltip>
         }
         loading={loading}
-        total={`${numeral(226560).format('0,0')}`}
+        total={`${numeral(userStats.touristAmount).format('0,0')}`}
         footer={
           <Field
-            label={<FormattedMessage id="app.analysis.authorize-num" defaultMessage="Daily Sales" />}
-            value={`${numeral(82423).format('0,0')}`}
+            label={"授权人数"}
+            value={`${numeral(userStats.registerAmount).format('0,0')}`}
           />
         }
         contentHeight={46}
         statusTitle={'游客'}
-
       >
 
       </ChartCard>
     </Col>
-    <Col {...topColResponsiveProps}>
+ { specialStats.length>0 && specialStats.map(item=>{
+   {/* debugger */}
+  return  <Col {...topColResponsiveProps} key={item.specialId}>
       <ChartCard
         bordered={false}
-        title={'听力专项训练'}
+        title={item.specialTitle}
         action={
           <Tooltip
-            title={<FormattedMessage id="app.analysis.introduce" defaultMessage="Introduce" />}
+            title={item.specialTitle}
           >
             <Icon type="info-circle-o" />
           </Tooltip>
         }
         loading={loading}
-        total={`${numeral(126560).format('0,0')}`}
+        total={`${numeral(item.complete).format('0,0')}`}
         footer={
           <Field
-            label={'进入人数'}
-            value={`${numeral(22423).format('0,0')}`}
+            label={<FormattedMessage id="app.analysis.authorize-num" defaultMessage="Daily Sales" />}
+            value={`${numeral(item.access).format('0,0')}`}
           />
         }
         contentHeight={46}
         statusTitle={'已完成'}
-
       >
 
       </ChartCard>
     </Col>
-    <Col {...topColResponsiveProps}>
-      <ChartCard
-        bordered={false}
-        title={'仿真模拟练习'}
-        action={
-          <Tooltip
-            title={<FormattedMessage id="app.analysis.introduce" defaultMessage="Introduce" />}
-          >
-            <Icon type="info-circle-o" />
-          </Tooltip>
-        }
-        loading={loading}
-        total={`${numeral(8846).format('0,0')}`}
-        footer={
-          <Field
-            label={'进入人数'}
-            value={`${numeral(32423).format('0,0')}`}
-          />
-        }
-        contentHeight={46}
-        statusTitle={'已完成'}
-
-      >
-
-      </ChartCard>
-    </Col>
-    <Col {...topColResponsiveProps}>
-      <ChartCard
-        bordered={false}
-        title={'历年真题闯关'}
-        action={
-          <Tooltip
-            title={<FormattedMessage id="app.analysis.introduce" defaultMessage="Introduce" />}
-          >
-            <Icon type="info-circle-o" />
-          </Tooltip>
-        }
-        loading={loading}
-
-        total={`${numeral(6560).format('0,0')}`}
-
-        footer={
-          <Field
-            label={'进入人数'}
-            value={`${numeral(2423).format('0,0')}`}
-          />
-        }
-        contentHeight={46}
-        statusTitle={'已完成'}
-
-      >
-
-      </ChartCard>
-    </Col>
+ })
+ }
+  
   </Row>
 ));
 
