@@ -257,7 +257,6 @@ class Edit extends PureComponent {
   
   cbSetPaperDetail = (v)=>{
     const {  dispatch } = this.props;
-// debugger
     v = this.deleteId(v);
     this.setState({
       paperDetail:v,

@@ -62,7 +62,7 @@ export default {
     },
     *updatePaper({ payload, callback }, { call, put }) {
       const response = yield call(updatePaper, payload);
-      debugger;
+      // debugger;
       if (response.data && response.data.code === 1) {
         if (callback) callback();
       }
