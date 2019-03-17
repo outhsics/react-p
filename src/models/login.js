@@ -89,26 +89,33 @@ export default {
     *getCaptcha({ payload }, { call }) {
       yield call(getFakeCaptcha, payload);
     },
-
-    *logout(_, { put }) {
-      debugger
-      yield put({
-        type: 'changeLoginStatus',
-        payload: {
-          status: false,
-          currentAuthority: 'guest',
-        },
-      });
-      reloadAuthorized();
+    *logout(_, { call, put }) {
+    localStorage.removeItem('XTOKEN')
       yield put(
         routerRedux.push({
-          pathname: '/admin/login',
-          search: stringify({
-            redirect: window.location.href,
-          }),
+          pathname:'/admin/login'
         })
-      );
+      )
     },
+    // *logout2(_, { put }) {
+    //   debugger
+    //   yield put({
+    //     type: 'changeLoginStatus',
+    //     payload: {
+    //       status: false,
+    //       currentAuthority: 'guest',
+    //     },
+    //   });
+    //   reloadAuthorized();
+    //   yield put(
+    //     routerRedux.push({
+    //       pathname: '/admin/login',
+    //       search: stringify({
+    //         redirect: window.location.href,
+    //       }),
+    //     })
+    //   );
+    // },
   },
 
   reducers: {

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { FormattedMessage, formatMessage } from 'umi/locale';
-import { Spin, Tag, Menu, Icon, Avatar,Button } from 'antd';
+import { Spin, Tag, Menu, Icon, Avatar,Button ,Dropdown} from 'antd';
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import { NoticeIcon } from 'ant-design-pro';
@@ -9,6 +9,12 @@ import HeaderDropdown from '../HeaderDropdown';
 import { connect } from 'dva';
 
 import styles from './index.less';
+import {
+  Modal
+} from 'antd';
+
+const confirm = Modal.confirm;
+
 
 @connect(({ login }) => ({
   login
@@ -58,8 +64,9 @@ export default class GlobalHeaderRight extends PureComponent {
     return unreadMsg;
   };
   handleLogout = ()=>{
-    this.props.dispatch({
-      type:'/login/logout'
+    const { dispatch } = this.props;
+    dispatch({
+      type:'login/logout'
     })
   }
 
@@ -69,6 +76,21 @@ export default class GlobalHeaderRight extends PureComponent {
     dispatch({
       type: 'global/changeNoticeReadState',
       payload: id,
+    });
+  };
+
+  logout= () => {
+    const _this = this;
+
+    confirm({
+      title: `退出登录`,
+      content: '确定退出吗?',
+      cancelText:'取消',
+      okText:'确定',
+      onOk() {
+        _this.handleLogout()
+      },
+      onCancel() {},
     });
   };
 
@@ -166,15 +188,16 @@ export default class GlobalHeaderRight extends PureComponent {
         ) : null */}
         {/* } */}
 
-        {/* <Dropdown trigger={['click']}>
-    <a className="ant-dropdown-link" href="#">
+        {/* <Dropdown trigger={['click']}> */}
+   {/* <a className="ant-dropdown-link" href="#">
       Click me <Icon type="down" />
-    </a>
-  </Dropdown>, */}
-  {/* <Button type="primary" onClick={this.handleLogout}>
+    </a> */}
+  {/* </Dropdown> */}
+ 
+  <Button  style={{marginRight:24}} type="primary"  onClick={this.logout}>
   退出登录
 
-  </Button> */}
+  </Button>
 
       </div>
     );
