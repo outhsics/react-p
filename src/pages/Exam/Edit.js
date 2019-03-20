@@ -675,12 +675,26 @@ dispatchEditContent = (html)=>{
 
 
 
-
     for (let index = 0; index < cloneEditItem.subTopics.length; index++) {
       // const element = array[index];
       // if(currentItem[index].parse == '' || currentItem[index].title ==''){
       if(cloneEditItem.subTopics[index].title ==''){
         message.error(`题目和解析为必填`);
+        return false;
+      }
+      const isInputCorrect =  cloneEditItem.subTopics[index].options.filter(item=>item.isCorrect === 1);
+      
+      // const isInputCorrect =  subTopicsListTemp[index].options.filter(item=>item.isCorrect === 1);
+      
+      // if(isInputCorrect.length<=0) {
+      //   message.error(`请选择正确答案`);
+      //   return false;
+      // }
+
+
+      // debugger
+      if(!isInputCorrect) {
+        message.error(`请选择正确答案`);
         return false;
       }
     
@@ -689,6 +703,7 @@ dispatchEditContent = (html)=>{
           message.error(`缺少选项信息`);
           return false;
         }
+      
 
       }
     }

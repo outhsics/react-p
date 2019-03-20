@@ -227,7 +227,7 @@ class NewExam extends PureComponent {
       paperDetailHeader:{
         title:'',
         specialId:null,
-        level:0,
+        level:0.1,
         totalScore:null,
         totalDuration:null,
       }, // 试卷头部info
@@ -853,8 +853,14 @@ onAddSubTopicsSubmit = e => {
         return false;
       }
     
-      // debugger
-      //  return
+
+      const isInputCorrect =  currentItem[index].options.filter(item=>item.isCorrect === 1);
+      
+      if(isInputCorrect.length<=0) {
+        message.error(`请选择正确答案`);
+        return false;
+      }
+
       //TODO
       if(currentItem[index].options&& currentItem[index].options.length) {
 
@@ -948,12 +954,27 @@ onAddSubTopicsSubmit = e => {
       // if(subTopicsListTemp[index].parse == '' || subTopicsListTemp[index].title ==''){
       if(subTopicsListTemp[index].title ==''){
         message.error(`题目和解析为必填`);
-        // debugger
         return false;
       }
+
+      const isInputCorrect =  subTopicsListTemp[index].options.filter(item=>item.isCorrect === 1);
+      
+      if(isInputCorrect.length<=0) {
+        message.error(`请选择正确答案`);
+        return false;
+      }
+
+      // const isInputCorrect =  currentItem[index].options.filter(item=>item.isCorrect === 1);
+      
+      // if(isInputCorrect.length<=0) {
+      //   message.error(`请选择正确答案`);
+      //   return false;
+      // }
+
     
       for (let index2 = 0; index2 < subTopicsListTemp[index].options.length; index2++) {
         if(subTopicsListTemp[index].options[index2].image === '' && subTopicsListTemp[index].options[index2].answer === '') {
+
           message.error(`缺少选项信息`);
           return false;
         }
@@ -1455,7 +1476,7 @@ dispatchEditContent = (html)=>{
 
                     <InputNumber
                      onChange={this.handleGetLevel} 
-                     min={0} max={5} step={0.1} value={Number(paperDetailHeader.level)} />
+                     min={0.1} max={5} step={0.1} value={Number(paperDetailHeader.level)} />
                      </Col>
                      </Row>
               </Col>
@@ -1650,8 +1671,8 @@ dispatchEditContent = (html)=>{
                       >
                         {getFieldDecorator('topicScore', {
                           rules: [{ required: true, message: '请输入分数' }],
-                          initialValue:0
-                        })(<InputNumber min={0} max={100}  />)}
+                          initialValue:1
+                        })(<InputNumber min={1} max={100}  />)}
                       </Form.Item>
 
 
