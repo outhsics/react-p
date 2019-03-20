@@ -231,7 +231,6 @@ class ExamList extends Component {
 
   callback = id => {
     if (!id) return;
-// debugger
     this.setState({
       currentSpecial: id,
     });
@@ -312,9 +311,9 @@ class ExamList extends Component {
             tabBarExtraContent={
               <div className={styles.salesExtraWrap}>
                 <div className={styles.salesExtra}>
-                  <Button style={{ marginRight: 8 }} onClick={this.handleSort}>
+                  {/* <Button style={{ marginRight: 8 }} onClick={this.handleSort}>
                     整理排序
-                  </Button>
+                  </Button> */}
                   <Button type="primary">
                     <Link to="/exam/newexam">新建试卷</Link>
                   </Button>
