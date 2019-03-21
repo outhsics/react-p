@@ -13,7 +13,8 @@ const SalesCard = React.lazy(() => import('./SalesCard'));
 
 
 
-@connect(({ operate,report,loading,chart}) => ({
+@connect(({examlist, operate,report,loading,chart}) => ({
+  examlist,
   report,
   operate,
   chart,
@@ -21,10 +22,14 @@ const SalesCard = React.lazy(() => import('./SalesCard'));
 }))
 class Analysis extends Component {
   state = {
+    
     salesType: 'all',
-    currentSpecial:'',
-    currentTabKey: '',
-    rangePickerValue: getTimeDistance('year'),
+    // currentSpecial:'',
+    specialId: '',
+    rangePickerValue: getTimeDistance('today'),
+    dateType:1,
+    startDate:null,
+    endDate:null
   };
 
   handleRangePickerChange = rangePickerValue => {
@@ -43,9 +48,18 @@ class Analysis extends Component {
 
 
   selectDate = type => {
+    console.log(type,'type');
     const { dispatch } = this.props;
+    // console.log(getTimeDistance(type)[1].valueOf(),'11')
+    // this.state.filterData.qcte = value[1].valueOf();
+    // this.state.filterData.qcte = value[1].valueOf();
+    const dateType = type ==='today'?1:2;
+
     this.setState({
+      dateType,
       rangePickerValue: getTimeDistance(type),
+      startDate:getTimeDistance(type)[0].valueOf(),
+      endDate:getTimeDistance(type)[1].valueOf(),
     });
 
     dispatch({
@@ -72,35 +86,48 @@ class Analysis extends Component {
   componentDidMount() {
     const { dispatch } = this.props;
     // this.reqRef = requestAnimationFrame(() => {
-    //   dispatch({ß
+    //   dispatch({ß卷完成量
     //     type: 'report/fetch',
     //   });
     // });
     dispatch({
         type: 'report/fetch',
     });
-    dispatch({
-      type: 'chart/getReportPaper',
-      payload:{
-        specialId:24,
-        dateType:1,
-        startDate:0,
-        endDate:0
-      }
-    });
+   
     dispatch({
       type: 'operate/fetchSpecialList',
       callback: this.callback,
     });
 
-    
+
+    dispatch({
+      type: 'examlist/fetchPaperList',
+      payload: {
+        pageNum: 1,
+        pageSize: 100,
+        specialId: this.state.specialId||36,
+      } ,
+      // cbPageTotal: this.cbPageTotal,
+    });
   }
   callback = id => {
+    const {dispatch} = this.props;
     if (!id) return;
-// debugger
+
     this.setState({
-      currentSpecial: id,
+      specialId: id,
+    },()=>{
+      dispatch({
+        type: 'chart/getReportPaper',
+        payload:{
+          specialId:id,
+          dateType:1,
+          startDate:0,
+          endDate:0
+        }
+      });
     })
+
   };
   componentWillUnmount() {
     // const { dispatch } = this.props;
@@ -119,8 +146,9 @@ class Analysis extends Component {
 
   handleTabChange = key => {
     this.setState({
-      currentTabKey: key,
+      specialId: key,
     });
+    console.log(key,'specialId')
   };
 
   // renderList = (resources = []) => resources.map(resource => {
@@ -142,9 +170,26 @@ class Analysis extends Component {
 
 
   render() {
-    const { rangePickerValue, salesType, currentTabKey } = this.state;
+    const { rangePickerValue, salesType, specialId } = this.state;
 
-    const { report,loading,operate:{specialList} } = this.props;
+    const { examlist,report,loading,operate:{specialList} } = this.props;
+    const { paperList } = examlist;
+
+    const salesData = paperList.map(item=>item.title).slice(0,10);
+
+
+
+// const salesData = [];
+for (let i = 0; i < salesData.length; i += 1) {
+  // salesData.push({
+  //   x: `${i + 1}月`,
+  //   y: Math.floor(Math.random() * 1000) + 200,
+  // });
+  salesData[i] = {
+    x: salesData[i],
+    y: Math.floor(Math.random() * 1000) + 200,
+  }
+}
 
     const {
       specialStats,
@@ -159,14 +204,15 @@ class Analysis extends Component {
           <IntroduceRow loading={loading} specialStats={specialStats} userStats={userStats}/>
         </Suspense>
         <Suspense fallback={null}>
-          {/* <SalesCard
+          <SalesCard
+          specialList={specialList}
             rangePickerValue={rangePickerValue}
             salesData={salesData}
             isActive={this.isActive}
             handleRangePickerChange={this.handleRangePickerChange}
             loading={loading}
             selectDate={this.selectDate}
-          /> */}
+          />
         </Suspense>
 
 

@@ -60,7 +60,7 @@ const IntroduceRow = memo(({ loading,specialStats=[],userStats={} }) => (
         total={`${numeral(item.complete).format('0,0')}`}
         footer={
           <Field
-            label={<FormattedMessage id="app.analysis.authorize-num" defaultMessage="Daily Sales" />}
+            label={'进入人数 '}
             value={`${numeral(item.access).format('0,0')}`}
           />
         }

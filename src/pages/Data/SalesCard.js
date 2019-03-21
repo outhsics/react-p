@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { Component } from 'react';
 import { Row, Col, Card, Tabs, DatePicker } from 'antd';
 import { FormattedMessage, formatMessage } from 'umi/locale';
 import numeral from 'numeral';
@@ -16,11 +16,29 @@ for (let i = 0; i < 7; i += 1) {
   });
 }
 
-const SalesCard = memo(
-  ({ rangePickerValue, salesData, isActive, handleRangePickerChange, loading, selectDate }) => (
-    <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
+
+
+class SalesCard extends Component {
+
+  state = {
+    currentTabKey:''
+  }
+  handleTabChange = key => {
+    this.setState({
+      currentTabKey: key,
+    });
+    console.log(key,'currentTabKey')
+  };
+  
+  
+  render(){
+    const { specialList,rangePickerValue, salesData, isActive, handleRangePickerChange, loading, selectDate } = this.props;
+
+    return(
+      <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
       <div className={styles.salesCard}>
         <Tabs
+          onChange={this.handleTabChange}
           tabBarExtraContent={
             <div className={styles.salesExtraWrap}>
               <div className={styles.salesExtra}>
@@ -46,136 +64,62 @@ const SalesCard = memo(
           }
           size="large"
           tabBarStyle={{ marginBottom: 24 }}
-        >
-          <TabPane
-            tab={'听力专项训练'}
-            key="special"
-          >
-            <Row>
-              <Col xl={16} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesBar}>
-                  <Bar
-                    height={295}
-                    title={'试卷完成量'}
-                    data={salesData}
-                  />
-                </div>
-              </Col>
-              <Col xl={8} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesRank}>
-                  <h4 className={styles.rankingTitle}>
-                    试卷访问排名
-                  </h4>
-                  <ul className={styles.rankingList}>
-                    {rankingListData.map((item, i) => (
-                      <li key={item.title}>
-                        <span
-                          className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}
-                        >
-                          {i + 1}
-                        </span>
-                        <span className={styles.rankingItemTitle} title={item.title}>
-                          {item.title}
-                        </span>
-                        <span className={styles.rankingItemValue}>
-                          {numeral(item.total).format('0,0')}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane
-            tab={'仿真模拟练习'}
-            key="imitate"
-          >
-            <Row>
-              <Col xl={16} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesBar}>
-                  <Bar
-                    height={292}
-                    title={'试卷完成量'}
-                    data={salesData}
-                  />
-                </div>
-              </Col>
-              <Col xl={8} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesRank}>
-                  <h4 className={styles.rankingTitle}>
-                    <FormattedMessage
-                      id="app.analysis.visits-ranking"
-                      defaultMessage="Visits Ranking"
-                    />
-                  </h4>
-                  <ul className={styles.rankingList}>
-                    {rankingListData.map((item, i) => (
-                      <li key={item.title}>
-                        <span
-                          className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}
-                        >
-                          {i + 1}
-                        </span>
-                        <span className={styles.rankingItemTitle} title={item.title}>
-                          {item.title}
-                        </span>
-                        <span>{numeral(item.total).format('0,0')}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Col>
-            </Row>
-          </TabPane>
+      >
 
-          <TabPane
-            tab={'历年真题闯关'}
-            key="history"
-          >
-            <Row>
-              <Col xl={16} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesBar}>
-                  <Bar
-                    height={295}
-                    title={'试卷完成量'}
-                    data={salesData}
-                  />
-                </div>
-              </Col>
-              <Col xl={8} lg={12} md={12} sm={24} xs={24}>
-                <div className={styles.salesRank}>
-                  <h4 className={styles.rankingTitle}>
-                    <FormattedMessage
-                      id="app.analysis.sales-ranking"
-                      defaultMessage="Sales Ranking"
-                    />
-                  </h4>
-                  <ul className={styles.rankingList}>
-                    {rankingListData.map((item, i) => (
-                      <li key={item.title}>
-                        <span
-                          className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}
-                        >
-                          {i + 1}
-                        </span>
-                        <span className={styles.rankingItemTitle} title={item.title}>
-                          {item.title}
-                        </span>
-                        <span className={styles.rankingItemValue}>
-                          {numeral(item.total).format('0,0')}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Col>
-            </Row>
-          </TabPane>
+        {specialList.map(sitem=>{
+          return (
+            <TabPane
+                    tab={sitem.title}
+                    key={sitem.id}
+                  >
+                    <Row>
+                      <Col xl={16} lg={12} md={12} sm={24} xs={24}>
+                        <div className={styles.salesBar}>
+                          <Bar
+                            height={295}
+                            title={'试卷完成量'}
+                            data={salesData}
+                          />
+                        </div>
+                      </Col>
+                      <Col xl={8} lg={12} md={12} sm={24} xs={24}>
+                        <div className={styles.salesRank}>
+                          <h4 className={styles.rankingTitle}>
+                            试卷访问排名
+                          </h4>
+                          <ul className={styles.rankingList}>
+                            {rankingListData.map((item, i) => (
+                              <li key={item.title}>
+                                <span
+                                  className={`${styles.rankingItemNumber} ${i < 3 ? styles.active : ''}`}
+                                >
+                                  {i + 1}
+                                </span>
+                                <span className={styles.rankingItemTitle} title={item.title}>
+                                  {item.title}
+                                </span>
+                                <span className={styles.rankingItemValue}>
+                                  {numeral(item.total).format('0,0')}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </Col>
+                    </Row>
+                  </TabPane>
+          )
+        })
+        }
+         
         </Tabs>
       </div>
     </Card>
-  )
-);
+    )
+  }
+
+
+}
+
 
 export default SalesCard;

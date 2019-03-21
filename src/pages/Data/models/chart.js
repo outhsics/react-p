@@ -20,7 +20,7 @@ export default {
   effects: {
     *getReportPaper({payload}, { call, put }) {
       const response = yield call(getReportPaper,payload);
-      // debuggerß∑
+      debugger
       if(response.data.code ===1){
         yield put({
           type: 'save',
