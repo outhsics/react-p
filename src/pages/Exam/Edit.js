@@ -150,7 +150,7 @@ class Edit extends PureComponent {
         message.success(`${info.file.name} 音频上传成功!`,5);
         if (info.file.response.code === 1) {
           // const {currentEditIndex,uploadList} = _this.state;
-          // const arr = clonedeep(uploadList);
+          // const arr = cloneDeep(uploadList);
           // arr[currentEditIndex] = {
           //   uploadAudioDuration:info.file.response.data.duration,
           //   uploadAudioPath: info.file.response.data.path,
@@ -180,7 +180,7 @@ class Edit extends PureComponent {
 
   onChangeUploadImgParseProps =(info,subItemIndex)=>{
     // const {editItem} = this.state;
-    // const examTmp = clonedeep(editItem);
+    // const examTmp = cloneDeep(editItem);
 
     // examTmp.subTopics[index].parse = event.target.value;
     // this.setState({
@@ -188,7 +188,7 @@ class Edit extends PureComponent {
     // })
 
     const { editItem } = this.state;
-    const examTmp = clonedeep(editItem);
+    const examTmp = cloneDeep(editItem);
    
     const _this = this;
     if (info.fileList.length > 1) {
@@ -217,7 +217,7 @@ class Edit extends PureComponent {
   onChangeUploadImgProps =(info,subItemIndex,optionIndex)=>{
     
     const { editItem } = this.state;
-    const copySub = clonedeep(editItem.subTopics);
+    const copySub = cloneDeep(editItem.subTopics);
    
     // console.log(info)
     // debugger
@@ -307,7 +307,7 @@ class Edit extends PureComponent {
 
   handleTopicScore =  (event)=>{
     const {editItem} = this.state;
-    const examTmp = clonedeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     examTmp.score = Number(event.target.value);
     this.setState({
@@ -320,7 +320,7 @@ class Edit extends PureComponent {
   handleTopicSubNum =  (event)=>{
 
     // const {editItem} = this.state;
-    // const examTmp = clonedeep(editItem);
+    // const examTmp = cloneDeep(editItem);
 
     // examTmp.subNum = Number(event.target.value);
 
@@ -333,7 +333,7 @@ class Edit extends PureComponent {
   // handleGetInputText= (index,event)=>{
   
   //   const {editItem} = this.state;
-  //   const examTmp = clonedeep(editItem);
+  //   const examTmp = cloneDeep(editItem);
 
   //   examTmp.subTopics[index].parse = event.target.value;
   //   this.setState({
@@ -345,7 +345,7 @@ class Edit extends PureComponent {
     // console.log(e,'e')
     // console.log(event.target.value,'e')
     const {editItem} = this.state;
-    const examTmp = clonedeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     examTmp.subTopics[index-1].title = event.target.value;
     this.setState({
@@ -360,7 +360,7 @@ class Edit extends PureComponent {
     // console.log(e,'e')
     // console.log(event.target.value,'e')
 
-    const data = clonedeep(this.state.paperDetail);
+    const data = cloneDeep(this.state.paperDetail);
     data.title = event.target.value;
 
     // examTmp.subTopics[index].title = event.target.value;
@@ -384,7 +384,7 @@ class Edit extends PureComponent {
     // console.log(event.target.value,'e')
 
 
-    const data = clonedeep(this.state.paperDetail);
+    const data = cloneDeep(this.state.paperDetail);
 
     data.specialId =  Number(event.target.value);
 
@@ -399,8 +399,8 @@ class Edit extends PureComponent {
     // console.log(e,'e')
     console.log(event.target.value,'e')
 
-    // const examTmp = clonedeep(editItem);
-    const data = clonedeep(this.state.paperDetail);
+    // const examTmp = cloneDeep(editItem);
+    const data = cloneDeep(this.state.paperDetail);
     data.level =  Number(event.target.value);
     this.setState({
       paperDetail:data
@@ -413,7 +413,7 @@ class Edit extends PureComponent {
     console.log(index2)
     // debugger
     const {editItem} = this.state;
-    const examTmp = clonedeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     examTmp.subTopics[index].options[index2].answer = event.target.value;
     this.setState({
@@ -427,11 +427,11 @@ class Edit extends PureComponent {
     console.log(index)
     const {editItem} = this.state;
 
-    const examTmp = clonedeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     // this.state.radioValueList[index] = event.target.value;
     // const v = this.refs.radioGroup.props.topicno;
-    const copyData =  clonedeep(this.state.radioValueList)
+    const copyData =  cloneDeep(this.state.radioValueList)
     // const copyData = this.state.radioValueList.slice(0);
 
 
@@ -458,7 +458,7 @@ class Edit extends PureComponent {
     let editItem = v
     // const id = this.refs.addOption.props.topicno;
 
-    const data =  clonedeep(editItem);
+    const data =  cloneDeep(editItem);
 
     data.subTopics[id - 1].options.push({
       // topicSubId: data.subTopics[id - 1].id,
@@ -646,7 +646,7 @@ class Edit extends PureComponent {
 
 dispatchEditContent = (html)=>{
   const {editItem} = this.state;
-  const data = clonedeep(editItem);
+  const data = cloneDeep(editItem);
   data.subTopics[0].title = html;
 
   this.setState({
@@ -661,7 +661,7 @@ dispatchEditContent = (html)=>{
   saveChange = (v) => {
     const { radioValueList,paperDetail } = this.state;
     const {editItem,editorContent,currentEditIndex,uploadAudioDuration,uploadAudioName} = this.state;
-    const cloneEditItem = clonedeep(editItem);
+    const cloneEditItem = cloneDeep(editItem);
 
     const { dispatch, location } = this.props;
     cloneEditItem.audio = this.state.uploadAudioName;
@@ -693,7 +693,8 @@ dispatchEditContent = (html)=>{
 
 
       // debugger
-      if(!isInputCorrect) {
+      if(isInputCorrect.length<=0 && editItem ===1) {
+
         message.error(`请选择正确答案`);
         return false;
       }
@@ -708,14 +709,14 @@ dispatchEditContent = (html)=>{
       }
     }
     if(cloneEditItem.type ===2){
-      // const tmpdata = clonedeep(currentItem);
+      // const tmpdata = cloneDeep(currentItem);
       cloneEditItem.subTopics[0].title=editorContent;
      
     }
 
 
 
-    let clonePaper = clonedeep(paperDetail);
+    let clonePaper = cloneDeep(paperDetail);
     clonePaper.topics[cloneEditItem.topicNo - 1] = cloneEditItem;
 
     let formData = this.props.form.getFieldsValue();
@@ -1002,8 +1003,8 @@ dispatchEditContent = (html)=>{
     // const { paperDetail } = examlist;
     const { specialList } = operate;
 
-    // const copyEditItem =   clonedeep(editItem);
-    // const title = clonedeep();
+    // const copyEditItem =   cloneDeep(editItem);
+    // const title = cloneDeep();
 
     return (
       paperDetail &&
