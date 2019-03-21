@@ -18,7 +18,7 @@ import {
   } from 'antd';
   import E from 'wangeditor';
 import styles from '../List.less';
-import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 
 
 
@@ -168,7 +168,7 @@ class RenderSelectP extends PureComponent {
       // console.log(index)
       // debugger
       const {subTopicsListTemp} = this.props;
-      const cloneSubTopicsListTemp = _.cloneDeep(subTopicsListTemp);
+      const cloneSubTopicsListTemp = cloneDeep(subTopicsListTemp);
     
       cloneSubTopicsListTemp[index].parse = event.target.value;
       this.props.dispatchSubTopicsListTemp (
@@ -178,7 +178,7 @@ class RenderSelectP extends PureComponent {
     
     onChangeUploadImgParseProps =(info,subItemIndex)=>{
       const {subTopicsListTemp} = this.props;
-      const copySub = _.cloneDeep(subTopicsListTemp);
+      const copySub = cloneDeep(subTopicsListTemp);
      
       const _this = this;
       if (info.fileList.length > 1) {
@@ -215,7 +215,7 @@ class RenderSelectP extends PureComponent {
         // console.log(event.target.value,'e')
         // console.log(index)
         const {subTopicsListTemp} = this.props;
-        const cloneSubTopicsListTemp = _.cloneDeep(subTopicsListTemp);
+        const cloneSubTopicsListTemp = cloneDeep(subTopicsListTemp);
         
         // debugger
         cloneSubTopicsListTemp[index].options[optionIndex].answer = event.target.value;
@@ -230,11 +230,11 @@ class RenderSelectP extends PureComponent {
     
     //     const {subTopicsListTemp} = this.state;
     
-    //     const examTmp = _.cloneDeep(subTopicsListTemp);
+    //     const examTmp = cloneDeep(subTopicsListTemp);
     
     //     // this.state.radioValueList[index] = event.target.value;
     //     // const v = this.refs.radioGroup.props.topicno;
-    //     const copyData =  _.cloneDeep(this.state.radioValueList)
+    //     const copyData =  cloneDeep(this.state.radioValueList)
     //     // const copyData = this.state.radioValueList.slice(0);
     
     

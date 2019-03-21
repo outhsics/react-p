@@ -20,7 +20,7 @@ import { connect } from 'dva';
 import NavLink from 'umi/navlink';
 import E from 'wangeditor';
 import moment from 'moment';
-import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import mapRadioToOptions from '@/utils/mapRadioToOptions';
 import RenderSelectP from './components/RenderSelectP'
 import {formatDuration} from '@/utils/utils';
@@ -101,7 +101,7 @@ class NewExam extends PureComponent {
         message.success(`${info.file.name} 音频上传成功!`,5);
         if (info.file.response.code === 1) {
           // const {currentEditIndex,uploadList} = _this.state;
-          // const arr = _.cloneDeep(uploadList);
+          // const arr = clonedeep(uploadList);
 
           // arr[currentEditIndex] = {
           //   uploadAudioDuration:info.file.response.data.duration,
@@ -123,7 +123,7 @@ class NewExam extends PureComponent {
   }
   onChangeUploadImgProps =(info,subItemIndex,optionIndex)=>{
     const { subTopicsListTemp } = this.state;
-    const copySub = _.cloneDeep(subTopicsListTemp);
+    const copySub = clonedeep(subTopicsListTemp);
    
     // console.log(info)
     // debugger
@@ -154,7 +154,7 @@ class NewExam extends PureComponent {
 
   onChangeUploadImgParseProps =(info,subItemIndex)=>{
     const { subTopicsListTemp } = this.state;
-    const copySub = _.cloneDeep(subTopicsListTemp);
+    const copySub = clonedeep(subTopicsListTemp);
    
     const _this = this;
     if (info.fileList.length > 1) {
@@ -344,7 +344,7 @@ onAddSubTopicsSubmit = e => {
 
   handleTopicScore =  (event)=>{
     const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+    const examTmp = clonedeep(editItem);
 
     examTmp.score = Number(event.target.value);
     this.setState({
@@ -356,7 +356,7 @@ onAddSubTopicsSubmit = e => {
 
   handleTopicSubNum =  (event)=>{
     const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+    const examTmp = clonedeep(editItem);
 
     examTmp.subNum = Number(event.target.value);
     this.setState({
@@ -371,7 +371,7 @@ onAddSubTopicsSubmit = e => {
     // console.log(index)
     // debugger
     const {subTopicsListTemp} = this.state;
-    const examTmp = _.cloneDeep(subTopicsListTemp);
+    const examTmp = clonedeep(subTopicsListTemp);
 
     examTmp[index].parse = event.target.value;
     this.setState({
@@ -383,7 +383,7 @@ onAddSubTopicsSubmit = e => {
     // console.log(e,'e')
     // console.log(event.target.value,'e')
     const {subTopicsListTemp} = this.state;
-    const examTmp = _.cloneDeep(subTopicsListTemp);
+    const examTmp = clonedeep(subTopicsListTemp);
 
     examTmp[index].title = event.target.value;
     this.setState({
@@ -398,7 +398,7 @@ onAddSubTopicsSubmit = e => {
     // console.log(e,'e')
     // console.log(event.target.value,'e')
 
-    // const examTmp = _.cloneDeep(editItem);
+    // const examTmp = clonedeep(editItem);
 
     // examTmp.subTopics[index].title = event.target.value;
     this.setState({
@@ -424,7 +424,7 @@ onAddSubTopicsSubmit = e => {
     // console.log(event,'e')
     // console.log(event.target.value,'e')
 
-    // const examTmp = _.cloneDeep(editItem);
+    // const examTmp = clonedeep(editItem);
 
     this.setState({
       paperDetailHeader:{
@@ -460,7 +460,7 @@ onAddSubTopicsSubmit = e => {
   handleGetInputChoice= (index,optionsIndex,event)=>{
     // console.log(e,'e')
     const {subTopicsListTemp} = this.state;
-    const examTmp = _.cloneDeep(subTopicsListTemp);
+    const examTmp = clonedeep(subTopicsListTemp);
     
     examTmp[index].options[optionsIndex].answer = event.target.value;
     this.setState({
@@ -469,7 +469,7 @@ onAddSubTopicsSubmit = e => {
   }
 
   // const {subTopicsListTemp} = this.state;
-  // const examTmp = _.cloneDeep(subTopicsListTemp);
+  // const examTmp = clonedeep(subTopicsListTemp);
 
   // examTmp[index].title = event.target.value;
   // this.setState({
@@ -496,11 +496,11 @@ onAddSubTopicsSubmit = e => {
 
     const {subTopicsListTemp} = this.state;
 
-    const examTmp = _.cloneDeep(subTopicsListTemp);
+    const examTmp = clonedeep(subTopicsListTemp);
 
     // this.state.radioValueList[index] = event.target.value;
     // const v = this.refs.radioGroup.props.topicno;
-    const copyData =  _.cloneDeep(this.state.radioValueList)
+    const copyData =  clonedeep(this.state.radioValueList)
     // const copyData = this.state.radioValueList.slice(0);
 
 
@@ -526,7 +526,7 @@ onAddSubTopicsSubmit = e => {
     // let editItem = v
     // const id = this.refs.addOption.props.topicno;
 // debugger
-    const data =  _.cloneDeep(v);
+    const data =  clonedeep(v);
 
     data[index].options.push({
       // topicSubId: data.subTopics[id - 1].id,
@@ -604,7 +604,7 @@ onAddSubTopicsSubmit = e => {
     const { topicsListTemp,paperDetailHeader } = this.state;
     const { specialList } = operate;
 
-    const dataList = _.cloneDeep(topicsListTemp);
+    const dataList = clonedeep(topicsListTemp);
     const _this = this;
 
 
@@ -828,7 +828,7 @@ onAddSubTopicsSubmit = e => {
 
       if(currentEditType ===2) {
         // subTopicsListTemp[0].title = 
-        let cloneSub = _.cloneDeep(subTopicsListTemp[0])
+        let cloneSub = clonedeep(subTopicsListTemp[0])
         cloneSub = {
           ...subTopicsListTemp[0],
           title:editorContent
@@ -840,7 +840,7 @@ onAddSubTopicsSubmit = e => {
          currentItem = mapRadioToOptions(radioValueList,subTopicsListTemp);
       }
 
-    const data = _.cloneDeep(topicsListTemp);
+    const data = clonedeep(topicsListTemp);
 
 
     // debugger
@@ -1316,7 +1316,7 @@ onAddSubTopicsSubmit = e => {
 
 dispatchEditContent = (html)=>{
   const {subTopicsListTemp} = this.state;
-  const data = _.cloneDeep(subTopicsListTemp);
+  const data = clonedeep(subTopicsListTemp);
   data[0].title = html;
   this.setState({
     editorContent:html

@@ -21,7 +21,7 @@ import NavLink from 'umi/navlink';
 
 
 import moment from 'moment';
-import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import mapRadioToOptions from '@/utils/mapRadioToOptions';
 import {formatDuration} from '@/utils/utils';
 
@@ -156,7 +156,7 @@ class Detail extends PureComponent {
   onChangeUploadImgProps =(info,subItemIndex,optionIndex)=>{
     
     const { editItem } = this.state;
-    const copySub = _.cloneDeep(editItem.subTopics);
+    const copySub = cloneDeep(editItem.subTopics);
    
     // console.log(info)
     // debugger
@@ -250,7 +250,7 @@ class Detail extends PureComponent {
 
   handleTopicScore =  (event)=>{
     const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     examTmp.score = Number(event.target.value);
     this.setState({
@@ -263,7 +263,7 @@ class Detail extends PureComponent {
   handleTopicSubNum =  (event)=>{
 
     // const {editItem} = this.state;
-    // const examTmp = _.cloneDeep(editItem);
+    // const examTmp = cloneDeep(editItem);
 
     // examTmp.subNum = Number(event.target.value);
 
@@ -279,7 +279,7 @@ class Detail extends PureComponent {
     // console.log(index)
     // debugger
     const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     examTmp.subTopics[index].parse = event.target.value;
     this.setState({
@@ -291,7 +291,7 @@ class Detail extends PureComponent {
     // console.log(e,'e')
     // console.log(event.target.value,'e')
     const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     examTmp.subTopics[index-1].title = event.target.value;
     this.setState({
@@ -306,7 +306,7 @@ class Detail extends PureComponent {
     // console.log(e,'e')
     // console.log(event.target.value,'e')
 
-    const data = _.cloneDeep(this.state.paperDetail);
+    const data = cloneDeep(this.state.paperDetail);
     data.title = event.target.value;
 
     // examTmp.subTopics[index].title = event.target.value;
@@ -330,7 +330,7 @@ class Detail extends PureComponent {
     // console.log(event.target.value,'e')
 
 
-    const data = _.cloneDeep(this.state.paperDetail);
+    const data = cloneDeep(this.state.paperDetail);
 
     data.specialId =  Number(event.target.value);
 
@@ -345,8 +345,8 @@ class Detail extends PureComponent {
     // console.log(e,'e')
     console.log(event.target.value,'e')
 
-    // const examTmp = _.cloneDeep(editItem);
-    const data = _.cloneDeep(this.state.paperDetail);
+    // const examTmp = cloneDeep(editItem);
+    const data = cloneDeep(this.state.paperDetail);
     data.level =  Number(event.target.value);
     this.setState({
       paperDetail:data
@@ -359,7 +359,7 @@ class Detail extends PureComponent {
     console.log(index2)
     // debugger
     const {editItem} = this.state;
-    const examTmp = _.cloneDeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     examTmp.subTopics[index].options[index2].answer = event.target.value;
     this.setState({
@@ -373,11 +373,11 @@ class Detail extends PureComponent {
     console.log(index)
     const {editItem} = this.state;
 
-    const examTmp = _.cloneDeep(editItem);
+    const examTmp = cloneDeep(editItem);
 
     // this.state.radioValueList[index] = event.target.value;
     // const v = this.refs.radioGroup.props.topicno;
-    const copyData =  _.cloneDeep(this.state.radioValueList)
+    const copyData =  cloneDeep(this.state.radioValueList)
     // const copyData = this.state.radioValueList.slice(0);
 
 
@@ -404,7 +404,7 @@ class Detail extends PureComponent {
     let editItem = v
     // const id = this.refs.addOption.props.topicno;
 
-    const data =  _.cloneDeep(editItem);
+    const data =  cloneDeep(editItem);
 
     data.subTopics[id - 1].options.push({
       // topicSubId: data.subTopics[id - 1].id,
@@ -515,7 +515,7 @@ class Detail extends PureComponent {
 
 dispatchEditContent = (html)=>{
   const {editItem} = this.state;
-  const data = _.cloneDeep(editItem);
+  const data = cloneDeep(editItem);
   data.subTopics[0].title = html;
 
   this.setState({
@@ -530,7 +530,7 @@ dispatchEditContent = (html)=>{
   saveChange = (v) => {
     const { radioValueList,paperDetail } = this.state;
     const {editItem,editorContent} = this.state;
-    const cloneEditItem = _.cloneDeep(editItem);
+    const cloneEditItem = cloneDeep(editItem);
 
     const { dispatch, location } = this.props;
 
@@ -562,7 +562,7 @@ dispatchEditContent = (html)=>{
       }
     }
     if(cloneEditItem.type ===2){
-      // const tmpdata = _.cloneDeep(currentItem);
+      // const tmpdata = cloneDeep(currentItem);
       cloneEditItem.subTopics[0].title=editorContent;
       // currentItem = [{
       //   ...currentItem,
@@ -810,8 +810,8 @@ dispatchEditContent = (html)=>{
     // const { paperDetail } = examlist;
     const { specialList } = operate;
 
-    // const copyEditItem =   _.cloneDeep(editItem);
-    // const title = _.cloneDeep();
+    // const copyEditItem =   cloneDeep(editItem);
+    // const title = cloneDeep();
 
     return (
       paperDetail &&

@@ -2,6 +2,7 @@
 import { primaryColor } from '../src/defaultSettings';
 import pageRoutes from './router.config';
 
+import webpackPlugin from './plugin.config';
 
 export default {
   // history: 'hash',
@@ -56,6 +57,8 @@ export default {
   /**
    * webpack 相关配置
    */
+  chainWebpack: webpackPlugin,
+
   define: {
     APP_TYPE: process.env.APP_TYPE || '',
   },
@@ -71,4 +74,5 @@ export default {
   lessLoaderOptions: {
     javascriptEnabled: true,
   },
+
 };
