@@ -8,31 +8,35 @@ import { Bar } from '@/components/Charts';
 const { RangePicker } = DatePicker;
 const { TabPane } = Tabs;
 
-const rankingListData = [];
-for (let i = 0; i < 7; i += 1) {
-  rankingListData.push({
-    title: `因果训练day${i}`,
-    total: 323234,
-  });
-}
-
-
 
 class SalesCard extends Component {
 
   state = {
-    currentTabKey:''
+    // currentTabKey:''
   }
   handleTabChange = key => {
-    this.setState({
-      currentTabKey: key,
+    const {dispatch,cbSpecialId} = this.props;
+    const {dataType,startDate,endDate} = this.state;
+    // this.setState({
+    //   currentTabKey: key,
+    // });
+    cbSpecialId(key);
+
+    dispatch({
+      type: 'chart/getReportPaper',
+      payload:{
+        specialId:key,
+        dateType,
+        startDate,
+        endDate
+      }
     });
-    console.log(key,'currentTabKey')
+    // console.log(key,'currentTabKey')
   };
   
   
   render(){
-    const { specialList,rangePickerValue, salesData, isActive, handleRangePickerChange, loading, selectDate } = this.props;
+    const { rankingListData,specialList,rangePickerValue, salesData, isActive, handleRangePickerChange, loading, selectDate } = this.props;
 
     return(
       <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
@@ -99,7 +103,7 @@ class SalesCard extends Component {
                                   {item.title}
                                 </span>
                                 <span className={styles.rankingItemValue}>
-                                  {numeral(item.total).format('0,0')}
+                                  {numeral(item.accessAmount).format('0,0')}
                                 </span>
                               </li>
                             ))}

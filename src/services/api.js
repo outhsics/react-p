@@ -13,6 +13,7 @@ export async function queryActivities() {
 
 export async function queryUserList(params) {
   // TODO 分页  pageNum 参数
+  debugger
   return request({
     url: `${apiConfig.queryDataHub.getUserList}`,
     method: 'get',

@@ -13,8 +13,15 @@ const SalesCard = React.lazy(() => import('./SalesCard'));
 
 
 
-@connect(({examlist, operate,report,loading,chart}) => ({
-  examlist,
+// const rankingListData = [];
+// for (let i = 0; i < 7; i += 1) {
+//   rankingListData.push({
+//     title: `因果训练day${i}`,
+//     total: 323234,
+//   });
+// }
+
+@connect(({operate,report,loading,chart}) => ({
   report,
   operate,
   chart,
@@ -29,7 +36,8 @@ class Analysis extends Component {
     rangePickerValue: getTimeDistance('today'),
     dateType:1,
     startDate:null,
-    endDate:null
+    endDate:null,
+    rankingListData:[]
   };
 
   handleRangePickerChange = rangePickerValue => {
@@ -81,7 +89,11 @@ class Analysis extends Component {
     }
     return '';
   };
-
+  cbSpecialId = (v)=>{
+    this.setState({
+      specialId:v
+    })
+  }
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -100,19 +112,20 @@ class Analysis extends Component {
     });
 
 
-    dispatch({
-      type: 'examlist/fetchPaperList',
-      payload: {
-        pageNum: 1,
-        pageSize: 100,
-        specialId: this.state.specialId||36,
-      } ,
-      // cbPageTotal: this.cbPageTotal,
-    });
+    // dispatch({
+    //   type: 'examlist/fetchPaperList',
+    //   payload: {
+    //     pageNum: 1,
+    //     pageSize: 100,
+    //     specialId: this.state.specialId||36,
+    //   } 
+    // });
   }
   callback = id => {
     const {dispatch} = this.props;
+    // const {dateType} = this.state;
     if (!id) return;
+    // const dateType = type ==='today'?1:2;
 
     this.setState({
       specialId: id,
@@ -137,6 +150,41 @@ class Analysis extends Component {
     // cancelAnimationFrame(this.reqRef);
     // clearTimeout(this.timeoutId);
   }
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const paperData= nextProps.report.paperData;
+    let salesData = [];
+    if(nextProps.chart.paperData !== prevState.salesData) {
+
+      return {
+        salesData:nextProps.report.paperData
+      }
+
+      // const salesData = [];
+      const rankingListData = paperData && paperData.sort((a,b)=>a.accessAmount -b.accessAmount ).slice(0,7);
+    // const salesData = paperList.map(item=>item.title).slice(0,10);
+  
+        // const salesData = [];
+        for (let i = 0; i < paperData.slice(0,7).length; i += 1) {
+          // salesData.push({
+          //   x: `${i + 1}月`,
+          //   y: Math.floor(Math.random() * 1000) + 200,
+          // });
+          salesData[i] = {
+            x: salesData[i].paperTitle,
+            y:salesData[i].accessAmount
+          }
+        }
+    }
+    debugger
+    return null
+    // this.setState({
+    //   salesData,
+    //   rankingListData
+    // })
+
+    
+  }
+  
 
   handleChangeSalesType = e => {
     this.setState({
@@ -144,12 +192,12 @@ class Analysis extends Component {
     });
   };
 
-  handleTabChange = key => {
-    this.setState({
-      specialId: key,
-    });
-    console.log(key,'specialId')
-  };
+  // handleTabChange = key => {
+  //   this.setState({
+  //     specialId: key,
+  //   });
+  //   console.log(key,'specialId')
+  // };
 
   // renderList = (resources = []) => resources.map(resource => {
   //         return (
@@ -170,26 +218,16 @@ class Analysis extends Component {
 
 
   render() {
-    const { rangePickerValue, salesType, specialId } = this.state;
-
-    const { examlist,report,loading,operate:{specialList} } = this.props;
-    const { paperList } = examlist;
-
-    const salesData = paperList.map(item=>item.title).slice(0,10);
 
 
 
-// const salesData = [];
-for (let i = 0; i < salesData.length; i += 1) {
-  // salesData.push({
-  //   x: `${i + 1}月`,
-  //   y: Math.floor(Math.random() * 1000) + 200,
-  // });
-  salesData[i] = {
-    x: salesData[i],
-    y: Math.floor(Math.random() * 1000) + 200,
-  }
-}
+
+    const { salesData,rankingListData,specialId,startDate,endDate,dataType,rangePickerValue, salesType } = this.state;
+
+    const {report,loading,operate:{specialList} } = this.props;
+    const { paperData } = report;
+
+    debugger
 
     const {
       specialStats,
@@ -205,12 +243,18 @@ for (let i = 0; i < salesData.length; i += 1) {
         </Suspense>
         <Suspense fallback={null}>
           <SalesCard
+          rankingListData={rankingListData}
           specialList={specialList}
             rangePickerValue={rangePickerValue}
             salesData={salesData}
             isActive={this.isActive}
             handleRangePickerChange={this.handleRangePickerChange}
             loading={loading}
+            dataType={dataType}
+            endDate = {endDate}
+            // specialId={specialId}
+            cbSpecialId = {this.cbSpecialId}
+            startDate = {startDate}
             selectDate={this.selectDate}
           />
         </Suspense>
