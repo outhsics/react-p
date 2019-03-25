@@ -19,6 +19,7 @@ import {
   DatePicker
 } from 'antd';
 import styles from './List.less';
+import { object } from 'prop-types';
 
 // import { supportsGoWithoutReloadUsingHash } from 'history/DOMUtils';
 const { RangePicker } = DatePicker;
@@ -71,25 +72,25 @@ class UserList extends Component {
   state = {
     // modalVisible: false,
     // updateModalVisible: false,
-    currentPageNum: 1,
+    createTimeDesc:true, // 创建时间 默认11 降序
+    durationDesc:true, //
     selectedTags: [],
     expandForm: false,
-    filterVal: '',
+    filterVal: 'a',   // a 创建时间 b 学习时长  默认a
     filterCreateTime: '',
     filterStudyTime: '',
     filterNickname: '',
-    // selectedRows: [],
     list:[],
     total:null,
     rangeTime:'',
-    filterData:{
-      qcts:null,
-      qcte:null,
-      qds:null,
-      qde:null,
+    pageSize:10,
+    pageNum:1,
+    qcts:null,
+    qcte:null,
+    qds:null,
+    qde:null,
     // 排序（10：创建时间-升序，11：创建时间-降序，20：学习时长-升序，21：学习时长-降序）
-  },
-  hasNickName:1
+    orderBy:null
   };
 
 
@@ -98,58 +99,34 @@ class UserList extends Component {
     console.log('Selected Time: ', value);
     console.log('Formatted Selected Time: ', dateString);
     // console.log(dateString[0].getTime(),'1')
-    // this.state.filterData.qcts = value[0].valueOf();
-    // this.state.filterData.qcte = value[1].valueOf();
+
   
     this.setState({
-      filterData:{
-        ...this.state.filterData,
-        qcts:value[0].valueOf(),
-        qcte:value[1].valueOf(),
-      },
+      qcts:value[0].valueOf(),
+      qcte:value[1].valueOf(),
       rangeTime:value
     })
     // console.log(value[0].valueOf(),'1')
-    // console.log(this.state.filterData,'state.filterData')
+ 
   }
   
-   onOk = (value) =>{
-    console.log('onOk: ', value);
-  }
   
 
   // handleGetInputValue= (index,event)=>{
     changeQds = (e)=>{
       // event.target.value;
-      // this.state.filterData.qde = event.target.value;
       this.setState({
-        filterData:{
-          ...this.state.filterData,
-          qds:Number(e.target.value)
-        }
+        qds:Number(e.target.value)
       })
-      // console.log(this.state.filterData.qds,'this.state.filterData')
       console.log(event,'cc')
     }
     changeQde = (e)=>{
-      // this.state.filterData.qde = event.target.value;
       // console.log(typeof e.target.value)
       this.setState({
-        filterData:{
-          ...this.state.filterData,
-          qde:Number(e.target.value)
-        }
+        qde:Number(e.target.value)
       })
-      // console.log(event.data,'this.state.filterData')
-      // console.log(this.state.filterData.qde,'state.filterData.qde')
     }
 
-    onChangeRadio = (e) => {
-      console.log('radio checked', e.target.value);
-      this.setState({
-        hasNickName: e.target.value
-      });
-    }
   
 
 
@@ -181,12 +158,12 @@ class UserList extends Component {
   
   cbUpdateUser = ()=>{
     // cbUpdateUser
-    // debugger
+    
      const {dispatch}= this.props;
     dispatch({
       type: 'userlist/fetch',
       payload: {
-        pageNum: this.state.currentPageNum,
+        pageNum: this.state.pageNum,
         pageSize: 10,
       },
       callback: this.cbUserData
@@ -209,6 +186,20 @@ class UserList extends Component {
     this.setState({ filterVal: e.target.value });
     console.log(this.state.filterVal);
   };
+  changeCreateTimeDesc= ()=> {
+     const {createTimeDesc}= this.state;
+     const data = !createTimeDesc;
+     this.setState({
+      createTimeDesc:data
+     })
+  };
+  changeDurationDesc= () => {
+    const {durationDesc}= this.state;
+    const data = !durationDesc;
+    this.setState({
+     durationDesc:data
+    })
+ };
   handleFilterCreateTime = e => {
     this.setState({ FilterCreateTime: e.target.value });
     console.log(this.state.filterCreateTime);
@@ -217,56 +208,15 @@ class UserList extends Component {
     this.setState({ FilterStudyTime: e.target.value });
     console.log(this.state.filterStudyTime);
   };
-  handleFilterNickname = e => {
-    this.setState({ filterVal: e.target.value });
-    console.log(this.state.filterNickname);
-  };
-
-  handleSearch = () => {
-    const {dispatch} = this.props;
-    const { currentPageNum}= this.state;
-
-
-    dispatch({
-      type: 'userlist/fetch',
-      payload: {
-        pageNum: currentPageNum,
-        pageSize: 10
-      },
-      callback: this.cbUserData,
-      cbSearch:this.cbSearch
-    })
-  };
-
-  cbSearch = ()=>{
-
-    const { list,filterData:{qcts,qcte,qds,qde}}= this.state;
-    let userList = list;
-    // let res = [];
-    if(qcts && qcte) {
-      userList = userList.filter(item=>item.createTime >=qcts && item.createTime <= qcte);
-    }
-    if(qds && qde) {
-// debugger
-
-      userList = userList.filter(item=>item.duration >=qds*60 && item.duration <= qde*60);
-    }
-   
-    this.setState({
-      list:userList
-    })
-  }
-
   
   handleFormReset = () => {
     // const { form, dispatch } = this.props;
     // form.resetFields();
     this.setState({
-      filterData:{
-        qds:'',
-        qde:''
-      },
-      hasNickName:1,
+      qcte:null,
+      qcts:null,
+      qds:null,
+      qde:null,
       rangeTime:''
     });
   };
@@ -285,22 +235,25 @@ class UserList extends Component {
       loading,
     } = this.props;
 
-    const { selectedTags,rangeTime } = this.state;
+    const { selectedTags,rangeTime,createTimeDesc,durationDesc } = this.state;
     return (
       <Fragment>
         <Row className={styles.filterRow}>
-          {/* <Col span={21}>
+         
+          <Col span={21}>
             <Radio.Group defaultValue="a" buttonStyle="solid" onChange={this.handleFilterChange}>
-              <Radio.Button value="a">
+              <Radio.Button value="a"  onClick={this.changeCreateTimeDesc}>
                 创建时间
-                <MyIcon type="icon-sort" />
+                {createTimeDesc &&  <Icon type="down" />}
+                {!createTimeDesc && <Icon type="up" />}
               </Radio.Button>
-              <Radio.Button value="b">
+              <Radio.Button value="b" onClick={this.changeDurationDesc}>
                 学习时长
-                <MyIcon type="icon-sort" />
+                {durationDesc &&  <Icon type="down" />}
+                {!durationDesc && <Icon type="up" />}
               </Radio.Button>
             </Radio.Group>
-          </Col> */}
+          </Col>
           <Col span={3} offset={20}>
             <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
               筛选收起 <Icon type="up" />
@@ -344,14 +297,14 @@ class UserList extends Component {
                 {tag}
               </CheckableTag> */}
             {/* ))} */}
-            <Input className={styles.gray} value={this.state.filterData.qds} onChange={this.changeQds}  suffix="min" style={{width:100}}/>
+            <Input className={styles.gray} value={this.state.qds} onChange={this.changeQds}  suffix="min" style={{width:100}}/>
             &nbsp;
             &nbsp;
             至
             &nbsp;
             &nbsp;
 
-            <Input  className={styles.gray} value={this.state.filterData.qde}  onChange={this.changeQde} suffix="min" style={{width:100}}/>
+            <Input  className={styles.gray} value={this.state.qde}  onChange={this.changeQde} suffix="min" style={{width:100}}/>
 
             {/* <Input disabled value={subItem.title} onChange={()=>this.handleGetInputValue(subItem.topicNo,event)} /> */}
 
@@ -411,21 +364,24 @@ class UserList extends Component {
       filterVal,
       loading,
     } = this.props;
+    const {createTimeDesc,durationDesc } = this.state;
 
     return (
       <Row className={styles.filterRow}>
-        {/* <Col span={21}>
+        <Col span={21}>
           <Radio.Group defaultValue="a" buttonStyle="solid" onChange={this.handleFilterChange}>
-            <Radio.Button value="a">
+            <Radio.Button value="a" onClick={this.changeCreateTimeDesc}>
               创建时间
-              <MyIcon type="icon-sort" />
+              {createTimeDesc &&  <Icon type="down" />}
+                {!createTimeDesc && <Icon type="up" />}
             </Radio.Button>
-            <Radio.Button value="b">
-              学习时长
-              <MyIcon type="icon-sort" />
+            <Radio.Button value="b" onClick={this.changeDurationDesc}>
+              学习时长 
+              {durationDesc &&  <Icon type="down" />}
+                {!durationDesc && <Icon type="up" />}
             </Radio.Button>
           </Radio.Group>
-        </Col> */}
+        </Col>
         <Col span={3} offset={20}>
           <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
             筛选展开 <Icon type="down" />
@@ -462,14 +418,11 @@ class UserList extends Component {
     {
       title: '创建时间',
       dataIndex: 'createTime',
-      // sorter: true,
-      sorter: (a, b) => a.createTime - b.createTime,
       render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
     },
     {
       title: '学习时长',
       dataIndex: 'duration',
-      sorter: (a, b) => a.duration - b.duration,
       render: val => <Fragment>   
       {val>60 ? `${((val/60).toFixed(2))}分钟` : ''}{val<60 ?`${val}秒钟` : ''}
        </Fragment>,
@@ -495,12 +448,12 @@ class UserList extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    const { currentPageNum } = this.state;
+    const { pageNum } = this.state;
 
     dispatch({
       type: 'userlist/fetch',
       payload: {
-        pageNum: currentPageNum,
+        pageNum: pageNum,
         pageSize: 10
       },
       callback: this.cbUserData
@@ -509,7 +462,7 @@ class UserList extends Component {
 
 
   cbUserData = v=>{
-    // debugger
+    
     this.setState({
       list:v.list,
       total:v.total
@@ -526,29 +479,71 @@ class UserList extends Component {
 
   onPageChange = v => {
     const { dispatch } = this.props;
-    const { qcts,qcte,qds,qde } = this.state;
+    const { filterVal,createTimeDesc,durationDesc,qcte,qcts,qds,qde}= this.state;
 
-    const payload = {
+    let orderBy = null;
+    if(filterVal ==='a') {
+      orderBy = createTimeDesc ? 11:10
+
+    } else {
+      orderBy = durationDesc ? 21:20
+    }
+    let obj = {
       pageNum: v.current,
       pageSize: 10,
-      qcts,
-      qcte,
-      qds,
-      qde
+      orderBy
     }
+
+    if( qcts && qcte ){
+      obj.qcts = qcts,
+      obj.qcte = qcte
+    }
+    if(qds && qde) {
+      obj.qds = qds;
+      obj.qde = qde;
+    }
+
     this.setState({
-      currentPageNum: v.current,
+      pageNum: v.current,
     });
     dispatch({
       type: 'userlist/fetch',
-      payload: {
-        pageNum: v.current,
-        pageSize: 10,
-      },
+      payload: obj,
       callback:this.cbUserData
     });
   };
 
+  handleSearch = () => {
+    const {dispatch} = this.props;
+    const { filterVal, pageNum,createTimeDesc,durationDesc,qcte,qcts,qds,qde}= this.state;
+    let orderBy = null;
+    if(filterVal ==='a') {
+      orderBy = createTimeDesc ? 11:10
+
+    } else {
+      orderBy = durationDesc ? 21:20
+    }
+    let obj = {
+      pageNum: pageNum,
+      pageSize: 10,
+      orderBy
+    }
+
+    if( qcts && qcte ){
+      obj.qcts = qcts,
+      obj.qcte = qcte
+    }
+    if(qds && qde) {
+      obj.qds = qds;
+      obj.qde = qde;
+    }
+
+    dispatch({
+      type: 'userlist/fetch',
+      payload: obj,
+      callback: this.cbUserData,
+    })
+  };
   render() {
     // const { userlist } = this.props;
     const { list,total } = this.state;
@@ -562,7 +557,7 @@ class UserList extends Component {
             <div className={styles.tabelList}>
               <Table
                 pagination={{
-                  showQuickJumper: true,
+                  // showQuickJumper: true,
                   // showSizeChanger: true,
                   total
                 }}

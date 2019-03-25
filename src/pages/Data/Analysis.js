@@ -31,8 +31,6 @@ class Analysis extends Component {
   state = {
     
     salesType: 'all',
-    // currentSpecial:'',
-    specialId: '',
     rangePickerValue: getTimeDistance('today'),
     dateType:1,
     startDate:null,
@@ -89,11 +87,7 @@ class Analysis extends Component {
     }
     return '';
   };
-  cbSpecialId = (v)=>{
-    this.setState({
-      specialId:v
-    })
-  }
+  
 
   componentDidMount() {
     const { dispatch } = this.props;
@@ -106,11 +100,7 @@ class Analysis extends Component {
         type: 'report/fetch',
     });
    
-    dispatch({
-      type: 'operate/fetchSpecialList',
-      callback: this.callback,
-    });
-
+    
 
     // dispatch({
     //   type: 'examlist/fetchPaperList',
@@ -121,27 +111,9 @@ class Analysis extends Component {
     //   } 
     // });
   }
-  callback = id => {
-    const {dispatch} = this.props;
-    // const {dateType} = this.state;
-    if (!id) return;
-    // const dateType = type ==='today'?1:2;
+ 
 
-    this.setState({
-      specialId: id,
-    },()=>{
-      dispatch({
-        type: 'chart/getReportPaper',
-        payload:{
-          specialId:id,
-          dateType:1,
-          startDate:0,
-          endDate:0
-        }
-      });
-    })
 
-  };
   componentWillUnmount() {
     // const { dispatch } = this.props;
     // dispatch({
@@ -150,40 +122,10 @@ class Analysis extends Component {
     // cancelAnimationFrame(this.reqRef);
     // clearTimeout(this.timeoutId);
   }
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const paperData= nextProps.report.paperData;
-    let salesData = [];
-    if(nextProps.chart.paperData !== prevState.salesData) {
-
-      return {
-        salesData:nextProps.report.paperData
-      }
-
-      // const salesData = [];
-      const rankingListData = paperData && paperData.sort((a,b)=>a.accessAmount -b.accessAmount ).slice(0,7);
-    // const salesData = paperList.map(item=>item.title).slice(0,10);
-  
-        // const salesData = [];
-        for (let i = 0; i < paperData.slice(0,7).length; i += 1) {
-          // salesData.push({
-          //   x: `${i + 1}月`,
-          //   y: Math.floor(Math.random() * 1000) + 200,
-          // });
-          salesData[i] = {
-            x: salesData[i].paperTitle,
-            y:salesData[i].accessAmount
-          }
-        }
-    }
-    debugger
-    return null
-    // this.setState({
-    //   salesData,
-    //   rankingListData
-    // })
-
+  // static getDerivedStateFromProps(nextProps, prevState) {
     
-  }
+  
+  // }
   
 
   handleChangeSalesType = e => {
@@ -219,15 +161,12 @@ class Analysis extends Component {
 
   render() {
 
+    const { salesData,rankingListData,startDate,endDate,dataType,rangePickerValue, salesType } = this.state;
+
+    const {report,loading } = this.props;
+    // const { paperData } = report;
 
 
-
-    const { salesData,rankingListData,specialId,startDate,endDate,dataType,rangePickerValue, salesType } = this.state;
-
-    const {report,loading,operate:{specialList} } = this.props;
-    const { paperData } = report;
-
-    debugger
 
     const {
       specialStats,
@@ -243,19 +182,17 @@ class Analysis extends Component {
         </Suspense>
         <Suspense fallback={null}>
           <SalesCard
-          rankingListData={rankingListData}
-          specialList={specialList}
-            rangePickerValue={rangePickerValue}
+          // rankingListData={rankingListData}
+            // rangePickerValue={rangePickerValue}
             salesData={salesData}
-            isActive={this.isActive}
-            handleRangePickerChange={this.handleRangePickerChange}
+            // isActive={this.isActive}
+            // handleRangePickerChange={this.handleRangePickerChange}
             loading={loading}
             dataType={dataType}
-            endDate = {endDate}
-            // specialId={specialId}
-            cbSpecialId = {this.cbSpecialId}
-            startDate = {startDate}
-            selectDate={this.selectDate}
+            // endDate = {endDate}
+            // cbSpecialId = {this.cbSpecialId}
+            // startDate = {startDate}
+            // selectDate={this.selectDate}
           />
         </Suspense>
 

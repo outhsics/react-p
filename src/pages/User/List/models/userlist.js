@@ -9,7 +9,7 @@ export default {
 
 
   effects: {
-    *fetch({ payload,callback,cbSearch }, { call, put }) {
+    *fetch({ payload,callback }, { call, put }) {
       const response = yield call(queryUserList, payload);
       if (response.data && response.data.code === 1) {
         yield put({
@@ -17,7 +17,6 @@ export default {
           payload: response.data.data,
         });
         if (callback) callback(response.data.data);
-        if (cbSearch) cbSearch();
         // if (cbList) cbList(response.data.data.list);
       }
     },

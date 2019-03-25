@@ -28,8 +28,8 @@ export default {
         payload: response,
       });
     },
-    *fetchSpecialList({ payload, callback }, { call, put }) {
-      const { data } = yield call(querySpecialList, payload);
+    *fetchSpecialList({ callback,callbackPaper }, { call, put }) {
+      const { data } = yield call(querySpecialList);
       const { code, data: list } = data;
       if (code === 1) {
         yield put({
@@ -38,6 +38,9 @@ export default {
         });
         if (callback) {
           callback(list[0].id);
+        }
+        if(callbackPaper){
+          callbackPaper(list)
         }
       }
     },

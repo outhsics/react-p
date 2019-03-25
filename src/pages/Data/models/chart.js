@@ -18,9 +18,9 @@ export default {
   },
 
   effects: {
-    *getReportPaper({payload}, { call, put }) {
+    *getReportPaper({payload,callbackPaperData}, { call, put }) {
       const response = yield call(getReportPaper,payload);
-      debugger
+      // debugger
       if(response.data.code ===1){
         yield put({
           type: 'save',
@@ -28,6 +28,8 @@ export default {
             paperData: response.data.data,
           },
         });
+        // debugger
+        if(callbackPaperData) callbackPaperData(response.data.data)
       }
    
     },

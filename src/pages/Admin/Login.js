@@ -82,7 +82,7 @@ class LoginPage extends Component {
       <Form.Item
       className={styles.formItem}
         {...formItemLayout}
-        label="账户名:admin"
+        label="账户名"
       >
         {getFieldDecorator('userName', {
           rules: [{
@@ -97,7 +97,7 @@ class LoginPage extends Component {
       className={styles.formItem}
 
         {...formItemLayout}
-        label="密码:123"
+        label="密码"
       >
         {getFieldDecorator('password', {
           rules: [{
