@@ -211,7 +211,7 @@ class SalesCard extends Component {
 
     return(
       <Card loading={loading} bordered={false} bodyStyle={{ padding: 0 }}>
-     {specialId &&  <div className={styles.salesCard}>
+     <div className={styles.salesCard}>
         <Tabs
          defaultActiveKey={String(specialId)}
         //  defaultActiveKey={activeKey}
@@ -252,7 +252,6 @@ class SalesCard extends Component {
               // key={idx}
             >
             <Row>
-              {sitem.id}
                 <Col xl={16} lg={12} md={12} sm={24} xs={24}>
                   <div className={styles.salesBar}>
                     <Bar
@@ -294,7 +293,7 @@ class SalesCard extends Component {
          
         </Tabs>
       </div>
-     }
+
     </Card>
     )
   }
