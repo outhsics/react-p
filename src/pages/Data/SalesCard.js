@@ -191,16 +191,33 @@ class SalesCard extends Component {
   };
 
   handleRangePickerChange = rangePickerValue => {
+
+     const {specialId}= this.state;
+    console.log(rangePickerValue,'rangePickerValue');
     const { dispatch } = this.props;
     this.setState({
       rangePickerValue,
     });
 
+
+
+    const start = rangePickerValue[0].valueOf();
+    const end = rangePickerValue[1].valueOf();
+    let obj = {
+      specialId,
+      dateType:2,
+      startDate:start,
+      endDate:end
+    }
+    // if(dateType===2 && start && end){
+    //   obj.startDate = start
+    //   obj.endDate = end
+    // }
+
+
     dispatch({
       type: 'chart/getReportPaper',
-      payload:{
-        rangePickerValue
-      }
+      payload:obj
     });
   };
 

@@ -11,6 +11,7 @@ import {
   DatePicker,
   Popconfirm,
   InputNumber,
+  Upload
 } from 'antd';
 import { connect } from 'dva';
 import styles from './OperateTool.less';
@@ -22,12 +23,12 @@ const MyIcon = Icon.createFromIconfontCN({
   scriptUrl: '//at.alicdn.com/t/font_1025319_360iia8jjiu.js', // 在 iconfont.cn 上生成
 });
 
-const validatorContent = (rule, value, callback) => {
-  if (value.length > 180) {
-    callback('字数不得超过180');
-  }
-  callback();
-};
+// const validatorContent = (rule, value, callback) => {
+//   if (value.length > 180) {
+//     callback('字数不得超过180');
+//   }
+//   callback();
+// };
 
 const validatorName = (rule, value, callback) => {
   if (value.length > 10) {
@@ -116,11 +117,7 @@ class OperateTool extends Component {
     const { isEditing } = this.state;
 
     e.preventDefault();
-    // this.props.form.validateFields((err, values) => {
-    //   if (!err) {
-    //     console.log('Received values of form: ', values);
-    //   }
-    // });
+
     this.props.form.validateFields({ force: true }, (err, values) => {
       if (!err) {
         isEditing
@@ -141,6 +138,83 @@ class OperateTool extends Component {
   handleReset = () => {
     this.props.form.resetFields();
   };
+
+
+
+  uploadImgProps = {
+    name: 'file',
+    action: 'https://api.jze100.com/hear/admin/file/upload',
+    headers: {
+      authorization: 'authorization-text',
+    },
+    showUploadList: false,
+    accept:".jpg, .jpeg, .png",
+    beforeUpload:(file)=>{
+      // const isJPG = file.type === 'image/jpeg';
+      // if (!isJPG) {
+      //   message.error('You can only upload JPG file!');
+      // }
+      const isLt1M = file.size / 1024 / 1024 < 5;
+      if (!isLt1M) {
+        message.error('图片不能大于5MB!');
+      }
+      return isLt1M;
+    },
+  };
+
+  
+  normFile = (info) => {
+    console.log('Upload event:', info);
+   
+    if (info.fileList.length > 1) {
+      info.fileList.shift();
+    }
+
+  
+  if (info.file.status === 'done') {
+
+    message.success(`${info.file.name} 图片上传成功!`,5);
+    if (info.fileList[0].response.code === 1) {
+  // debugger
+
+      return info.file.response.data.path;
+      }
+    } else if (info.file.status === 'error') {
+
+      return false;
+    }
+  }
+  onChangeUploadImgParseProps =(info)=>{
+    // const {editItem} = this.state;
+    // const examTmp = cloneDeep(editItem);
+
+
+    // const examTmp = cloneDeep(editItem);
+   
+    const _this = this;
+    if (info.fileList.length > 1) {
+      info.fileList.shift();
+    }
+
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, 'info.file');
+    console.log(info.fileList, ' info.fileList');
+  }
+  
+  if (info.file.status === 'done') {
+    // debugger
+
+    message.success(`${info.file.name} 图片上传成功!`,5);
+    if (info.fileList[0].response.code === 1) {
+      const path = info.fileList[0].response.data.path
+      return path;
+      }
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+      return '';
+    }
+  }
+
 
   handleEdit = v => {
     console.log(this);
@@ -220,8 +294,11 @@ class OperateTool extends Component {
                         </Fragment>
                       }
                     >
-                      <Meta description={item.slogan} />
-                      <div className={styles.card_content}>{item.content}</div>
+                      {/* <div className={styles.card_content}>{item.content}</div> */}
+                      <Meta description={item.slogan}/>
+                      <div className={styles.card_content}>
+                        <img style={{width:200,height:200}} src={item.content} alt=""/>
+                      </div>
                       <p>{item.button}</p>
                       <p>人数基础：{item.peopleBase} 人</p>
                     </Card>
@@ -256,20 +333,40 @@ class OperateTool extends Component {
               </Row>
               <Row>
                 <Col span={12}>
-                  <Form.Item label="专项说明文本" labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
-                    {getFieldDecorator('content', {
-                      rules: [
-                        { required: true, message: '请输入文字,字数不得超过180' },
-                        { validator: validatorContent },
-                      ],
-                    })(
-                      <Input.TextArea
+               
+               {/* <Input.TextArea
                         placeholder={'专项说明文本（0/180）'}
                         autosize={{ minRows: 8, maxRows: 6 }}
                         max={180}
-                      />
-                    )}
-                  </Form.Item>
+                      /> */}
+                       {/* rules: [ */}
+                        {/* { required: true, message: '请上传图片' }, */}
+                        {/* { validator: validatorContent }, */}
+                      {/* ], */}
+                        {/* valuePropName: 'fileList', */}
+                        <Row>
+
+                          <Form.Item label="专项说明文本: " labelCol={{ span: 5 }} wrapperCol={{ span: 17 }}>
+                            {getFieldDecorator('content', {
+                                getValueFromEvent: this.normFile,
+                            })(
+                              <Upload
+                                {...this.uploadImgProps}>
+                                <Button >
+                                    <Icon type="upload" /> 上传图片
+                                  </Button>
+                                </Upload>
+                            )}
+                          </Form.Item>
+                        </Row>
+                        <Row>
+                        {
+
+                          this.props.form.getFieldValue('content') &&  <img style={{width:200,height:200}} src={this.props.form.getFieldValue('content')} alt=""/>
+                        }
+                              
+                        </Row>
+
                 </Col>
                 <Col span={12}>
                   <Row>

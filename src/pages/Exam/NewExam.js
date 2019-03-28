@@ -290,7 +290,8 @@ class NewExam extends PureComponent {
 
 
         this.setState({
-          subTopicsListTemp:data
+          subTopicsListTemp:data,
+        radioValueList:[]
         })
       }
     })
