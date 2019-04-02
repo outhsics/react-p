@@ -64,6 +64,7 @@
 
 import axios from 'axios';
 import { notification,message } from 'antd';
+import router from 'umi/router';
 
 const service = axios.create({
   // baseURL: 'https://some-domain.com/api/',
@@ -95,7 +96,9 @@ service.interceptors.response.use(
       // notification.error({
       //   message: response.data.msg
       // });
-      window.location.href = '/admin/login'
+      // window.location.href = '/admin/login'
+      router.push('/admin/login');
+
       // return false;
 
       // return response;

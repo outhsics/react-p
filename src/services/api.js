@@ -20,7 +20,7 @@ export async function queryUserList(params) {
 }
 
 export async function saveConfig(params) {
-  debugger
+  // debugger
   return request({
     url: `${apiConfig.basicData.saveConfig}`,
     method: 'post',
